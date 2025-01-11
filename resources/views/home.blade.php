@@ -167,7 +167,7 @@
                                     Jam Masuk
                                 </div>
                                 <div class="text-secondary" style="font-size: 25px;">
-                                    {{ now()->format('H:i:s') }}
+                                    {{ $AbsenKu->jam_masuk }}
                                 </div>
                             </div>
                             <div class="col-12">
@@ -175,7 +175,7 @@
                                     Jam Keluar
                                 </div>
                                 <div class="text-secondary" style="font-size: 25px;">
-                                    {{ now()->format('H:i:s') }}
+                                    {{ $AbsenKu->jam_keluar ?? 'Belum Absen' }}
                                 </div>
                             </div>
                             <div class="col-12">
@@ -183,10 +183,10 @@
                                     Ontime atau Tidak
                                 </div>
                                 <div class="text-secondary" style="font-size: 25px;">
-                                    @if (now()->format('H:i:s') <= '08:00:00')
-                                        Tidak
-                                    @else
+                                    @if ($AbsenKu->jam_masuk <= '08:00:00')
                                         Ontime
+                                    @else
+                                        Terlambat
                                     @endif
                                 </div>
                             </div>
