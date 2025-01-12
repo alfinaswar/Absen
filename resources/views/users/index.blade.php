@@ -36,7 +36,7 @@
                                     <line x1="12" y1="5" x2="12" y2="19"></line>
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                 </svg>
-                                Tambah User
+                                Tambah karyawan
                             </a>
                             <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
                                 data-bs-target="#modal-room" aria-label="Create new report">
@@ -64,39 +64,19 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table card-table table-vcenter text-nowrap datatable">
+                            <table class="table data-table">
                                 <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>Nama</th>
                                         <th>Email</th>
-                                        <th>Roles</th>
-                                        <th width="280px">Action</th>
+                                        <th>Jabatan</th>
+                                        <th>Divisi</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($data as $key => $user)
-                                        <tr>
-                                            <td>{{ ++$i }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>
-                                                @if (!empty($user->getRoleNames()))
-                                                    @foreach ($user->getRoleNames() as $v)
-                                                        <label class="badge bg">{{ $v }}</label>
-                                                    @endforeach
-                                                @endif
-                                            </td>
-                                            <td>
 
-                                                <a class="btn btn-primary" style="background-color:#6b6ef5;"
-                                                    href="{{ route('users.edit', $user->id) }}">Edit</a>
-                                                {!! Form::open(['method' => 'DELETE', 'route' => ['users.destroy', $user->id], 'style' => 'display:inline']) !!}
-                                                {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
-                                                {!! Form::close() !!}
-                                            </td>
-                                        </tr>
-                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
@@ -369,4 +349,92 @@
             </div>
         </div>
     </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var table = $('.data-table').DataTable({
+                responsive: true,
+                serverSide: true,
+                bDestroy: true,
+                processing: true,
+                language: {
+                    processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span> '
+                },
+
+                serverSide: true,
+                ajax: "{{ route('users.index') }}",
+
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+
+                    },
+                    {
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'jabatan',
+                        name: 'jabatan'
+                    },
+                    {
+                        data: 'divisi',
+                        name: 'divisi'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
+                ]
+            });
+
+
+            $('body').on('click', '.delete', function() {
+                var userId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Apakah Anda yakin?',
+                    text: "Data yang dihapus tidak dapat dikembalikan!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ya, hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "{{ route('users.destroy', ':id') }}".replace(':id',
+                                userId),
+                            type: "DELETE",
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                Swal.fire(
+                                    'Dihapus!',
+                                    response.message || "Data berhasil dihapus.",
+                                    'success'
+                                );
+                                table.ajax.reload();
+                            },
+                            error: function(xhr) {
+                                Swal.fire(
+                                    'Gagal!',
+                                    xhr.responseJSON.message ||
+                                    "Terjadi kesalahan saat menghapus data.",
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 @endsection

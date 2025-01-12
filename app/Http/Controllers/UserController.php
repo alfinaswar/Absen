@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
+use Yajra\DataTables\Facades\DataTables;
 use DB;
 use Hash;
 
@@ -24,12 +25,30 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request): View
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $data = User::latest()->get();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="' . route('users.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>
+                    <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    return $btn;
+                })
+                ->addColumn('ontime', function ($row) {
+                    if ($row->ontime == 'Y') {
+                        $ontime = '<span class="badge badge-success">Ontime</span>';
+                    } else {
+                        $ontime = '<span class="badge badge-danger">Terlambat</span>';
+                    }
+                    return $ontime;
+                })
+                ->rawColumns(['action', 'ontime'])
+                ->make(true);
+        }
         $roles = Role::pluck('name', 'name')->all();
-        $data = User::orderBy('id', 'DESC')->paginate(5);
-        return view('users.index', compact('data', 'roles'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+        return view('users.index', compact('roles'));
     }
 
     /**

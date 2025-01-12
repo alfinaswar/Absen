@@ -44,10 +44,10 @@
                                     </div>
                                     <div class="col">
                                         <div class="font-weight-medium">
-                                            Jumlah User
+                                            Jumlah Karyawan
                                         </div>
                                         <div class="text-secondary">
-                                            Jumlah User : 23
+                                            Jumlah Karyawan : {{ $countKaryawan }}
                                         </div>
                                     </div>
                                 </div>
@@ -77,7 +77,7 @@
                                             Absen Tepat Waktu
                                         </div>
                                         <div class="text-secondary">
-                                            23
+                                            {{ $countOntime }}
                                         </div>
                                     </div>
                                 </div>
@@ -111,7 +111,7 @@
                                             Absen Izin
                                         </div>
                                         <div class="text-secondary">
-                                            23
+                                            {{ $CountIzin }}
                                         </div>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@
                                             Total Jumlah Absen
                                         </div>
                                         <div class="text-secondary">
-                                            23
+                                            {{ $total }}
                                         </div>
                                     </div>
                                 </div>
@@ -150,6 +150,8 @@
                 </div>
             </div>
         </div>
+
+
         <div class="card mt-3">
             <div class="card-body">
                 <div class="row mt-4 text-center">
@@ -167,7 +169,7 @@
                                     Jam Masuk
                                 </div>
                                 <div class="text-secondary" style="font-size: 25px;">
-                                    {{ $AbsenKu->jam_masuk }}
+                                    {{ $AbsenKu->jam_masuk ?? 'Belum Absen' }}
                                 </div>
                             </div>
                             <div class="col-12">
@@ -183,21 +185,91 @@
                                     Ontime atau Tidak
                                 </div>
                                 <div class="text-secondary" style="font-size: 25px;">
-                                    @if ($AbsenKu->jam_masuk <= '08:00:00')
-                                        Ontime
+                                    @if (empty($AbsenKu->jam_masuk))
+                                        Belum Absen
                                     @else
-                                        Terlambat
+                                        @if ($AbsenKu->jam_masuk <= '08:00:00')
+                                            Ontime
+                                        @else
+                                            Terlambat
+                                        @endif
                                     @endif
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <button class="btn btn-primary w-100 mt-3" onclick="ShowCuti()">Ajukan Cuti </button>
+            </div>
+        </div>
+        <div class="card mt-5" id="cutiform" style="display: none;">
+            <div class="card-header text-center">
+                <h2>Formulir Pengajuan Cuti</h2>
+            </div>
+            <div class="card-body">
+                <form action="{{ route('absen.Cutistore') }}" method="POST">
+                    @csrf
+                    <div class="row">
+                        <!-- Nama -->
+                        <div class="col-12 mb-3">
+                            <label for="name" class="form-label fw-bold">Nama Lengkap</label>
+                            <input type="text" name="name" id="name" class="form-control"
+                                placeholder="Masukkan nama lengkap" value="{{ auth()->user()->name }}" required>
+                        </div>
+
+                        <!-- Tanggal Mulai -->
+                        <div class="col-6 mb-3">
+                            <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
+                            <input type="date" name="keterangan" id="keterangan" class="form-control" required>
+                        </div>
+
+                        <!-- Tanggal Selesai -->
+                        <div class="col-6 mb-3">
+                            <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
+                            <input type="date" name="end_date" id="end_date" class="form-control" required>
+                            <input type="hidden" name="status" value="CUTI">
+                        </div>
+
+                        <!-- Alasan -->
+                        <div class="col-12 mb-3">
+                            <label for="reason" class="form-label fw-bold">Alasan Cuti</label>
+                            <textarea name="keterangan" id="reason" class="form-control" rows="4"
+                                placeholder="Jelaskan alasan cuti Anda" required></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Tombol Submit -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary fw-bold px-4">Ajukan Cuti</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+    @if ($message = Session::get('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'success',
+                text: '{{ $message }}',
+            });
+        </script>
+    @endif
+    @if ($message = Session::get('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'error',
+                text: '{{ $message }}',
+            });
+        </script>
+    @endif
 @endsection
 <script>
+    function ShowCuti() {
+        $("#cutiform").show();
+    }
     setInterval(function() {
         document.getElementById('current-time').innerHTML = new Date().toLocaleTimeString();
     }, 1000);

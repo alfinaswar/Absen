@@ -21,7 +21,7 @@
                             Absensi
                         </div>
                         <h2 class="page-title">
-                            Kelola Data Absen
+                            Riwayat Absen
                         </h2>
                     </div>
                     <!-- Page title actions -->
@@ -72,7 +72,7 @@
                 @endcan
                 <div class="card">
                     <div class="card-header text-white" style="background-color: #1F573A;">
-                        <h3 class="card-title">Daftar Absensi </h3>
+                        <h3 class="card-title">Riwayat Absensi </h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -86,10 +86,9 @@
                                             <th>Jam Masuk</th>
                                             <th>Jam Keluar</th>
                                             <th>Ontime</th>
-
                                             <th>Status</th>
                                             <th>Approval</th>
-                                            <th>Action</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -109,7 +108,7 @@
                     responsive: true,
                     serverSide: true,
                     processing: true,
-                    ajax: "{{ route('absen.index') }}",
+                    ajax: "{{ route('absen.history') }}",
 
                     columns: [{
                             data: 'DT_RowIndex',
@@ -145,101 +144,8 @@
                             data: 'Approval',
                             name: 'Approval'
                         },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
+
                     ]
-                });
-                $('body').on('click', '.acc-cuti', function() {
-                    var id = $(this).data('id'); // Ambil ID data
-
-                    Swal.fire({
-                        title: 'Apakah Anda yakin?',
-                        text: "ACC cuti tidak dapat dibatalkan!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, ACC Cuti!',
-                        cancelButtonText: 'Batal'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: "{{ route('absen.accCuti') }}",
-                                type: "POST",
-                                data: {
-                                    id: id,
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    Swal.fire(
-                                        'Berhasil!',
-                                        response.message || 'Cuti berhasil di-ACC.',
-                                        'success'
-                                    );
-                                    table.ajax.reload(); // Refresh DataTable
-                                },
-                                error: function(xhr) {
-                                    Swal.fire(
-                                        'Gagal!',
-                                        xhr.responseJSON.message ||
-                                        'Terjadi kesalahan saat meng-ACC cuti.',
-                                        'error'
-                                    );
-                                }
-                            });
-                        }
-                    });
-                });
-                $(document).on('click', '.delete', function() {
-                    var id = $(this).data('id');
-                    var url = '{{ route('absen.destroy', ':id') }}'.replace(':id', id);
-
-                    Swal.fire({
-                        title: 'Anda yakin ingin menghapus data ini?',
-                        text: "Data yang dihapus tidak bisa dikembalikan!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonText: 'Ya, Hapus!',
-                        cancelButtonText: 'Batal',
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: url,
-                                type: 'DELETE',
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                },
-                                success: function(response) {
-                                    if (response.success) {
-                                        Swal.fire(
-                                            'Dihapus!',
-                                            'Data berhasil dihapus.',
-                                            'success'
-                                        ).then(() => {
-                                            location.reload();
-                                        });
-                                    } else {
-                                        Swal.fire(
-                                            'Gagal!',
-                                            'Data gagal dihapus.',
-                                            'error'
-                                        );
-                                    }
-                                },
-                                error: function() {
-                                    Swal.fire(
-                                        'Error!',
-                                        'Terjadi kesalahan saat menghapus data.',
-                                        'error'
-                                    );
-                                }
-                            });
-                        }
-                    });
                 });
 
             });
