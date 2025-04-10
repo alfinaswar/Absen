@@ -70,8 +70,8 @@
                 </button>
                 <h5 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
                     <a href=".">
-                        <img src="{{ asset('assets/img/icon/login-logo.png') }}" width="1000" height="1000"
-                            alt="Tabler" class="navbar-brand-image">
+                        <img src="{{ asset('assets/img/icon/login-logo.png') }}" width="1000" height="1000" alt="Tabler"
+                            class="navbar-brand-image">
                     </a>
                     <span style="color: #1F573A; font-size: 18px">Sistem Absensi</span>
                 </h5>
@@ -140,10 +140,9 @@
                                 <a class="nav-link" href="{{ route('home') }}">
                                     <span
                                         class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
                                             <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
@@ -161,8 +160,8 @@
                                         <span
                                             class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
                                                 class="icon icon-tabler icons-tabler-outline icon-tabler-building-skyscraper">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M3 21l18 0" />
@@ -182,14 +181,13 @@
                                 </li>
                             @endcan
                             @can('monitoring-absen')
-                                <li
-                                    class="nav-item dropdown {{ request()->segment(2) == 'kelola-absen' ? 'active' : '' }}">
+                                <li class="nav-item dropdown {{ request()->segment(2) == 'kelola-absen' ? 'active' : '' }}">
                                     <a class="nav-link" href="{{ route('absen.index') }}">
                                         <span
                                             class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
                                                 class="icon icon-tabler icons-tabler-outline icon-tabler-building-skyscraper">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M3 21l18 0" />
@@ -212,10 +210,9 @@
                                 <a class="nav-link" href="{{ route('absen.history') }}">
                                     <span
                                         class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2"
-                                            stroke="currentColor" fill="none" stroke-linecap="round"
-                                            stroke-linejoin="round">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
                                             <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
@@ -227,6 +224,38 @@
                                     </span>
                                 </a>
                             </li>
+                            {{-- @can('roles') --}}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
+                                    data-bs-auto-close="false" role="button" aria-expanded="false">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                                            <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                                            <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                                        </svg>
+                                    </span>
+                                    <span class="nav-link-title">
+                                        Pengaturan
+                                    </span>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-menu-columns">
+                                        <div class="dropdown-menu-column">
+                                            <a class="dropdown-item" href="{{ route('roles.index') }}">
+                                                Hak Akses
+                                            </a>
+                                            <a class="dropdown-item" href="{{ route('shift.index') }}">
+                                                Shift Kerja
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                            {{-- @endcan --}}
 
 
                         </ul>
@@ -247,13 +276,13 @@
     <script src="{{ asset('') }}assets/libs/jsvectormap/dist/js/jsvectormap.min.js?1692870487" defer></script>
     <script src="{{ asset('') }}assets/libs/jsvectormap/dist/maps/world.js?1692870487" defer></script>
     <script src="{{ asset('') }}assets/libs/jsvectormap/dist/maps/world-merc.js?1692870487" defer></script>
-    <script src="{{ asset('') }}assets/dist/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
-    <script src="{{ asset('') }}assets/dist/libs/tom-select/dist/js/tom-select.base.min.js?1692870487" defer></script>
-    <script src="{{ asset('') }}assets/dist/libs/litepicker/dist/litepicker.js?1692870487" defer></script>
+    <script src="{{ asset('') }}assets/libs/nouislider/dist/nouislider.min.js?1692870487" defer></script>
+    <script src="{{ asset('') }}assets/libs/tom-select/dist/js/tom-select.base.min.js?1692870487" defer></script>
+    <script src="{{ asset('') }}assets/libs/litepicker/dist/litepicker.js?1692870487" defer></script>
     <!-- Tabler Core -->
     <script src="{{ asset('') }}assets/js/tabler.min.js?1692870487" defer></script>
     <script src="{{ asset('') }}assets/js/demo.min.js?1692870487" defer></script>
-
+    @stack('js')
 </body>
 
 </html>
