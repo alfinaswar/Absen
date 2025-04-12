@@ -99,14 +99,15 @@ class UserController extends Controller
 
         return view('users.edit', compact('user', 'roles', 'userRole'));
     }
+    public function UpdateProfile($id): View
+    {
+        $user = User::find($id);
+        $roles = Role::pluck('name', 'name')->all();
+        $userRole = $user->roles->pluck('name', 'name')->all();
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+        return view('users.edit-profile', compact('user', 'roles', 'userRole'));
+    }
+
     public function update(Request $request, $id): RedirectResponse
     {
         $input = $request->all();
@@ -125,6 +126,7 @@ class UserController extends Controller
             ->route('users.index')
             ->with('success', 'Data Karyawan Berhasil Di Perbarui');
     }
+
 
     /**
      * Remove the specified resource from storage.

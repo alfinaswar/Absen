@@ -109,9 +109,8 @@
 
                     </div>
                     <div class="nav-item dropdown">
-
-                        <a href="{{ route('logout') }}" class="nav-link d-flex lh-1 text-reset p-0"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
+                            aria-label="Open user menu">
                             <span class="avatar avatar-sm"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                     height="24" viewBox="0 0 24 24" fill="#2465ff"
                                     class="icon icon-tabler icons-tabler-filled icon-tabler-user">
@@ -121,9 +120,34 @@
                                         d="M14 14a5 5 0 0 1 5 5v1a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-1a5 5 0 0 1 5 -5h4z" />
                                 </svg></span>
                             <div class="d-none d-xl-block ps-2">
-                                <div>Logout</div>
+                                <div>{{ Auth::user()->name }}</div>
                             </div>
                         </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <a href="{{route('users.update-profile', auth()->user()->id)}}" class="dropdown-item">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
+                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                </svg>
+                                Profile
+                            </a>
+                            <a href="{{ route('logout') }}" class="dropdown-item"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-logout"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path
+                                        d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+                                    <path d="M9 12h12l-3 -3" />
+                                    <path d="M18 15l3 -3" />
+                                </svg>
+                                Logout
+                            </a>
+                        </div>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>

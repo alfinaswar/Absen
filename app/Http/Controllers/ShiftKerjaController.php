@@ -16,7 +16,7 @@ class ShiftKerjaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = ShiftKerja::latest()->get();
+            $data = ShiftKerja::whereDate('tanggal', now())->latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
