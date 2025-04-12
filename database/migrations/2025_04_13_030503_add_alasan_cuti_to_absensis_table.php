@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('absensis', function (Blueprint $table) {
-            $table->string('    ', 255)->nullable()->after('status');
+            $table->string('alasan_cuti', 255)->nullable()->after('status');
             $table->string('ip_address', 100)->nullable()->after('keterangan');
         });
     }

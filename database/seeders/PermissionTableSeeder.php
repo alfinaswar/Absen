@@ -19,6 +19,7 @@ class PermissionTableSeeder extends Seeder
             'data-laporan',
             'kelola-pengajuan',
             'data-master',
+            'shift-kerja',
             'role-list',
             'role-create',
             'role-edit',
