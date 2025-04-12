@@ -27,7 +27,7 @@
 
 <body>
     <h2 style="text-align: center;">Laporan Absensi</h2>
-    <p>Periode: {{ $request->start_date }} sampai {{ $request->end_date }}</p>
+    {{-- <p>Periode: {{ $request->start_date }} sampai {{ $request->end_date }}</p> --}}
 
     <table>
         <thead>
@@ -42,7 +42,7 @@
             </tr>
         </thead>
         <tbody>
-            @forelse ($absenData as $key => $data)
+            @forelse ($absensi as $key => $data)
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td>{{ $data->user->name }}</td>

@@ -35,12 +35,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('keola-absen')->group(function () {
         Route::GET('/', [AbsensiController::class, 'index'])->name('absen.index');
         Route::GET('/create', [AbsensiController::class, 'create'])->name('absen.create');
-        Route::get('/simpan', [AbsensiController::class, 'store'])->name('absen.store');
+        Route::get('/simpan/{token}', [AbsensiController::class, 'store'])->name('absen.store');
         Route::POST('/simpan-cuti', [AbsensiController::class, 'Cutistore'])->name('absen.Cutistore');
         Route::GET('/edit/{id}', [AbsensiController::class, 'edit'])->name('absen.edit');
         Route::PUT('/update/{id}', [AbsensiController::class, 'update'])->name('absen.update');
         Route::delete('hapus/{id}', [AbsensiController::class, 'destroy'])->name('absen.destroy');
-        Route::get('/absen/download', [AbsensiController::class, 'downloadPDF'])->name('absen.download');
+        Route::get('/absen/download', [AbsensiController::class, 'downloadExcel'])->name('absen.download');
         Route::post('/absen/acc-cuti', [AbsensiController::class, 'accCuti'])->name('absen.accCuti');
         Route::get('/absen/history', [AbsensiController::class, 'history'])->name('absen.history');
     });

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AbsenExport;
 use App\Models\Absensi;
+use App\Models\QrcodeToken;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class AbsensiController extends Controller
@@ -85,29 +88,41 @@ class AbsensiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $token)
     {
+        $qr = QrcodeToken::where('token', $token)
+            ->where('used', false)
+            ->where('expires_at', '>=', now())
+            ->first();
+
+        if (!$qr) {
+            return redirect()->back()->with('error', 'QR Code tidak valid atau sudah kadaluarsa');
+        }
+
         $cek = Absensi::where('user_id', auth()->user()->id)
             ->whereDate('tanggal', now()->format('Y-m-d'))
             ->first();
-        if (now()->format('H:i:s') > '08:00:00') {
-            $ontime = 'Y';
-        } else {
-            $ontime = 'N';
-        }
+
         if ($cek) {
             return redirect()->back()->with('error', 'Anda Sudah Absen Hari Ini');
         }
-        $data = [];
-        $data['tanggal'] = now()->format('Y-m-d');
-        $data['jam_masuk'] = now()->format('H:i:s');
-        $data['jam_keluar'] = null;
-        $data['status'] = 'HADIR';
-        $data['ontime'] = $ontime;
-        $data['keterangan'] = $request->keterangan;
-        $data['user_id'] = auth()->user()->id;
-        // dd($data);
-        Absensi::create($data);
+
+        $ontime = now()->format('H:i:s') > '08:00:00' ? 'Y' : 'N';
+
+        Absensi::create([
+            'tanggal' => now()->format('Y-m-d'),
+            'jam_masuk' => now()->format('H:i:s'),
+            'jam_keluar' => null,
+            'status' => 'HADIR',
+            'ontime' => $ontime,
+            'keterangan' => $request->keterangan,
+            'user_id' => auth()->user()->id,
+            'ip_address' => $request->ip(),
+        ]);
+
+        $qr->used = true;
+        $qr->save();
+
         return redirect()->back()->with('success', 'Absensi Berhasil Ditambahkan');
     }
 
@@ -133,7 +148,7 @@ class AbsensiController extends Controller
         $data['ontime'] = $ontime;
         $data['keterangan'] = $request->keterangan;
         $data['user_id'] = auth()->user()->id;
-
+        $data['ip_address'] = $request->ip();
         Absensi::create($data);
         return redirect()->back()->with('success', 'Absensi Berhasil Ditambahkan');
     }
@@ -146,20 +161,9 @@ class AbsensiController extends Controller
         //
     }
 
-    public function downloadPDF(Request $request)
+    public function downloadExcel(Request $request)
     {
-        $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-        ]);
-
-        $absenData = Absensi::with('user')
-            ->whereBetween('tanggal', [$request->start_date, $request->end_date])
-            ->orderBy('tanggal', 'asc')
-            ->get();
-        $pdf = Pdf::loadView('laporan.absensi', ['absenData' => $absenData, 'request' => $request]);
-        $fileName = 'Laporan_Absensi_' . $request->start_date . '_to_' . $request->end_date . '.pdf';
-        return $pdf->download($fileName);
+        return Excel::download(new AbsenExport, 'laporan_absensi.xlsx');
     }
 
     public function edit($id)
