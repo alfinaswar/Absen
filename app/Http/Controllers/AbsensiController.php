@@ -96,7 +96,7 @@ class AbsensiController extends Controller
             ->first();
 
         if (!$qr) {
-            return redirect()->back()->with('error', 'QR Code tidak valid atau sudah kadaluarsa');
+            return view('absensi.absen-gagal');
         }
 
         $cek = Absensi::where('user_id', auth()->user()->id)
@@ -104,7 +104,7 @@ class AbsensiController extends Controller
             ->first();
 
         if ($cek) {
-            return redirect()->back()->with('error', 'Anda Sudah Absen Hari Ini');
+            return view('absensi.sudah-absen');
         }
 
         $ontime = now()->format('H:i:s') > '08:00:00' ? 'Y' : 'N';
@@ -123,7 +123,7 @@ class AbsensiController extends Controller
         $qr->used = true;
         $qr->save();
 
-        return redirect()->back()->with('success', 'Absensi Berhasil Ditambahkan');
+        return view('absensi.sukses');
     }
 
     public function Cutistore(Request $request)

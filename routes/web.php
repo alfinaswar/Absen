@@ -43,6 +43,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/absen/download', [AbsensiController::class, 'downloadExcel'])->name('absen.download');
         Route::post('/absen/acc-cuti', [AbsensiController::class, 'accCuti'])->name('absen.accCuti');
         Route::get('/absen/history', [AbsensiController::class, 'history'])->name('absen.history');
+        Route::get('/berhasil-absen', [AbsensiController::class, 'AbsenSukses'])->name('absen.sukses');
     });
     Route::prefix('shift')->group(function () {
         Route::GET('/', [ShiftKerjaController::class, 'index'])->name('shift.index');
