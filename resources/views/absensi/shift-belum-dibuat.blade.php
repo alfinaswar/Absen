@@ -9,9 +9,9 @@
             </div>
             <div class="card card-md">
                 <div class="card-body">
-                    <h2 class="mb-3">Maaf, absen gagal!</h2>
-                    <p class="text-secondary mb-4">Barcode yang Anda gunakan telah digunakan atau telah kadaluarsa. Silakan
-                        coba lagi.</p>
+                    <h2 class="mb-3">Maaf, shift belum dibuat!</h2>
+                    <p class="text-secondary mb-4">Shift yang Anda coba absen belum dibuat. Silakan
+                        coba lagi setelah shift dibuat.</p>
                     <div class="my-4">
                         <a href="#" class="btn btn-primary w-100"> Coba lagi </a>
                     </div>

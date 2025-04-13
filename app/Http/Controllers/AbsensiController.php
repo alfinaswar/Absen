@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\AbsenExport;
 use App\Models\Absensi;
 use App\Models\QrcodeToken;
+use App\Models\ShiftKerjaDetail;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,7 +19,7 @@ class AbsensiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Absensi::select('*');
+            $data = Absensi::with('user')->select('*');
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -107,7 +108,11 @@ class AbsensiController extends Controller
             return view('absensi.sudah-absen');
         }
 
-        $ontime = now()->format('H:i:s') > '08:00:00' ? 'Y' : 'N';
+        $cekshift = ShiftKerjaDetail::with('getNamaShift')->where('user_id', auth()->user()->id);
+        if (!$qr) {
+            return view('absensi.shift-belum-dibuat');
+        }
+        $ontime = now()->format('H:i:s') > $cekshift->getNamaShift->jam_masuk ? 'Y' : 'N';
 
         Absensi::create([
             'tanggal' => now()->format('Y-m-d'),

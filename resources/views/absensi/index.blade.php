@@ -118,8 +118,8 @@
                             searchable: false
                         },
                         {
-                            data: 'user_id',
-                            name: 'user_id'
+                            data: 'user.name',
+                            name: 'user.name'
                         },
                         {
                             data: 'tanggal',
