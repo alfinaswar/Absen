@@ -19,6 +19,6 @@ class ShiftKerjaDetail extends Model
 
     public function getNamaShift()
     {
-        return $this->hasOne(ShiftKerja::class, 'id_shift', 'id');
+        return $this->hasOne(ShiftKerja::class, 'id', 'id_shift');
     }
 }
