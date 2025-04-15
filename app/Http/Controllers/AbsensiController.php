@@ -109,6 +109,7 @@ class AbsensiController extends Controller
         }
 
         $cekshift = ShiftKerjaDetail::with('getNamaShift')->where('user_id', auth()->user()->id);
+        dd($cekshift);
         if (!$qr) {
             return view('absensi.shift-belum-dibuat');
         }
