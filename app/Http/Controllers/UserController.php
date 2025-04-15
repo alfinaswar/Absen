@@ -33,7 +33,7 @@ class UserController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('users.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>
-                    <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a>';
                     return $btn;
                 })
                 ->addColumn('ontime', function ($row) {
@@ -99,6 +99,7 @@ class UserController extends Controller
 
         return view('users.edit', compact('user', 'roles', 'userRole'));
     }
+
     public function UpdateProfile($id): View
     {
         $user = User::find($id);
@@ -127,18 +128,21 @@ class UserController extends Controller
             ->with('success', 'Data Karyawan Berhasil Di Perbarui');
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id): RedirectResponse
+    public function destroy($id)
     {
-        User::find($id)->delete();
-        return redirect()
-            ->route('users.index')
-            ->with('success', 'User deleted successfully');
+        // dd($id);
+        $user = User::find($id);
+        if ($user) {
+            $user->delete();
+            return response()->json(['message' => 'Pengguna berhasil dihapus'], 200);
+        } else {
+            return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
+        }
     }
 }

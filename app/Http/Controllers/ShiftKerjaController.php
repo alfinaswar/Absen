@@ -21,10 +21,9 @@ class ShiftKerjaController extends Controller
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $btn = '<a href="' . route('shift.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>
-                    <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    <a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="' . $row->id . '">Delete</a>';
                     return $btn;
                 })
-
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -57,7 +56,6 @@ class ShiftKerjaController extends Controller
                 'id_shift' => ShiftKerjaDetail::latest()->first()->id ?? 1,
                 'id_user' => $request->id_user[$key],
             ]);
-
         }
 
         return redirect()->route('shift.index')->with('success', 'Shift Kerja Berhasil Ditambahkan');
@@ -89,8 +87,9 @@ class ShiftKerjaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ShiftKerja $shiftKerja)
+    public function update(Request $request, $id)
     {
+        $shiftKerja = ShiftKerja::find($id);
         $shiftKerja->update([
             'nama_shift' => $request->nama_shift,
             'tanggal' => $request->tanggal,
@@ -115,9 +114,14 @@ class ShiftKerjaController extends Controller
      */
     public function destroy($id)
     {
-        $absensi = ShiftKerja::find($id);
-        $absensi->delete();
-        $absensiDetail = ShiftKerjaDetail::where('id_shift', $absensi->id)->delete();
-        return response()->json(['success' => true, 'message' => 'Data berhasil dihapus.']);
+        // dd($id);
+        $Shift = ShiftKerja::find($id);
+        $detail = ShiftKerjaDetail::where('id_shift', $id)->delete();
+        if ($Shift) {
+            $Shift->delete();
+            return response()->json(['message' => 'Shift berhasil dihapus'], 200);
+        } else {
+            return response()->json(['message' => 'Shift tidak ditemukan'], 404);
+        }
     }
 }

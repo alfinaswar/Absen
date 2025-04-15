@@ -30,15 +30,15 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Nama Shift</label>
-                                        <input type="text" class="form-control" name="nama_shift" placeholder="Nama Shift"
-                                            value="{{ $data->nama_shift }}" required>
+                                        <input type="text" class="form-control" name="nama_shift"
+                                            placeholder="Nama Shift" value="{{ $data->nama_shift }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Tanggal Shift</label>
-                                        <input type="date" class="form-control" name="tanggal" value="{{ $data->tanggal }}"
-                                            required>
+                                        <input type="date" class="form-control" name="tanggal"
+                                            value="{{ $data->tanggal }}" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -76,16 +76,17 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($data->DetailShiftKerja as $key => $detail)
+                                                @foreach ($data->DetailShiftKerja as $key => $detail)
                                                     <tr>
                                                         <td>{{ $key + 1 }}</td>
                                                         <td>
                                                             <select type="text" class="form-select select-users"
-                                                                name="id_user[]" id="select-users{{$key}}"
+                                                                name="id_user[]" id="select-users{{ $key }}"
                                                                 value="{{ $detail->id_user }}">
                                                                 @foreach ($karyawan as $kar)
-                                                                    <option value="{{$kar->id}}" {{ $detail->id_user == $kar->id ? 'selected' : '' }}>
-                                                                        {{$kar->name}} - {{$kar->jabatan}}
+                                                                    <option value="{{ $kar->id }}"
+                                                                        {{ $detail->id_user == $kar->id ? 'selected' : '' }}>
+                                                                        {{ $kar->name }} - {{ $kar->jabatan }}
                                                                     </option>
                                                                 @endforeach
                                                             </select>
@@ -118,36 +119,39 @@
 @push('js')
     <script>
         // @formatter:off
-        document.addEventListener("DOMContentLoaded", function () {
-            @foreach($data->DetailShiftKerja as $key => $detail)
-                var el{{$key}};
-                window.TomSelect && (new TomSelect(el{{$key}} = document.getElementById('select-users{{$key}}'), {
+        document.addEventListener("DOMContentLoaded", function() {
+            @foreach ($data->DetailShiftKerja as $key => $detail)
+                var el{{ $key }};
+                window.TomSelect && (new TomSelect(el{{ $key }} = document.getElementById(
+                    'select-users{{ $key }}'), {
                     copyClassesToDropdown: false,
                     dropdownParent: 'body',
                     controlInput: '<input>',
                     render: {
-                        item: function (data, escape) {
+                        item: function(data, escape) {
                             if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                                return '<div><span class="dropdown-item-indicator">' + data
+                                    .customProperties + '</span>' + escape(data.text) + '</div>';
                             }
                             return '<div>' + escape(data.text) + '</div>';
                         },
-                        option: function (data, escape) {
+                        option: function(data, escape) {
                             if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                                return '<div><span class="dropdown-item-indicator">' + data
+                                    .customProperties + '</span>' + escape(data.text) + '</div>';
                             }
                             return '<div>' + escape(data.text) + '</div>';
                         },
                     },
                 }));
             @endforeach
-            });
+        });
         // @formatter:on
     </script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Handle add row button
-            $('#addRow').click(function () {
+            $('#addRow').click(function() {
                 var rowCount = $('#karyawanTable tbody tr').length;
                 var newRow = `
                         <tr>
@@ -155,7 +159,7 @@
                             <td>
                                 <select type="text" class="form-select select-users" name="id_user[]" id="select-users${rowCount}">
                                     @foreach ($karyawan as $kar)
-                                        <option value="{{$kar->id}}">{{$kar->name}} - {{$kar->jabatan}}</option>
+                                        <option value="{{ $kar->id }}">{{ $kar->name }} - {{ $kar->jabatan }}</option>
                                     @endforeach
                                 </select>
                             </td>
@@ -174,15 +178,19 @@
                     dropdownParent: 'body',
                     controlInput: '<input>',
                     render: {
-                        item: function (data, escape) {
+                        item: function(data, escape) {
                             if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                                return '<div><span class="dropdown-item-indicator">' + data
+                                    .customProperties + '</span>' + escape(data.text) +
+                                    '</div>';
                             }
                             return '<div>' + escape(data.text) + '</div>';
                         },
-                        option: function (data, escape) {
+                        option: function(data, escape) {
                             if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                                return '<div><span class="dropdown-item-indicator">' + data
+                                    .customProperties + '</span>' + escape(data.text) +
+                                    '</div>';
                             }
                             return '<div>' + escape(data.text) + '</div>';
                         },
@@ -193,14 +201,14 @@
             });
 
             // Handle delete row
-            $(document).on('click', '.delete-row', function () {
+            $(document).on('click', '.delete-row', function() {
                 $(this).closest('tr').remove();
                 updateRowNumbers();
             });
 
             // Update row numbers
             function updateRowNumbers() {
-                $('#karyawanTable tbody tr').each(function (index) {
+                $('#karyawanTable tbody tr').each(function(index) {
                     $(this).find('td:first').text(index + 1);
                 });
             }

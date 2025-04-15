@@ -52,7 +52,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::POST('/simpan-cuti', [ShiftKerjaController::class, 'Cutistore'])->name('shift.Cutistore');
         Route::GET('/edit/{id}', [ShiftKerjaController::class, 'edit'])->name('shift.edit');
         Route::PUT('/update/{id}', [ShiftKerjaController::class, 'update'])->name('shift.update');
-        Route::delete('hapus/{id}', [ShiftKerjaController::class, 'destroy'])->name('shift.destroy');
+        Route::delete('/hapus/{id}', [ShiftKerjaController::class, 'destroy'])->name('shift.destroy');
     });
     Route::prefix('users')->group(function () {
         Route::GET('/edit-profile/{id}', [UserController::class, 'UpdateProfile'])->name('users.update-profile');
