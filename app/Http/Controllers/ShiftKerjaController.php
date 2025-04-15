@@ -53,7 +53,7 @@ class ShiftKerjaController extends Controller
 
         foreach ($request->id_user as $key => $karyawan) {
             ShiftKerjaDetail::create([
-                'id_shift' => ShiftKerjaDetail::latest()->first()->id ?? 1,
+                'id_shift' => ShiftKerja::latest()->first()->id ?? 1,
                 'id_user' => $request->id_user[$key],
             ]);
         }
