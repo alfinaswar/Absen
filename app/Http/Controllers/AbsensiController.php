@@ -105,12 +105,21 @@ class AbsensiController extends Controller
             ->first();
 
         if ($cek) {
+            if ($cek->jam_masuk && !$cek->jam_keluar) {
+                $cek->update([
+                    'jam_keluar' => now()->format('H:i:s'),
+                    'JenisAbsen' => 'Pulang'
+                ]);
+                return view('absensi.sukses');
+            }
             return view('absensi.sudah-absen');
         }
 
-        $cekshift = ShiftKerjaDetail::with(['getNamaShift' => function ($query) {
-            $query->whereDate('tanggal', now()->format('Y-m-d'));
-        }])->where('id_user', auth()->user()->id)->first();
+        $cekshift = ShiftKerjaDetail::with([
+            'getNamaShift' => function ($query) {
+                $query->whereDate('tanggal', now()->format('Y-m-d'));
+            }
+        ])->where('id_user', auth()->user()->id)->first();
         if (!$qr) {
             return view('absensi.shift-belum-dibuat');
         }
@@ -125,6 +134,7 @@ class AbsensiController extends Controller
             'keterangan' => $request->keterangan,
             'user_id' => auth()->user()->id,
             'ip_address' => $request->ip(),
+            'JenisAbsen' => 'Masuk'
         ]);
 
         $qr->used = true;
