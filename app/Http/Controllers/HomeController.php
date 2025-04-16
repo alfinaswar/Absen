@@ -45,7 +45,7 @@ class HomeController extends Controller
         $qrCodes = QrCode::size(200)->style('square')->generate(route('absen.store', ['token' => $token]));
         // $qrCodes = QrCode::size(200)->style('square')->generate(route('absen.store'));
         if (!auth()->user()->hasRole('Admin')) {
-            return view('home-user', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin'));
+            return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin'));
         } else {
             return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin'));
         }
