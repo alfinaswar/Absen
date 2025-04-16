@@ -103,7 +103,7 @@
 
         </div>
         <script type="text/javascript">
-            $(document).ready(function() {
+            $(document).ready(function () {
                 var table = $('.data-table').DataTable({
                     responsive: true,
                     serverSide: true,
@@ -111,43 +111,43 @@
                     ajax: "{{ route('absen.history') }}",
 
                     columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'user_id',
-                            name: 'user_id'
-                        },
-                        {
-                            data: 'tanggal',
-                            name: 'tanggal'
-                        },
-                        {
-                            data: 'jam_masuk',
-                            name: 'jam_masuk'
-                        },
-                        {
-                            data: 'jam_keluar',
-                            name: 'jam_keluar'
-                        },
-                        {
-                            data: 'ontime',
-                            name: 'ontime'
-                        },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
-                        {
-                            data: 'Approval',
-                            name: 'Approval'
-                        },
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'user.name',
+                        name: 'user.name'
+                    },
+                    {
+                        data: 'tanggal',
+                        name: 'tanggal'
+                    },
+                    {
+                        data: 'jam_masuk',
+                        name: 'jam_masuk'
+                    },
+                    {
+                        data: 'jam_keluar',
+                        name: 'jam_keluar'
+                    },
+                    {
+                        data: 'ontime',
+                        name: 'ontime'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'Approval',
+                        name: 'Approval'
+                    },
 
                     ]
                 });
 
             });
         </script>
-    @endsection
+@endsection

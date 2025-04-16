@@ -66,9 +66,10 @@ class AbsensiController extends Controller
     public function history(Request $request)
     {
         if ($request->ajax()) {
-            $data = Absensi::where('user_id', auth()->user()->id)
+            $data = Absensi::with('user')->where('user_id', auth()->user()->id)
                 ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year);
+                ->whereYear('created_at', now()->year)
+                ->latest();
 
             return DataTables::of($data)
                 ->addIndexColumn()
