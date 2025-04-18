@@ -66,7 +66,8 @@ class AbsensiController extends Controller
     public function history(Request $request)
     {
         if ($request->ajax()) {
-            $data = Absensi::with('user')->where('user_id', auth()->user()->id)
+            $data = Absensi::with('user')
+                ->where('user_id', auth()->user()->id)
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->latest();
@@ -124,7 +125,7 @@ class AbsensiController extends Controller
         if (!$qr) {
             return view('absensi.shift-belum-dibuat');
         }
-        $ontime = now()->format('H:i:s') > $cekshift->getNamaShift->jam_masuk ? 'Y' : 'N';
+        $ontime = now()->format('H:i:s') < $cekshift->getNamaShift->jam_masuk ? 'Y' : 'N';
 
         Absensi::create([
             'tanggal' => now()->format('Y-m-d'),
