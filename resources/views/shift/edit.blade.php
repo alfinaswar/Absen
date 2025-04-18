@@ -23,7 +23,7 @@
                         <h3 class="card-title">Form Edit Shift Kerja</h3>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('shift.update', ['shift' => $shift->id]) }}" method="POST">
+                        <form action="{{ route('shift.update', $data->id) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="row">
@@ -31,28 +31,28 @@
                                     <div class="form-group mb-3">
                                         <label class="form-label">Nama Shift</label>
                                         <input type="text" class="form-control" name="nama_shift"
-                                            placeholder="Nama Shift" required value="{{ $shift->nama_shift }}">
+                                            placeholder="Nama Shift" required value="{{ $data->nama_shift }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Tanggal Shift</label>
                                         <input type="date" class="form-control" name="tanggal" required
-                                            value="{{ $shift->tanggal }}">
+                                            value="{{ $data->tanggal }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Jam Masuk</label>
                                         <input type="time" class="form-control" name="jam_masuk" required
-                                            value="{{ $shift->jam_masuk }}">
+                                            value="{{ $data->jam_masuk }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Jam Pulang</label>
                                         <input type="time" class="form-control" name="jam_keluar" required
-                                            value="{{ $shift->jam_keluar }}">
+                                            value="{{ $data->jam_keluar }}">
                                     </div>
                                 </div>
                             </div>
@@ -75,14 +75,14 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach ($shift->karyawan as $index => $kar)
+                                                @foreach ($data->DetailShiftKerja as $index => $kar)
                                                     <tr>
                                                         <td>
                                                             <select class="form-select select-users" name="id_user[]"
                                                                 id="select-users-{{ $index }}">
                                                                 @foreach ($karyawan as $k)
                                                                     <option value="{{ $k->id }}"
-                                                                        {{ $k->id == $kar->id ? 'selected' : '' }}>
+                                                                        {{ $k->id == $kar->id_user ? 'selected' : '' }}>
                                                                         {{ $k->name }} -
                                                                         {{ $k->jabatan }}</option>
                                                                 @endforeach
