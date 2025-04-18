@@ -29,8 +29,8 @@
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Nama Shift</label>
-                                        <input type="text" class="form-control" name="nama_shift" placeholder="Nama Shift"
-                                            required>
+                                        <input type="text" class="form-control" name="nama_shift"
+                                            placeholder="Nama Shift" required>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -66,32 +66,29 @@
                                         <table class="table" width="100%" id="karyawanTable">
                                             <thead>
                                                 <tr>
-                                                    <th width="5%">No</th>
                                                     <th width="80%">Nama Karyawan</th>
                                                     <th width="10%">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @foreach($karyawan as $key => $k)
-                                                    <tr>
-                                                        <td>{{ $key + 1 }}</td>
-                                                        <td><select type="text" class="form-select select-users" name="id_user[]" id="select-users{{$key}}"
-                                                                value="">
-                                                                @foreach ($karyawan as $kar)
-                                                                    <option value="{{$kar->id}}">{{$kar->name}} - {{$kar->jabatan    }}</option>
-                                                                @endforeach
-
-                                                            </select></td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-danger btn-md delete-row">
-                                                                <i class="fas fa-trash"></i>
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
+                                                <tr>
+                                                    <td>
+                                                        <select class="form-select select-users" name="id_user[]"
+                                                            id="select-users-0">
+                                                            @foreach ($karyawan as $kar)
+                                                                <option value="{{ $kar->id }}">{{ $kar->name }} -
+                                                                    {{ $kar->jabatan }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-danger btn-md delete-row">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
@@ -111,92 +108,71 @@
 @endsection
 @push('js')
     <script>
-        // @formatter:off
-        document.addEventListener("DOMContentLoaded", function () {
-            @foreach($karyawan as $key => $k)
-                var el{{$key}};
-                window.TomSelect && (new TomSelect(el{{$key}} = document.getElementById('select-users{{$key}}'), {
-                    copyClassesToDropdown: false,
-                    dropdownParent: 'body',
-                    controlInput: '<input>',
-                    render: {
-                        item: function (data, escape) {
-                            if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
-                            }
-                            return '<div>' + escape(data.text) + '</div>';
-                        },
-                        option: function (data, escape) {
-                            if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
-                            }
-                            return '<div>' + escape(data.text) + '</div>';
-                        },
-                    },
-                }));
-            @endforeach
-                                                        });
-        // @formatter:on
-    </script>
-    <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
+            // Initialize TomSelect for the first row
+            initializeTomSelect(0);
+
             // Handle add row button
-            $('#addRow').click(function () {
+            $('#addRow').click(function() {
                 var rowCount = $('#karyawanTable tbody tr').length;
                 var newRow = `
-                                            <tr>
-                                                <td>${rowCount + 1}</td>
-                                                <td>
-                                                    <select type="text" class="form-select select-users" name="id_user[]" id="select-users${rowCount}">
-                                                       @foreach ($karyawan as $kar)
-                                                        <option value="{{$kar->id}}">{{$kar->name}} - {{$kar->jabatan    }}</option>
-                                                    @endforeach
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-danger btn-md delete-row">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        `;
+            <tr>
+                <td>
+                    <select class="form-select select-users" name="id_user[]" id="select-users-${rowCount}">
+                        @foreach ($karyawan as $kar)
+                            <option value="{{ $kar->id }}">{{ $kar->name }} - {{ $kar->jabatan }}</option>
+                        @endforeach
+                    </select>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-md delete-row">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
                 $('#karyawanTable tbody').append(newRow);
 
                 // Initialize TomSelect for new row
-                new TomSelect('#select-users' + rowCount, {
-                    copyClassesToDropdown: false,
-                    dropdownParent: 'body',
-                    controlInput: '<input>',
-                    render: {
-                        item: function (data, escape) {
-                            if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
-                            }
-                            return '<div>' + escape(data.text) + '</div>';
-                        },
-                        option: function (data, escape) {
-                            if (data.customProperties) {
-                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
-                            }
-                            return '<div>' + escape(data.text) + '</div>';
-                        },
-                    },
-                });
-
-                updateRowNumbers();
+                initializeTomSelect(rowCount);
             });
 
             // Handle delete row
-            $(document).on('click', '.delete-row', function () {
-                $(this).closest('tr').remove();
-                updateRowNumbers();
+            $(document).on('click', '.delete-row', function() {
+                // Don't remove if it's the only row
+                if ($('#karyawanTable tbody tr').length > 1) {
+                    $(this).closest('tr').remove();
+                }
             });
 
-            // Update row numbers
-            function updateRowNumbers() {
-                $('#karyawanTable tbody tr').each(function (index) {
-                    $(this).find('td:first').text(index + 1);
-                });
+            // Function to initialize TomSelect
+            function initializeTomSelect(index) {
+                const selectElement = document.getElementById('select-users-' + index);
+                if (selectElement && !selectElement.tomselect) {
+                    new TomSelect(selectElement, {
+                        copyClassesToDropdown: false,
+                        dropdownParent: 'body',
+                        controlInput: '<input>',
+                        render: {
+                            item: function(data, escape) {
+                                if (data.customProperties) {
+                                    return '<div><span class="dropdown-item-indicator">' + data
+                                        .customProperties +
+                                        '</span>' + escape(data.text) + '</div>';
+                                }
+                                return '<div>' + escape(data.text) + '</div>';
+                            },
+                            option: function(data, escape) {
+                                if (data.customProperties) {
+                                    return '<div><span class="dropdown-item-indicator">' + data
+                                        .customProperties +
+                                        '</span>' + escape(data.text) + '</div>';
+                                }
+                                return '<div>' + escape(data.text) + '</div>';
+                            },
+                        },
+                    });
+                }
             }
         });
     </script>
