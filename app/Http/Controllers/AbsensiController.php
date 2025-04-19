@@ -14,7 +14,7 @@ use Yajra\DataTables\Facades\DataTables;
 class AbsensiController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Menampilkan daftar absensi.
      */
     public function index(Request $request)
     {
@@ -23,7 +23,7 @@ class AbsensiController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    // Default buttons
+                    // Tombol default
                     $btn = '<a href="' . route('absen.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>
                         <a href="javascript:void(0)"  data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a> ';
                     if ($row->status == 'CUTI') {
@@ -46,6 +46,9 @@ class AbsensiController extends Controller
         return view('absensi.index');
     }
 
+    /**
+     * Mengubah status cuti menjadi di-ACC.
+     */
     public function accCuti(Request $request)
     {
         $absensi = Absensi::findOrFail($request->id);
@@ -61,7 +64,7 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Menampilkan riwayat absensi.
      */
     public function history(Request $request)
     {
@@ -89,23 +92,27 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Menyimpan absensi baru.
      */
     public function store(Request $request, $token)
     {
+        // Mencari token QR yang sesuai dan belum digunakan
         $qr = QrcodeToken::where('token', $token)
             ->where('used', false)
             ->where('expires_at', '>=', now())
             ->first();
 
+        // Jika token QR tidak ditemukan atau sudah kadaluarsa, maka absensi gagal
         if (!$qr) {
             return view('absensi.absen-gagal');
         }
 
+        // Mengecek apakah user sudah melakukan absensi hari ini
         $cek = Absensi::where('user_id', auth()->user()->id)
             ->whereDate('tanggal', now()->format('Y-m-d'))
             ->first();
 
+        // Jika user sudah melakukan absensi masuk dan belum melakukan absensi pulang, maka update jam keluar
         if ($cek) {
             if ($cek->jam_masuk && !$cek->jam_keluar) {
                 $cek->update([
@@ -114,19 +121,24 @@ class AbsensiController extends Controller
                 ]);
                 return view('absensi.sukses');
             }
+            // Jika user sudah melakukan absensi masuk dan pulang, maka tidak perlu absensi lagi
             return view('absensi.sudah-absen');
         }
 
+        // Mengecek detail shift kerja untuk menentukan keterlambatan
         $cekshift = ShiftKerjaDetail::with([
             'getNamaShift' => function ($query) {
                 $query->whereDate('tanggal', now()->format('Y-m-d'));
             }
         ])->where('id_user', auth()->user()->id)->first();
+        // Jika detail shift kerja tidak ditemukan, maka shift belum dibuat
         if (!$qr) {
             return view('absensi.shift-belum-dibuat');
         }
+        // Menentukan apakah user datang ontime atau tidak berdasarkan jam masuk shift
         $ontime = now()->format('H:i:s') < $cekshift->getNamaShift->jam_masuk ? 'Y' : 'N';
 
+        // Membuat absensi baru untuk user
         Absensi::create([
             'tanggal' => now()->format('Y-m-d'),
             'jam_masuk' => now()->format('H:i:s'),
@@ -139,12 +151,17 @@ class AbsensiController extends Controller
             'JenisAbsen' => 'Masuk'
         ]);
 
+        // Menandai token QR sebagai sudah digunakan
         $qr->used = true;
         $qr->save();
 
+        // Menampilkan view sukses setelah absensi berhasil
         return view('absensi.sukses');
     }
 
+    /**
+     * Menyimpan absensi cuti.
+     */
     public function Cutistore(Request $request)
     {
         $cek = Absensi::where('user_id', auth()->user()->id)
@@ -173,18 +190,24 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Menampilkan detail absensi.
      */
     public function show(Absensi $absensi)
     {
         //
     }
 
+    /**
+     * Mengunduh laporan absensi dalam format Excel.
+     */
     public function downloadExcel(Request $request)
     {
         return Excel::download(new AbsenExport, 'laporan_absensi.xlsx');
     }
 
+    /**
+     * Menampilkan form edit absensi.
+     */
     public function edit($id)
     {
         $data = Absensi::find($id);
@@ -192,7 +215,7 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Memperbarui absensi.
      */
     public function update(Request $request, $id)
     {
@@ -218,7 +241,7 @@ class AbsensiController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Menghapus absensi.
      */
     public function destroy($id)
     {
