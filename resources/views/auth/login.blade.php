@@ -32,7 +32,7 @@
             <center>
                 <div class="text-center mb-4">
                     <a href="." class="">
-                        <img src="{{ asset('assets/img/icon/logo-univ.jpg') }}" width="30%" height="30%"
+                        <img src="{{ asset('assets/img/icon/login-logo.png') }}" width="30%" height="30%"
                             alt="Tabler">
                     </a>
                 </div>
