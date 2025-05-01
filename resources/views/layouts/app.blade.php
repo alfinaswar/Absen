@@ -70,7 +70,7 @@
                 </button>
                 <h5 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
                     <a href=".">
-                        <img src="{{ asset('assets/img/icon/logo-univ.jpg') }}" width="1000" height="1000"
+                        <img src="{{ asset('assets/img/icon/login-logo.png') }}" width="1000" height="1000"
                             alt="Tabler" class="navbar-brand-image">
                     </a>
                     <span style="color: #1F573A; font-size: 18px">Sistem Absensi</span>
