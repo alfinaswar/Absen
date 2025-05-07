@@ -8,9 +8,9 @@
                     <div class="card-stamp">
                         <div class="card-stamp-icon bg-white text-primary">
                             <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path
                                     d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z">
@@ -61,9 +61,9 @@
                                     <div class="col-auto">
                                         <span
                                             class="bg-green text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/shopping-cart -->
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
                                                 <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
@@ -123,9 +123,9 @@
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-auto">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round"
                                             class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-cart-dollar">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M4 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
@@ -154,53 +154,39 @@
 
         <div class="card mt-3">
             <div class="card-body">
-                <div class="row mt-4 text-center">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h1 class="text-center mb-3">Absen Berdasarkan Lokasi</h1>
+                        <!-- Leaflet map container -->
+                        <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
 
-                    <div class="col-6">
-                        <h1>Scan Disini Untuk Absen</h1>
-                        <a href="javascript:void(0)" id="container">{!! $qrCodes !!}</a><br /><br />
-                        <div id="current-time" style="font-size: 24px; font-weight: bold;">{{ now() }}</div>
-
-                    </div>
-                    <div class="col-6 d-flex align-items-center">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="fw-bold" style="font-size: 25px;">
-                                    Jam Masuk
-                                </div>
-                                <div class="text-secondary" style="font-size: 25px;">
-                                    {{ $AbsenKu->jam_masuk ?? 'Belum Absen' }}
+                        <div class="mt-3">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="alert alert-info" id="location-status">
+                                        Mencari lokasi Anda...
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-12">
-                                <div class="fw-bold" style="font-size: 25px;">
-                                    Jam Keluar
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-success w-100" id="btn-masuk" onclick="absenMasuk()">Absen
+                                        Masuk</button>
                                 </div>
-                                <div class="text-secondary" style="font-size: 25px;">
-                                    {{ $AbsenKu->jam_keluar ?? 'Belum Absen' }}
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="fw-bold" style="font-size: 25px;">
-                                    Ontime atau Tidak
-                                </div>
-                                <div class="text-secondary" style="font-size: 25px;">
-                                    @if (empty($AbsenKu->jam_masuk))
-                                        Belum Absen
-                                    @else
-                                        @if ($AbsenKu->jam_masuk <= '08:00:00')
-                                            Ontime
-                                        @else
-                                            Terlambat
-                                        @endif
-                                    @endif
-
+                                <div class="col-6">
+                                    <button class="btn btn-danger w-100" id="btn-keluar" onclick="absenKeluar()">Absen
+                                        Keluar</button>
                                 </div>
                             </div>
                         </div>
+
+                        <div id="current-time" class="text-center mt-3" style="font-size: 24px; font-weight: bold;">
+                            {{ now() }}
+                        </div>
                     </div>
+
                 </div>
-                <button class="btn btn-primary w-100 mt-3" onclick="ShowCuti()">Ajukan Cuti </button>
+                <button class="btn btn-primary w-100 mt-3" onclick="ShowCuti()">Ajukan Cuti</button>
             </div>
         </div>
         <div class="card mt-5" id="cutiform" style="display: none;">
@@ -221,7 +207,7 @@
                         <!-- Tanggal Mulai -->
                         <div class="col-6 mb-3">
                             <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
-                            <input type="date" name="keterangan" id="keterangan" class="form-control" required>
+                            <input type="date" name="start_date" id="start_date" class="form-control" required>
                         </div>
 
                         <!-- Tanggal Selesai -->
@@ -247,6 +233,34 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal konfirmasi absensi -->
+    <div class="modal fade" id="confirmAttendanceModal" tabindex="-1" aria-labelledby="confirmAttendanceModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmAttendanceModalLabel">Konfirmasi Absensi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-message">Apakah Anda yakin ingin melakukan absensi?</p>
+                    <form id="attendance-form" action="{{ route('absen.store') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="latitude" id="latitude">
+                        <input type="hidden" name="longitude" id="longitude">
+                        <input type="hidden" name="lokasi" id="lokasi">
+                        <input type="hidden" name="tipe_absen" id="tipe_absen">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="confirm-btn">Konfirmasi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @if ($message = Session::get('success'))
         <script>
             Swal.fire({
@@ -267,17 +281,201 @@
     @endif
 @endsection
 @push('js')
+    <!-- Include Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
     <script>
+        let map, marker, circle, userLatitude, userLongitude, userLocationAddress;
+        let confirmedInOfficeArea = false;
+        // Office coordinates (example - replace with your actual office coordinates)
+        const officeLatitude = 0.5208882; // Jakarta example coordinate
+        const officeLongitude = 101.4431991; // Jakarta example coordinate
+        const maxDistanceMeters = 1000; // Maximum allowed distance from office in meters
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize the map
+            map = L.map('map').setView([-6.2088, 106.8456], 15); // Default to Jakarta
+
+            // Add tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add office marker
+            const officeIcon = L.icon({
+                iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            const officeMarker = L.marker([officeLatitude, officeLongitude], { icon: officeIcon }).addTo(map);
+            officeMarker.bindPopup("Lokasi Kantor").openPopup();
+
+            // Define allowed radius
+            const allowedRadius = L.circle([officeLatitude, officeLongitude], {
+                color: 'green',
+                fillColor: '#0f8',
+                fillOpacity: 0.2,
+                radius: maxDistanceMeters
+            }).addTo(map);
+
+            // Get user's current location
+            getUserLocation();
+
+            // Set up the modal confirmation button
+            document.getElementById('confirm-btn').addEventListener('click', function () {
+                document.getElementById('attendance-form').submit();
+            });
+        });
+
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        userLatitude = position.coords.latitude;
+                        userLongitude = position.coords.longitude;
+
+                        // If marker already exists, update position, otherwise create new
+                        if (marker) {
+                            marker.setLatLng([userLatitude, userLongitude]);
+                        } else {
+                            marker = L.marker([userLatitude, userLongitude]).addTo(map);
+                        }
+
+                        // Set map view to user location
+                        map.setView([userLatitude, userLongitude], 15);
+
+                        // Calculate distance to office
+                        const distance = calculateDistance(
+                            userLatitude, userLongitude,
+                            officeLatitude, officeLongitude
+                        );
+
+                        // Update user's location info
+                        getAddressFromCoordinates(userLatitude, userLongitude);
+
+                        // Check if user is within allowed distance
+                        if (distance <= maxDistanceMeters) {
+                            document.getElementById('location-status').className = 'alert alert-success';
+                            document.getElementById('location-status').innerHTML =
+                                `<strong>Lokasi Valid!</strong> Anda berada dalam radius kantor (${Math.round(distance)}m dari kantor)`;
+                            confirmedInOfficeArea = true;
+                        } else {
+                            document.getElementById('location-status').className = 'alert alert-danger';
+                            document.getElementById('location-status').innerHTML =
+                                `<strong>Lokasi Tidak Valid!</strong> Anda berada di luar radius kantor (${Math.round(distance)}m dari kantor)`;
+                            confirmedInOfficeArea = false;
+                        }
+                    },
+                    function (error) {
+                        console.error("Error getting location: ", error);
+                        document.getElementById('location-status').className = 'alert alert-danger';
+                        document.getElementById('location-status').innerHTML =
+                            `<strong>Error!</strong> Tidak dapat mengakses lokasi Anda. ${error.message}`;
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                document.getElementById('location-status').className = 'alert alert-danger';
+                document.getElementById('location-status').innerHTML =
+                    "<strong>Error!</strong> Geolocation tidak didukung oleh browser Anda.";
+            }
+        }
+
+        function getAddressFromCoordinates(lat, lng) {
+            // Using Nominatim Reverse Geocoding API
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    userLocationAddress = data.display_name;
+                    document.getElementById('current-location').textContent = userLocationAddress;
+                })
+                .catch(error => {
+                    console.error("Error getting address: ", error);
+                    userLocationAddress = `Latitude: ${lat}, Longitude: ${lng}`;
+                    document.getElementById('current-location').textContent = userLocationAddress;
+                });
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth radius in meters
+            const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // distance in meters
+        }
+
+        function absenMasuk() {
+            // Re-check location before submitting
+            getUserLocation();
+
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
+                if (confirmedInOfficeArea) {
+                    document.getElementById('confirm-message').innerHTML = "Anda akan melakukan absen masuk. Lanjutkan?";
+                    document.getElementById('latitude').value = userLatitude;
+                    document.getElementById('longitude').value = userLongitude;
+                    document.getElementById('lokasi').value = userLocationAddress;
+                    document.getElementById('tipe_absen').value = 'masuk';
+                    modal.show();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lokasi Tidak Valid',
+                        text: 'Anda harus berada dalam radius kantor untuk melakukan absensi!',
+                    });
+                }
+            }, 1000); // Short delay to allow location check to complete
+        }
+
+        function absenKeluar() {
+            // Re-check location before submitting
+            getUserLocation();
+
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
+                if (confirmedInOfficeArea) {
+                    document.getElementById('confirm-message').innerHTML = "Anda akan melakukan absen keluar. Lanjutkan?";
+                    document.getElementById('latitude').value = userLatitude;
+                    document.getElementById('longitude').value = userLongitude;
+                    document.getElementById('lokasi').value = userLocationAddress;
+                    document.getElementById('tipe_absen').value = 'keluar';
+                    modal.show();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lokasi Tidak Valid',
+                        text: 'Anda harus berada dalam radius kantor untuk melakukan absensi!',
+                    });
+                }
+            }, 1000); // Short delay to allow location check to complete
+        }
+
         function ShowCuti() {
             $("#cutiform").show();
         }
-        setInterval(function() {
+
+        // Update the clock every second
+        setInterval(function () {
             document.getElementById('current-time').innerHTML = new Date().toLocaleTimeString();
         }, 1000);
-    </script>
-    <script>
-        setInterval(() => {
-            location.reload();
+
+        // Refresh location every 30 seconds
+        setInterval(function () {
+            getUserLocation();
         }, 30000);
     </script>
 @endpush
