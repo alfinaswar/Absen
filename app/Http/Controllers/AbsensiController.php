@@ -94,7 +94,7 @@ class AbsensiController extends Controller
     /**
      * Menyimpan absensi baru.
      */
-    public function store(Request $request, $token)
+    public function store(Request $request)
     {
         $data = $request->all();
         dd($data);
