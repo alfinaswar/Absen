@@ -96,49 +96,8 @@ class AbsensiController extends Controller
      */
     public function store(Request $request, $token)
     {
-        // Mencari token QR yang sesuai dan belum digunakan
-        $qr = QrcodeToken::where('token', $token)
-            ->where('used', false)
-            ->where('expires_at', '>=', now())
-            ->first();
-
-        // Jika token QR tidak ditemukan atau sudah kadaluarsa, maka absensi gagal
-        if (!$qr) {
-            return view('absensi.absen-gagal');
-        }
-
-        // Mengecek apakah user sudah melakukan absensi hari ini
-        $cek = Absensi::where('user_id', auth()->user()->id)
-            ->whereDate('tanggal', now()->format('Y-m-d'))
-            ->first();
-
-        // Jika user sudah melakukan absensi masuk dan belum melakukan absensi pulang, maka update jam keluar
-        if ($cek) {
-            if ($cek->jam_masuk && !$cek->jam_keluar) {
-                $cek->update([
-                    'jam_keluar' => now()->format('H:i:s'),
-                    'JenisAbsen' => 'Pulang'
-                ]);
-                return view('absensi.sukses');
-            }
-            // Jika user sudah melakukan absensi masuk dan pulang, maka tidak perlu absensi lagi
-            return view('absensi.sudah-absen');
-        }
-
-        // Mengecek detail shift kerja untuk menentukan keterlambatan
-        $cekshift = ShiftKerjaDetail::with([
-            'getNamaShift' => function ($query) {
-                $query->whereDate('tanggal', now()->format('Y-m-d'));
-            }
-        ])->where('id_user', auth()->user()->id)->first();
-        // Jika detail shift kerja tidak ditemukan, maka shift belum dibuat
-        if (!$qr) {
-            return view('absensi.shift-belum-dibuat');
-        }
-        // Menentukan apakah user datang ontime atau tidak berdasarkan jam masuk shift
-        $ontime = now()->format('H:i:s') < $cekshift->getNamaShift->jam_masuk ? 'Y' : 'N';
-
-        // Membuat absensi baru untuk user
+        $data = $request->all();
+        dd($data);
         Absensi::create([
             'tanggal' => now()->format('Y-m-d'),
             'jam_masuk' => now()->format('H:i:s'),
@@ -151,11 +110,7 @@ class AbsensiController extends Controller
             'JenisAbsen' => 'Masuk'
         ]);
 
-        // Menandai token QR sebagai sudah digunakan
-        $qr->used = true;
-        $qr->save();
 
-        // Menampilkan view sukses setelah absensi berhasil
         return view('absensi.sukses');
     }
 

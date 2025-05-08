@@ -283,12 +283,13 @@
                         <input type="hidden" name="lokasi" id="lokasi">
                         <input type="hidden" name="tipe_absen" id="tipe_absen">
                         <input type="hidden" name="selfie_photo" id="selfie_photo">
-                    </form>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary" id="confirm-btn">Konfirmasi</button>
                 </div>
+                </form>
             </div>
         </div>
     </div>
@@ -324,9 +325,9 @@
         let confirmedInOfficeArea = false;
         let currentAbsenType = null;
         // Office coordinates (example - replace with your actual office coordinates)
-        const officeLatitude = 0.5208882; // Jakarta example coordinate
-        const officeLongitude = 101.4431991; // Jakarta example coordinate
-        const maxDistanceMeters = 1500; // Maximum allowed distance from office in meters
+        const officeLatitude = {{$dataKaryawan->getPerusahaan->Latitude}}; // Jakarta example coordinate
+        const officeLongitude = {{$dataKaryawan->getPerusahaan->Longitude}}; // Jakarta example coordinate
+        const maxDistanceMeters = 75; // Maximum allowed distance from office in meters
 
         // Camera variables
         let cameraStream = null;
@@ -336,7 +337,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize the map
-            map = L.map('map').setView([-6.2088, 106.8456], 15); // Default to Jakarta
+            map = L.map('map').setView([-6.2088, 106.8456], 15); // Default ke Jakarta
 
             // Add tile layer (OpenStreetMap)
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

@@ -31,10 +31,12 @@ class HomeController extends Controller
     public function index(): View
     {
         $countKaryawan = User::count();
-        $countOntime = Absensi::where('jam_masuk', '<=', '08:00:00')->whereDate('created_at', now()->format('Y-m-d'))->count();
-        $CountIzin = Absensi::where('status', 'CUTI')->whereDate('created_at', now()->format('Y-m-d'))->count();
-        $total = Absensi::whereDate('created_at', now()->format('Y-m-d'))->count();
-        $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', now()->format('Y-m-d'))->first();
+        $tanggalHariIni = now()->format('Y-m-d');
+        $countOntime = Absensi::where('jam_masuk', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
+        $CountIzin = Absensi::where('status', 'CUTI')->whereDate('created_at', $tanggalHariIni)->count();
+        $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
+        $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
+        $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
 
         $token = Str::uuid();  // token unik
         QrcodeToken::create([
@@ -43,11 +45,6 @@ class HomeController extends Controller
         ]);
 
         $qrCodes = QrCode::size(200)->style('square')->generate(route('absen.store', ['token' => $token]));
-        // $qrCodes = QrCode::size(200)->style('square')->generate(route('absen.store'));
-        if (!auth()->user()->hasRole('Admin')) {
-            return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin'));
-        } else {
-            return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin'));
-        }
+        return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan'));
     }
 }

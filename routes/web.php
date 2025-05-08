@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AkunController;
+use App\Http\Controllers\DependantDropdownController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\MasterPerusahaanController;
+use App\Http\Controllers\MasterStatusPegawaiController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShiftKerjaController;
@@ -27,11 +30,15 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
+Route::get('provinces', [DependantDropdownController::class, 'provinces'])->name('provinces');
+Route::get('cities', [DependantDropdownController::class, 'cities'])->name('cities');
+Route::get('districts', [DependantDropdownController::class, 'districts'])->name('districts');
+Route::get('villages', [DependantDropdownController::class, 'villages'])->name('villages');
 Route::group(['middleware' => ['auth']], function () {
     Route::resource('roles', RoleController::class);
     Route::resource('users', UserController::class);
     Route::resource('akun', AkunController::class);
+    Route::resource('master-status-pegawai', MasterStatusPegawaiController::class);
     Route::prefix('keola-absen')->group(function () {
         Route::GET('/', [AbsensiController::class, 'index'])->name('absen.index');
         Route::GET('/create', [AbsensiController::class, 'create'])->name('absen.create');
@@ -57,5 +64,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('users')->group(function () {
         Route::GET('/edit-profile/{id}', [UserController::class, 'UpdateProfile'])->name('users.update-profile');
         Route::PUT('/update-profile/{id}', [UserController::class, 'update'])->name('users.simpan-profile');
+    });
+    Route::prefix('master-perusahaan')->group(function () {
+        Route::GET('/', [MasterPerusahaanController::class, 'index'])->name('mp.index');
+        Route::GET('/create', [MasterPerusahaanController::class, 'create'])->name('mp.create');
+        Route::POST('/simpan', [MasterPerusahaanController::class, 'store'])->name('mp.store');
+        Route::GET('/edit/{id}', [MasterPerusahaanController::class, 'edit'])->name('mp.edit');
+        Route::PUT('/update/{id}', [MasterPerusahaanController::class, 'update'])->name('mp.update');
+        Route::delete('hapus/{id}', [MasterPerusahaanController::class, 'destroy'])->name('mp.destroy');
     });
 });

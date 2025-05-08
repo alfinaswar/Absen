@@ -26,19 +26,14 @@
                         <form action="{{ route('shift.store') }}" method="POST">
                             @csrf
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-12">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Nama Shift</label>
-                                        <input type="text" class="form-control" name="nama_shift"
-                                            placeholder="Nama Shift" required>
+                                        <input type="text" class="form-control" name="nama_shift" placeholder="Nama Shift"
+                                            required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group mb-3">
-                                        <label class="form-label">Tanggal Shift</label>
-                                        <input type="date" class="form-control" name="tanggal" required>
-                                    </div>
-                                </div>
+
                                 <div class="col-md-6">
                                     <div class="form-group mb-3">
                                         <label class="form-label">Jam Masuk</label>
@@ -53,48 +48,6 @@
                                 </div>
                             </div>
 
-                            <div class="card mt-3">
-                                <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h3 class="card-title">Daftar Karyawan</h3>
-                                    <button type="button" class="btn btn-success" id="addRow">
-                                        <i class="fas fa-plus"></i> Tambah Baris
-                                    </button>
-                                </div>
-                                <div class="card-body">
-
-                                    <div class="table-responsive">
-                                        <table class="table" width="100%" id="karyawanTable">
-                                            <thead>
-                                                <tr>
-                                                    <th width="80%">Nama Karyawan</th>
-                                                    <th width="10%">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <select class="form-select select-users" name="id_user[]"
-                                                            id="select-users-0">
-                                                            @foreach ($karyawan as $kar)
-                                                                <option value="{{ $kar->id }}">{{ $kar->name }} -
-                                                                    {{ $kar->jabatan }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-danger btn-md delete-row">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-
-
-
                             <div class="form-group mt-3">
                                 <button type="submit" class="btn btn-primary">Simpan</button>
                                 <a href="{{ route('shift.index') }}" class="btn btn-danger">Batal</a>
@@ -108,29 +61,29 @@
 @endsection
 @push('js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Initialize TomSelect for the first row
             initializeTomSelect(0);
 
             // Handle add row button
-            $('#addRow').click(function() {
+            $('#addRow').click(function () {
                 var rowCount = $('#karyawanTable tbody tr').length;
                 var newRow = `
-            <tr>
-                <td>
-                    <select class="form-select select-users" name="id_user[]" id="select-users-${rowCount}">
-                        @foreach ($karyawan as $kar)
-                            <option value="{{ $kar->id }}">{{ $kar->name }} - {{ $kar->jabatan }}</option>
-                        @endforeach
-                    </select>
-                </td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-md delete-row">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
+                            <tr>
+                                <td>
+                                    <select class="form-select select-users" name="id_user[]" id="select-users-${rowCount}">
+                                        @foreach ($karyawan as $kar)
+                                            <option value="{{ $kar->id }}">{{ $kar->name }} - {{ $kar->jabatan }}</option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-md delete-row">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
                 $('#karyawanTable tbody').append(newRow);
 
                 // Initialize TomSelect for new row
@@ -138,7 +91,7 @@
             });
 
             // Handle delete row
-            $(document).on('click', '.delete-row', function() {
+            $(document).on('click', '.delete-row', function () {
                 // Don't remove if it's the only row
                 if ($('#karyawanTable tbody tr').length > 1) {
                     $(this).closest('tr').remove();
@@ -154,7 +107,7 @@
                         dropdownParent: 'body',
                         controlInput: '<input>',
                         render: {
-                            item: function(data, escape) {
+                            item: function (data, escape) {
                                 if (data.customProperties) {
                                     return '<div><span class="dropdown-item-indicator">' + data
                                         .customProperties +
@@ -162,7 +115,7 @@
                                 }
                                 return '<div>' + escape(data.text) + '</div>';
                             },
-                            option: function(data, escape) {
+                            option: function (data, escape) {
                                 if (data.customProperties) {
                                     return '<div><span class="dropdown-item-indicator">' + data
                                         .customProperties +

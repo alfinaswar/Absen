@@ -27,8 +27,7 @@
                     <!-- Page title actions -->
                     <div class="col-auto ms-auto d-print-none">
                         <div class="btn-list">
-                            <a href="#" class="btn btn-primary d-none d-sm-inline-block" data-bs-toggle="modal"
-                                data-bs-target="#modalForm">
+                            <a href="{{route('users.create')}}" class="btn btn-primary d-none d-sm-inline-block">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                     stroke-linecap="round" stroke-linejoin="round">
@@ -38,16 +37,7 @@
                                 </svg>
                                 Tambah karyawan
                             </a>
-                            <a href="#" class="btn btn-primary d-sm-none btn-icon" data-bs-toggle="modal"
-                                data-bs-target="#modal-room" aria-label="Create new report">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                                </svg>
-                            </a>
+
                         </div>
                     </div>
                 </div>
@@ -159,37 +149,37 @@
                             <div class="form-group">
                                 <strong>Jenis Kelamin:</strong>
                                 {!! Form::select('jenis_kelamin', ['L' => 'Laki-laki', 'P' => 'Perempuan'], null, [
-                                    'placeholder' => 'Pilih Jenis Kelamin',
-                                    'class' => 'form-control',
-                                ]) !!}
+        'placeholder' => 'Pilih Jenis Kelamin',
+        'class' => 'form-control',
+    ]) !!}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <strong>Agama:</strong>
                                 {!! Form::select(
-                                    'agama',
-                                    [
-                                        'Islam' => 'Islam',
-                                        'Kristen' => 'Kristen',
-                                        'Katolik' => 'Katolik',
-                                        'Hindu' => 'Hindu',
-                                        'Buddha' => 'Buddha',
-                                        'Konghucu' => 'Konghucu',
-                                        'Lainnya' => 'Lainnya',
-                                    ],
-                                    null,
-                                    ['placeholder' => 'Pilih Agama', 'class' => 'form-control'],
-                                ) !!}
+        'agama',
+        [
+            'Islam' => 'Islam',
+            'Kristen' => 'Kristen',
+            'Katolik' => 'Katolik',
+            'Hindu' => 'Hindu',
+            'Buddha' => 'Buddha',
+            'Konghucu' => 'Konghucu',
+            'Lainnya' => 'Lainnya',
+        ],
+        null,
+        ['placeholder' => 'Pilih Agama', 'class' => 'form-control'],
+    ) !!}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <strong>Status Pernikahan:</strong>
                                 {!! Form::select('status_pernikahan', ['Lajang' => 'Lajang', 'Menikah' => 'Menikah', 'Cerai' => 'Cerai'], null, [
-                                    'placeholder' => 'Pilih Status',
-                                    'class' => 'form-control',
-                                ]) !!}
+        'placeholder' => 'Pilih Status',
+        'class' => 'form-control',
+    ]) !!}
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -213,10 +203,10 @@
                             <div class="form-group">
                                 <strong>Alamat KTP:</strong>
                                 {!! Form::textarea('alamat_ktp', null, [
-                                    'placeholder' => 'Alamat sesuai KTP',
-                                    'class' => 'form-control',
-                                    'rows' => 3,
-                                ]) !!}
+        'placeholder' => 'Alamat sesuai KTP',
+        'class' => 'form-control',
+        'rows' => 3,
+    ]) !!}
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -276,11 +266,11 @@
                             <div class="form-group">
                                 <strong>Status Kepegawaian:</strong>
                                 {!! Form::select(
-                                    'status_kepegawaian',
-                                    ['Tetap' => 'Tetap', 'Kontrak' => 'Kontrak', 'Magang' => 'Magang', 'Outsource' => 'Outsource'],
-                                    null,
-                                    ['placeholder' => 'Pilih Status', 'class' => 'form-control'],
-                                ) !!}
+        'status_kepegawaian',
+        ['Tetap' => 'Tetap', 'Kontrak' => 'Kontrak', 'Magang' => 'Magang', 'Outsource' => 'Outsource'],
+        null,
+        ['placeholder' => 'Pilih Status', 'class' => 'form-control'],
+    ) !!}
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -328,9 +318,9 @@
                             <div class="form-group">
                                 <strong>BPJS Ketenagakerjaan:</strong>
                                 {!! Form::text('no_bpjs_ketenagakerjaan', null, [
-                                    'placeholder' => 'Nomor BPJS Ketenagakerjaan',
-                                    'class' => 'form-control',
-                                ]) !!}
+        'placeholder' => 'Nomor BPJS Ketenagakerjaan',
+        'class' => 'form-control',
+    ]) !!}
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -350,7 +340,7 @@
         </div>
     </div>
     <script type="text/javascript">
-        $(document).ready(function() {
+        $(document).ready(function () {
             var table = $('.data-table').DataTable({
                 responsive: true,
                 serverSide: true,
@@ -364,37 +354,37 @@
                 ajax: "{{ route('users.index') }}",
 
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex'
 
-                    },
-                    {
-                        data: 'name',
-                        name: 'name'
-                    },
-                    {
-                        data: 'email',
-                        name: 'email'
-                    },
-                    {
-                        data: 'jabatan',
-                        name: 'jabatan'
-                    },
-                    {
-                        data: 'divisi',
-                        name: 'divisi'
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        orderable: false,
-                        searchable: false
-                    },
+                },
+                {
+                    data: 'name',
+                    name: 'name'
+                },
+                {
+                    data: 'email',
+                    name: 'email'
+                },
+                {
+                    data: 'jabatan',
+                    name: 'jabatan'
+                },
+                {
+                    data: 'divisi',
+                    name: 'divisi'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
                 ]
             });
 
 
-            $('body').on('click', '.delete', function() {
+            $('body').on('click', '.delete', function () {
                 var userId = $(this).data('id');
 
                 Swal.fire({
@@ -415,7 +405,7 @@
                             data: {
                                 _token: "{{ csrf_token() }}"
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 Swal.fire(
                                     'Dihapus!',
                                     response.message || "Data berhasil dihapus.",
@@ -423,7 +413,7 @@
                                 );
                                 table.ajax.reload();
                             },
-                            error: function(xhr) {
+                            error: function (xhr) {
                                 Swal.fire(
                                     'Gagal!',
                                     xhr.responseJSON.message ||

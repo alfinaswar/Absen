@@ -16,7 +16,7 @@ class ShiftKerjaController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = ShiftKerja::whereDate('tanggal', now())->latest()->get();
+            $data = ShiftKerja::latest()->get();
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -46,17 +46,10 @@ class ShiftKerjaController extends Controller
     {
         ShiftKerja::create([
             'nama_shift' => $request->nama_shift,
-            'tanggal' => $request->tanggal,
             'jam_masuk' => $request->jam_masuk,
             'jam_keluar' => $request->jam_keluar,
         ]);
 
-        foreach ($request->id_user as $key => $karyawan) {
-            ShiftKerjaDetail::create([
-                'id_shift' => ShiftKerja::latest()->first()->id ?? 1,
-                'id_user' => $request->id_user[$key],
-            ]);
-        }
 
         return redirect()->route('shift.index')->with('success', 'Shift Kerja Berhasil Ditambahkan');
     }

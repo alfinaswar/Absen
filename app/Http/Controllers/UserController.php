@@ -7,7 +7,10 @@ use App\Models\AturPoin;
 use App\Models\Avatar;
 use App\Models\FotoProfil;
 use App\Models\Lencana;
+use App\Models\MasterPerusahaan;
+use App\Models\MasterStatusPegawai;
 use App\Models\Poin;
+use App\Models\ShiftKerja;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -58,16 +61,14 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        $roles = Role::pluck('name', 'name')->all();
-        return view('users.create', compact('roles'));
+        $roles = Role::all();
+        $status = MasterStatusPegawai::all();
+        $shift = ShiftKerja::all();
+        $perusahaan = MasterPerusahaan::orderBy('Nama', 'ASC')->get();
+        return view('users.create', compact('roles', 'status', 'shift', 'perusahaan'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request): RedirectResponse
     {
         $input = $request->all();
@@ -78,26 +79,15 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User Berhasil Dibuat');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id): View
     {
         $user = User::find($id);
-        $roles = Role::pluck('name', 'name')->all();
-        $userRole = $user->roles->pluck('name', 'name')->all();
+        $roles = Role::all();
+        $status = MasterStatusPegawai::all();
+        $shift = ShiftKerja::all();
+        $perusahaan = MasterPerusahaan::orderBy('Nama', 'ASC')->get();
 
-        return view('users.edit', compact('user', 'roles', 'userRole'));
+        return view('users.edit', compact('roles', 'status', 'shift', 'perusahaan', 'user'));
     }
 
     public function UpdateProfile($id): View
