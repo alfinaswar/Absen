@@ -325,8 +325,8 @@
         let confirmedInOfficeArea = false;
         let currentAbsenType = null;
         // Office coordinates (example - replace with your actual office coordinates)
-        const officeLatitude = {{$dataKaryawan->getPerusahaan->Latitude}}; // Jakarta example coordinate
-        const officeLongitude = {{$dataKaryawan->getPerusahaan->Longitude}}; // Jakarta example coordinate
+        const officeLatitude = {{$dataKaryawan->getPerusahaan->Latitude ?? '-6.2088'}}; // Jakarta example coordinate
+        const officeLongitude = {{$dataKaryawan->getPerusahaan->Longitude ?? '106.8456'}}; // Jakarta example coordinate
         const maxDistanceMeters = 75; // Maximum allowed distance from office in meters
 
         // Camera variables
