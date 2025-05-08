@@ -170,11 +170,13 @@
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <button class="btn btn-success w-100" id="btn-masuk" onclick="absenMasuk()">Absen
+                                    <button class="btn btn-success w-100" id="btn-masuk"
+                                        onclick="checkLocationMasuk()">Absen
                                         Masuk</button>
                                 </div>
                                 <div class="col-6">
-                                    <button class="btn btn-danger w-100" id="btn-keluar" onclick="absenKeluar()">Absen
+                                    <button class="btn btn-danger w-100" id="btn-keluar"
+                                        onclick="checkLocationKeluar()">Absen
                                         Keluar</button>
                                 </div>
                             </div>
@@ -234,6 +236,34 @@
         </div>
     </div>
 
+    <!-- Modal Kamera Selfie -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cameraModalLabel">Ambil Foto Selfie</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="camera-container text-center">
+                        <video id="camera-view" autoplay playsinline
+                            style="width: 100%; max-height: 60vh; object-fit: cover;"></video>
+                        <canvas id="camera-canvas" style="display: none;"></canvas>
+                        <img id="camera-output" style="display: none; width: 100%; max-height: 60vh; object-fit: cover;"
+                            alt="Selfie Preview">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="capture-btn">Ambil Foto</button>
+                    <button type="button" class="btn btn-success" id="submit-photo" style="display: none;">Kirim</button>
+                    <button type="button" class="btn btn-warning" id="retake-photo" style="display: none;">Foto
+                        Ulang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal konfirmasi absensi -->
     <div class="modal fade" id="confirmAttendanceModal" tabindex="-1" aria-labelledby="confirmAttendanceModalLabel"
         aria-hidden="true">
@@ -245,12 +275,14 @@
                 </div>
                 <div class="modal-body">
                     <p id="confirm-message">Apakah Anda yakin ingin melakukan absensi?</p>
-                    <form id="attendance-form" action="{{ route('absen.store') }}" method="POST">
+                    <form id="attendance-form" action="{{ route('absen.store') }}" method="POST"
+                        enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="latitude" id="latitude">
                         <input type="hidden" name="longitude" id="longitude">
                         <input type="hidden" name="lokasi" id="lokasi">
                         <input type="hidden" name="tipe_absen" id="tipe_absen">
+                        <input type="hidden" name="selfie_photo" id="selfie_photo">
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -290,10 +322,17 @@
     <script>
         let map, marker, circle, userLatitude, userLongitude, userLocationAddress;
         let confirmedInOfficeArea = false;
+        let currentAbsenType = null;
         // Office coordinates (example - replace with your actual office coordinates)
         const officeLatitude = 0.5208882; // Jakarta example coordinate
         const officeLongitude = 101.4431991; // Jakarta example coordinate
-        const maxDistanceMeters = 1000; // Maximum allowed distance from office in meters
+        const maxDistanceMeters = 1500; // Maximum allowed distance from office in meters
+
+        // Camera variables
+        let cameraStream = null;
+        let cameraView = null;
+        let cameraCanvas = null;
+        let cameraOutput = null;
 
         document.addEventListener('DOMContentLoaded', function () {
             // Initialize the map
@@ -331,6 +370,52 @@
             // Set up the modal confirmation button
             document.getElementById('confirm-btn').addEventListener('click', function () {
                 document.getElementById('attendance-form').submit();
+            });
+
+            // Initialize camera elements
+            cameraView = document.getElementById('camera-view');
+            cameraCanvas = document.getElementById('camera-canvas');
+            cameraOutput = document.getElementById('camera-output');
+
+            // Capture button click event
+            document.getElementById('capture-btn').addEventListener('click', function () {
+                takeSelfie();
+            });
+
+            // Retake photo button
+            document.getElementById('retake-photo').addEventListener('click', function () {
+                // Reset UI
+                document.getElementById('camera-output').style.display = 'none';
+                document.getElementById('camera-view').style.display = 'block';
+                document.getElementById('capture-btn').style.display = 'block';
+                document.getElementById('submit-photo').style.display = 'none';
+                document.getElementById('retake-photo').style.display = 'none';
+            });
+
+            // Submit photo button
+            document.getElementById('submit-photo').addEventListener('click', function () {
+                const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
+                const cameraModal = bootstrap.Modal.getInstance(document.getElementById('cameraModal'));
+
+                // Get the selfie data
+                const selfieData = document.getElementById('camera-output').src;
+                document.getElementById('selfie_photo').value = selfieData;
+
+                // Close camera modal
+                cameraModal.hide();
+
+                // Show confirmation modal
+                document.getElementById('confirm-message').innerHTML =
+                    currentAbsenType === 'masuk'
+                        ? "Anda akan melakukan absen masuk. Lanjutkan?"
+                        : "Anda akan melakukan absen keluar. Lanjutkan?";
+
+                modal.show();
+            });
+
+            // Handle camera modal closing
+            document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function () {
+                stopCamera();
             });
         });
 
@@ -394,12 +479,10 @@
                 .then(response => response.json())
                 .then(data => {
                     userLocationAddress = data.display_name;
-                    document.getElementById('current-location').textContent = userLocationAddress;
                 })
                 .catch(error => {
                     console.error("Error getting address: ", error);
                     userLocationAddress = `Latitude: ${lat}, Longitude: ${lng}`;
-                    document.getElementById('current-location').textContent = userLocationAddress;
                 });
         }
 
@@ -418,19 +501,21 @@
             return R * c; // distance in meters
         }
 
-        function absenMasuk() {
-            // Re-check location before submitting
+        function checkLocationMasuk() {
+            // Re-check location before proceeding
             getUserLocation();
+            currentAbsenType = 'masuk';
 
             setTimeout(() => {
-                const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
                 if (confirmedInOfficeArea) {
-                    document.getElementById('confirm-message').innerHTML = "Anda akan melakukan absen masuk. Lanjutkan?";
+                    // Prepare the data for submission
                     document.getElementById('latitude').value = userLatitude;
                     document.getElementById('longitude').value = userLongitude;
                     document.getElementById('lokasi').value = userLocationAddress;
                     document.getElementById('tipe_absen').value = 'masuk';
-                    modal.show();
+
+                    // If location is valid, open camera for selfie
+                    openCamera();
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -441,19 +526,21 @@
             }, 1000); // Short delay to allow location check to complete
         }
 
-        function absenKeluar() {
-            // Re-check location before submitting
+        function checkLocationKeluar() {
+            // Re-check location before proceeding
             getUserLocation();
+            currentAbsenType = 'keluar';
 
             setTimeout(() => {
-                const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
                 if (confirmedInOfficeArea) {
-                    document.getElementById('confirm-message').innerHTML = "Anda akan melakukan absen keluar. Lanjutkan?";
+                    // Prepare the data for submission
                     document.getElementById('latitude').value = userLatitude;
                     document.getElementById('longitude').value = userLongitude;
                     document.getElementById('lokasi').value = userLocationAddress;
                     document.getElementById('tipe_absen').value = 'keluar';
-                    modal.show();
+
+                    // If location is valid, open camera for selfie
+                    openCamera();
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -462,6 +549,82 @@
                     });
                 }
             }, 1000); // Short delay to allow location check to complete
+        }
+
+        function openCamera() {
+            const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
+
+            // Reset UI elements
+            document.getElementById('camera-view').style.display = 'block';
+            document.getElementById('camera-output').style.display = 'none';
+            document.getElementById('capture-btn').style.display = 'block';
+            document.getElementById('submit-photo').style.display = 'none';
+            document.getElementById('retake-photo').style.display = 'none';
+
+            cameraModal.show();
+
+            // Start the camera
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                })
+                    .then(function (stream) {
+                        cameraStream = stream;
+                        cameraView.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.error("Camera error: ", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Kamera Error',
+                            text: 'Tidak dapat mengakses kamera. Mohon izinkan akses kamera.',
+                        });
+                    });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Browser Tidak Mendukung',
+                    text: 'Browser Anda tidak mendukung akses kamera.',
+                });
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                cameraStream = null;
+            }
+        }
+
+        function takeSelfie() {
+            // Set canvas dimensions to match video
+            cameraCanvas.width = cameraView.videoWidth;
+            cameraCanvas.height = cameraView.videoHeight;
+
+            // Draw the video frame to the canvas
+            cameraCanvas.getContext('2d').drawImage(cameraView, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+            // Get the data URL from the canvas
+            const dataURL = cameraCanvas.toDataURL('image/jpeg');
+
+            // Set the src of the img element to the data URL
+            cameraOutput.src = dataURL;
+
+            // Show the captured image and hide the video stream
+            cameraView.style.display = 'none';
+            cameraOutput.style.display = 'block';
+
+            // Update buttons
+            document.getElementById('capture-btn').style.display = 'none';
+            document.getElementById('submit-photo').style.display = 'inline-block';
+            document.getElementById('retake-photo').style.display = 'inline-block';
         }
 
         function ShowCuti() {
