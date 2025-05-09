@@ -32,8 +32,8 @@ class HomeController extends Controller
     {
         $countKaryawan = User::count();
         $tanggalHariIni = now()->format('Y-m-d');
-        $countOntime = Absensi::where('jam_masuk', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
-        $CountIzin = Absensi::where('status', 'CUTI')->whereDate('created_at', $tanggalHariIni)->count();
+        $countOntime = Absensi::where('waktu_absen', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
+        $CountIzin = Absensi::where('jenis_absen', 'Cuti')->whereDate('created_at', $tanggalHariIni)->count();
         $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
         $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
         $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
