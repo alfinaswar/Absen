@@ -119,7 +119,7 @@ class AbsensiController extends Controller
         }
         $data['tanggal'] = now()->format('Y-m-d');
         $data['waktu_absen'] = now()->format('H:i:s');
-        $data['jenis_absen'] = $request->jenis_absen;
+        $data['jenis_absen'] = $request->tipe_absen;
         $data['ontime'] = $ontime;
         $data['keterangan'] = $request->keterangan ?? null;
         $data['selfie_photo'] = $request->selfie_photo;
