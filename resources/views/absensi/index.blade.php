@@ -83,12 +83,10 @@
                                             <th>No</th>
                                             <th>Nama</th>
                                             <th>Tanggal</th>
-                                            <th>Jam Masuk</th>
-                                            <th>Jam Keluar</th>
+                                            <th>Tipe</th>
+                                            <th>Waktu Absen</th>
                                             <th>Ontime</th>
-
-                                            <th>Status</th>
-                                            <th>Approval</th>
+                                            <th>Foto</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -104,7 +102,7 @@
 
         </div>
         <script type="text/javascript">
-            $(document).ready(function() {
+            $(document).ready(function () {
                 var table = $('.data-table').DataTable({
                     responsive: true,
                     serverSide: true,
@@ -112,48 +110,44 @@
                     ajax: "{{ route('absen.index') }}",
 
                     columns: [{
-                            data: 'DT_RowIndex',
-                            name: 'DT_RowIndex',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                            data: 'user.name',
-                            name: 'user.name'
-                        },
-                        {
-                            data: 'tanggal',
-                            name: 'tanggal'
-                        },
-                        {
-                            data: 'jam_masuk',
-                            name: 'jam_masuk'
-                        },
-                        {
-                            data: 'jam_keluar',
-                            name: 'jam_keluar'
-                        },
-                        {
-                            data: 'ontime',
-                            name: 'ontime'
-                        },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
-                        {
-                            data: 'Approval',
-                            name: 'Approval'
-                        },
-                        {
-                            data: 'action',
-                            name: 'action',
-                            orderable: false,
-                            searchable: false
-                        },
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        data: 'user.name',
+                        name: 'user.name'
+                    },
+                    {
+                        data: 'tanggal',
+                        name: 'tanggal'
+                    },
+                    {
+                        data: 'jenis_absen',
+                        name: 'jenis_absen'
+                    },
+                    {
+                        data: 'waktu_absen',
+                        name: 'waktu_absen'
+                    },
+                    {
+                        data: 'ontime',
+                        name: 'ontime'
+                    },
+                    {
+                        data: 'selfie_photo',
+                        name: 'selfie_photo'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false
+                    },
                     ]
                 });
-                $('body').on('click', '.acc-cuti', function() {
+                $('body').on('click', '.acc-cuti', function () {
                     var id = $(this).data('id'); // Ambil ID data
 
                     Swal.fire({
@@ -174,7 +168,7 @@
                                     id: id,
                                     _token: "{{ csrf_token() }}"
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     Swal.fire(
                                         'Berhasil!',
                                         response.message || 'Cuti berhasil di-ACC.',
@@ -182,7 +176,7 @@
                                     );
                                     table.ajax.reload(); // Refresh DataTable
                                 },
-                                error: function(xhr) {
+                                error: function (xhr) {
                                     Swal.fire(
                                         'Gagal!',
                                         xhr.responseJSON.message ||
@@ -194,7 +188,7 @@
                         }
                     });
                 });
-                $(document).on('click', '.delete', function() {
+                $(document).on('click', '.delete', function () {
                     var id = $(this).data('id');
                     var url = '{{ route('absen.destroy', ':id') }}'.replace(':id', id);
 
@@ -213,7 +207,7 @@
                                 data: {
                                     _token: '{{ csrf_token() }}',
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     if (response.success) {
                                         Swal.fire(
                                             'Dihapus!',
@@ -230,7 +224,7 @@
                                         );
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     Swal.fire(
                                         'Error!',
                                         'Terjadi kesalahan saat menghapus data.',
@@ -244,4 +238,4 @@
 
             });
         </script>
-    @endsection
+@endsection

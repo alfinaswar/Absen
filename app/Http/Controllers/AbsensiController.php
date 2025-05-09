@@ -41,7 +41,10 @@ class AbsensiController extends Controller
                     }
                     return $ontime;
                 })
-                ->rawColumns(['action', 'ontime'])
+                ->addColumn('selfie_photo', function ($row) {
+                    return '<img src="data:image/jpeg;base64,' . $row->selfie_photo . '" alt="Selfie" width="150" height="150">';
+                })
+                ->rawColumns(['action', 'ontime', 'selfie_photo'])
                 ->make(true);
         }
         return view('absensi.index');
