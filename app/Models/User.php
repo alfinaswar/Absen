@@ -43,4 +43,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(MasterPerusahaan::class, 'IdPerusahaan', 'id');
     }
+    public function getShift()
+    {
+        return $this->belongsTo(ShiftKerja::class, 'shift_kerja', 'id');
+    }
 }

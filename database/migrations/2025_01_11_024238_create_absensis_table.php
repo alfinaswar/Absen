@@ -14,15 +14,17 @@ return new class extends Migration {
             $table->id();
             $table->string('user_id');
             $table->date('tanggal');
-            $table->time('jam_masuk');
-            $table->time('jam_keluar')->nullable();
-            $table->string('status');
+            $table->time('waktu_absen')->nullable();
+            $table->enum('jenis_absen', ['Masuk', 'Keluar', 'Cuti', 'Sakit'])->nullable();
             $table->enum('ontime', ['Y', 'N'])->nullable();
             $table->text('keterangan')->nullable();
-            $table->decimal('latitude_masuk', 10, 8)->nullable();
-            $table->decimal('longitude_masuk', 11, 8)->nullable();
-            $table->decimal('latitude_keluar', 10, 8)->nullable();
-            $table->decimal('longitude_keluar', 11, 8)->nullable();
+            $table->enum('approval', ['Y', 'N'])->nullable()->default('N');
+            $table->string('file_pendukung')->nullable();
+            $table->longText('selfie_photo')->nullable();
+            $table->text('lokasi')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
+            $table->string('ip_address')->nullable();
             $table->timestamps();
         });
     }

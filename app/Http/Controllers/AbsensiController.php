@@ -6,6 +6,7 @@ use App\Exports\AbsenExport;
 use App\Models\Absensi;
 use App\Models\QrcodeToken;
 use App\Models\ShiftKerjaDetail;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -96,20 +97,38 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-        dd($data);
-        Absensi::create([
-            'tanggal' => now()->format('Y-m-d'),
-            'jam_masuk' => now()->format('H:i:s'),
-            'jam_keluar' => null,
-            'status' => 'HADIR',
-            'ontime' => $ontime,
-            'keterangan' => $request->keterangan,
-            'user_id' => auth()->user()->id,
-            'ip_address' => $request->ip(),
-            'JenisAbsen' => 'Masuk'
-        ]);
+        $UserData = User::with('getShift')->where('id', auth()->user()->id)->first();
+        $waktu_absen = '';
+        if ($request->jenis_absen == 'Masuk') {
+            $waktu_absen = $UserData->getShift->jam_masuk->format('H:i:s');
 
+        } elseif ($request->jenis_absen == 'Keluar') {
+            $waktu_absen = $UserData->getShift->jam_keluar->format('H:i:s');
+        }
+
+        if ($request->hasFile('file_pendukung')) {
+            $file = $request->file('file_pendukung');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/absensi'), $filename);
+            $data['file_pendukung'] = $filename;
+        }
+        if (now()->format('H:i:s') < $waktu_absen) {
+            $ontime = 'Y';
+        } else {
+            $ontime = 'N';
+        }
+        $data['tanggal'] = now()->format('Y-m-d');
+        $data['waktu_absen'] = now()->format('H:i:s');
+        $data['jenis_absen'] = $request->jenis_absen;
+        $data['ontime'] = $ontime;
+        $data['keterangan'] = $request->keterangan ?? null;
+        $data['selfie_photo'] = $request->selfie_photo;
+        $data['ip_address'] = $request->ip();
+        $data['lokasi'] = $request->lokasi ?? null;
+        $data['latitude'] = $request->latitude ?? null;
+        $data['longitude'] = $request->longitude ?? null;
+        $data['user_id'] = auth()->user()->id;
+        Absensi::create($data);
 
         return view('absensi.sukses');
     }
