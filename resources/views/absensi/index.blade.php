@@ -48,28 +48,53 @@
 
 
             <div class="container-xl">
-                @can('data-laporan')
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <form action="{{ route('absen.download') }}" method="GET" class="row g-3">
-                                @csrf
-                                <div class="col-md-5">
-                                    <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
-                                </div>
-                                <div class="col-md-5">
-                                    <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
-                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
-                                </div>
-                                <div class="col-md-2 align-self-end">
-                                    <button type="submit" class="btn btn-success w-100">
-                                        <i class="fas fa-download"></i> Download Laporan
-                                    </button>
-                                </div>
-                            </form>
+
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header style=" font-weight: bold;">
+                                <h3 class=" card-title">Download Laporan Absensi</h3>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('absen.download') }}" method="GET" class="row g-3">
+                                    @csrf
+                                    <div class="col-md-3">
+                                        <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
+                                        <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
+                                        <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="karyawan" class="form-label fw-bold">Karyawan</label>
+                                        <select name="karyawan" id="karyawan" class="form-select">
+                                            <option value="">Semua Karyawan</option>
+                                            @foreach($users as $user)
+                                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="shift" class="form-label fw-bold">Shift</label>
+                                        <select name="shift" id="shift" class="form-select">
+                                            <option value="">Semua Shift</option>
+                                            @foreach($shifts as $shift)
+                                                <option value="{{ $shift->id }}">{{ $shift->nama_shift }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2 align-self-end">
+                                        <button type="submit" class="btn btn-success w-100">
+                                            <i class="fas fa-download"></i> Download Laporan
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                @endcan
+                </div>
+
                 <div class="card">
                     <div class="card-header text-white" style="background-color: #1F573A;">
                         <h3 class="card-title">Daftar Absensi </h3>

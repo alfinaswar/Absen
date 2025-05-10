@@ -48,28 +48,28 @@
 
 
             <div class="container-xl">
-                @can('data-laporan')
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <form action="{{ route('absen.download') }}" method="GET" class="row g-3">
-                                @csrf
-                                <div class="col-md-5">
-                                    <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
-                                    <input type="date" name="start_date" id="start_date" class="form-control" required>
-                                </div>
-                                <div class="col-md-5">
-                                    <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
-                                    <input type="date" name="end_date" id="end_date" class="form-control" required>
-                                </div>
-                                <div class="col-md-2 align-self-end">
-                                    <button type="submit" class="btn btn-success w-100">
-                                        <i class="fas fa-download"></i> Download Laporan
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <form action="{{ route('absen.download') }}" method="GET" class="row g-3">
+                            @csrf
+                            <div class="col-md-5">
+                                <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-5">
+                                <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control" required>
+                            </div>
+                            <div class="col-md-2 align-self-end">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-download"></i> Download Laporan
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                @endcan
+                </div>
+
                 <div class="card">
                     <div class="card-header text-white" style="background-color: #1F573A;">
                         <h3 class="card-title">Riwayat Absensi </h3>

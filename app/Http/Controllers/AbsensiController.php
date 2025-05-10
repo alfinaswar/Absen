@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AbsenExport;
 use App\Models\Absensi;
+use App\Models\MasterPerusahaan;
 use App\Models\QrcodeToken;
 use App\Models\ShiftKerjaDetail;
 use App\Models\User;
@@ -24,13 +25,11 @@ class AbsensiController extends Controller
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    // Tombol default
                     $btn = '<a href="' . route('absen.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>
                         <a href="javascript:void(0)"  data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a> ';
                     if ($row->status == 'CUTI') {
                         $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="acc-cuti btn btn-success btn-sm">ACC Cuti</a>';
                     }
-
                     return $btn;
                 })
                 ->addColumn('ontime', function ($row) {
@@ -47,7 +46,10 @@ class AbsensiController extends Controller
                 ->rawColumns(['action', 'ontime', 'selfie_photo'])
                 ->make(true);
         }
-        return view('absensi.index');
+        $users = User::orderBy('name', 'ASC')->get();
+        $shifts = ShiftKerjaDetail::all();
+        $company = MasterPerusahaan::orderBy('Nama')->get();
+        return view('absensi.index', compact('users', 'shifts'));
     }
 
     /**
