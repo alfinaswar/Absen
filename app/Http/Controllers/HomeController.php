@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Absensi;
 use App\Models\QrcodeToken;
+use App\Models\ShiftKerja;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class HomeController extends Controller
         $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
         $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
         $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
-
+        $shift = ShiftKerja::get();
         $token = Str::uuid();  // token unik
         QrcodeToken::create([
             'token' => $token,
@@ -45,6 +46,6 @@ class HomeController extends Controller
         ]);
 
         $qrCodes = QrCode::size(200)->style('square')->generate(route('absen.store', ['token' => $token]));
-        return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan'));
+        return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan', 'shift'));
     }
 }

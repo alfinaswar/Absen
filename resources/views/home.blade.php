@@ -283,7 +283,14 @@
                         <input type="hidden" name="lokasi" id="lokasi">
                         <input type="hidden" name="tipe_absen" id="tipe_absen">
                         <input type="hidden" name="selfie_photo" id="selfie_photo">
-
+                        <div class="mb-3">
+                            <label for="shift" class="form-label">Pilih Shift Kerja</label>
+                            <select name="shift" id="shift" class="form-select">
+                                @foreach ($shift as $s)
+                                    <option value="{{ $s->id }}">{{ $s->nama_shift }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

@@ -66,7 +66,7 @@
                                         <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
                                         <input type="date" name="end_date" id="end_date" class="form-control" required>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <label for="karyawan" class="form-label fw-bold">Karyawan</label>
                                         <select name="karyawan" id="karyawan" class="form-select">
                                             <option value="">Semua Karyawan</option>
@@ -75,7 +75,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <label for="shift" class="form-label fw-bold">Shift</label>
                                         <select name="shift" id="shift" class="form-select">
                                             <option value="">Semua Shift</option>
@@ -84,10 +84,20 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2 align-self-end">
-                                        <button type="submit" class="btn btn-success w-100">
+                                    <div class="col-md-3">
+                                        <label for="report_type" class="form-label fw-bold">Jenis Laporan</label>
+                                        <select name="jenis_laporan" id="jenis_laporan" class="form-select" required>
+                                            <option>--Pilih Salah Satu--</option>
+                                            <option value="excel">Excel</option>
+                                            <option value="pdf">PDF</option>
+                                        </select>
+                                    </div>
+                                    <div class="text-end">
+
+                                        <button type="submit" class="btn btn-success">
                                             <i class="fas fa-download"></i> Download Laporan
                                         </button>
+
                                     </div>
                                 </form>
                             </div>

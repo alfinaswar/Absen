@@ -47,7 +47,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::GET('/edit/{id}', [AbsensiController::class, 'edit'])->name('absen.edit');
         Route::PUT('/update/{id}', [AbsensiController::class, 'update'])->name('absen.update');
         Route::delete('hapus/{id}', [AbsensiController::class, 'destroy'])->name('absen.destroy');
-        Route::get('/absen/download', [AbsensiController::class, 'downloadExcel'])->name('absen.download');
+        Route::get('/absen/download', [AbsensiController::class, 'download'])->name('absen.download');
         Route::post('/absen/acc-cuti', [AbsensiController::class, 'accCuti'])->name('absen.accCuti');
         Route::get('/absen/history', [AbsensiController::class, 'history'])->name('absen.history');
         Route::get('/berhasil-absen', [AbsensiController::class, 'AbsenSukses'])->name('absen.sukses');

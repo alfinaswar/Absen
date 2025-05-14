@@ -6,12 +6,15 @@ use App\Exports\AbsenExport;
 use App\Models\Absensi;
 use App\Models\MasterPerusahaan;
 use App\Models\QrcodeToken;
+use App\Models\ShiftKerja;
 use App\Models\ShiftKerjaDetail;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
+use DB;
+use Illuminate\Support\Facades\Schema;
 
 class AbsensiController extends Controller
 {
@@ -47,7 +50,7 @@ class AbsensiController extends Controller
                 ->make(true);
         }
         $users = User::orderBy('name', 'ASC')->get();
-        $shifts = ShiftKerjaDetail::all();
+        $shifts = ShiftKerja::all();
         $company = MasterPerusahaan::orderBy('Nama')->get();
         return view('absensi.index', compact('users', 'shifts'));
     }
@@ -179,9 +182,75 @@ class AbsensiController extends Controller
     /**
      * Mengunduh laporan absensi dalam format Excel.
      */
-    public function downloadExcel(Request $request)
+    public function download(Request $request)
     {
-        return Excel::download(new AbsenExport, 'laporan_absensi.xlsx');
+        $data = DB::table('absensis as masuk')
+            ->select(
+                'masuk.id as id_masuk',
+                'masuk.user_id',
+                'users.name as nama_karyawan',
+                'masuk.tanggal',
+                'masuk.waktu_absen as jam_masuk',
+                'masuk.jenis_absen as jenis_absen_masuk',
+                'masuk.ontime as ontime_masuk',
+                'masuk.keterangan as keterangan_masuk',
+                'masuk.approval as approval_masuk',
+                'masuk.file_pendukung as file_pendukung_masuk',
+                'masuk.selfie_photo as selfie_photo_masuk',
+                'masuk.lokasi as lokasi_masuk',
+                'masuk.latitude as latitude_masuk',
+                'masuk.longitude as longitude_masuk',
+                'masuk.ip_address as ip_address_masuk',
+                'keluar.id as id_keluar',
+                'keluar.waktu_absen as jam_keluar',
+                'keluar.jenis_absen as jenis_absen_keluar',
+                'keluar.ontime as ontime_keluar',
+                'keluar.keterangan as keterangan_keluar',
+                'keluar.approval as approval_keluar',
+                'keluar.file_pendukung as file_pendukung_keluar',
+                'keluar.selfie_photo as selfie_photo_keluar',
+                'keluar.lokasi as lokasi_keluar',
+                'keluar.latitude as latitude_keluar',
+                'keluar.longitude as longitude_keluar',
+                'keluar.ip_address as ip_address_keluar'
+            )
+            ->join('users', 'masuk.user_id', '=', 'users.id')
+            ->leftJoin('absensis as keluar', function ($join) {
+                $join->on('masuk.user_id', '=', 'keluar.user_id')
+                    ->on('masuk.tanggal', '=', 'keluar.tanggal')
+                    ->where('keluar.jenis_absen', '=', 'Keluar');
+            })
+            ->where('masuk.jenis_absen', 'Masuk')
+            ->when($request->filled('start_date') && $request->filled('end_date'), function ($query) use ($request) {
+                $query->whereBetween('masuk.tanggal', [$request->start_date, $request->end_date]);
+            })
+            ->when($request->filled('karyawan'), function ($query) use ($request) {
+                $query->where('masuk.user_id', $request->karyawan);
+            })
+            ->when($request->filled('shift') && Schema::hasColumn('absensis', 'shift_id'), function ($query) use ($request) {
+                $query->where('masuk.shift_id', $request->shift);
+            })
+            ->orderBy('masuk.tanggal', 'desc')
+            ->orderBy('masuk.user_id')
+            ->get();
+
+        // Hapus dd() yang tidak diperlukan
+
+        $filename = 'Laporan_Absensi';
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $filename .= '_' . $request->start_date . '_' . $request->end_date;
+        } else {
+            $filename .= '_' . date('Y-m-d');
+        }
+
+        if ($request->jenis_laporan == 'excel') {
+            return Excel::download(new AbsenExport($data, $request), $filename . '.xlsx');
+        } elseif ($request->jenis_laporan == 'pdf') {
+            $pdf = Pdf::loadView('absensi.pdf', compact('data', 'request'));
+            return $pdf->download($filename . '.pdf');
+        } else {
+            return redirect()->back()->with('error', 'Format laporan tidak valid.');
+        }
     }
 
     /**
