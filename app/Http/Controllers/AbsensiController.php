@@ -125,6 +125,7 @@ class AbsensiController extends Controller
         } else {
             $ontime = 'N';
         }
+        $data['shift_id'] = $request->shift_id;
         $data['tanggal'] = now()->format('Y-m-d');
         $data['waktu_absen'] = now()->format('H:i:s');
         $data['jenis_absen'] = $request->tipe_absen;

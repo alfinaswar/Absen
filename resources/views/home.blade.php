@@ -285,7 +285,7 @@
                         <input type="hidden" name="selfie_photo" id="selfie_photo">
                         <div class="mb-3">
                             <label for="shift" class="form-label">Pilih Shift Kerja</label>
-                            <select name="shift" id="shift" class="form-select">
+                            <select name="shift_id" id="shift" class="form-select" required>
                                 @foreach ($shift as $s)
                                     <option value="{{ $s->id }}">{{ $s->nama_shift }}</option>
                                 @endforeach
