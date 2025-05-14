@@ -10,6 +10,7 @@ use App\Models\ShiftKerja;
 use App\Models\ShiftKerjaDetail;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -24,35 +25,125 @@ class AbsensiController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Absensi::with('user')->select('*');
+            $data = DB::table('absensis as masuk')
+                ->select(
+                    'masuk.id as id_masuk',
+                    'masuk.user_id',
+                    'users.name as nama_karyawan',
+                    'masuk.tanggal',
+                    'masuk.waktu_absen as jam_masuk',
+                    'masuk.jenis_absen as jenis_absen_masuk',
+                    'masuk.ontime as ontime_masuk',
+                    'masuk.keterangan as keterangan_masuk',
+                    'masuk.approval as approval_masuk',
+                    'masuk.file_pendukung as file_pendukung_masuk',
+                    'masuk.selfie_photo as selfie_photo_masuk',
+                    'masuk.lokasi as lokasi_masuk',
+                    'masuk.latitude as latitude_masuk',
+                    'masuk.longitude as longitude_masuk',
+                    'masuk.ip_address as ip_address_masuk',
+                    'keluar.id as id_keluar',
+                    'keluar.waktu_absen as jam_keluar',
+                    'keluar.jenis_absen as jenis_absen_keluar',
+                    'keluar.ontime as ontime_keluar',
+                    'keluar.keterangan as keterangan_keluar',
+                    'keluar.approval as approval_keluar',
+                    'keluar.file_pendukung as file_pendukung_keluar',
+                    'keluar.selfie_photo as selfie_photo_keluar',
+                    'keluar.lokasi as lokasi_keluar',
+                    'keluar.latitude as latitude_keluar',
+                    'keluar.longitude as longitude_keluar',
+                    'keluar.ip_address as ip_address_keluar'
+                )
+                ->join('users', 'masuk.user_id', '=', 'users.id')
+                ->leftJoin('absensis as keluar', function ($join) {
+                    $join->on('masuk.user_id', '=', 'keluar.user_id')
+                        ->on('masuk.tanggal', '=', 'keluar.tanggal')
+                        ->where('keluar.jenis_absen', '=', 'Keluar');
+                })
+                ->where('masuk.jenis_absen', 'Masuk')
+                // Filter tanggal jika ada
+                ->when($request->filled('start_date') && $request->filled('end_date'), function ($query) use ($request) {
+                    $query->whereBetween('masuk.tanggal', [$request->start_date, $request->end_date]);
+                })
+                // Filter karyawan jika ada
+                ->when($request->filled('karyawan'), function ($query) use ($request) {
+                    $query->where('masuk.user_id', $request->karyawan);
+                })
+                // Filter shift jika ada
+                ->when($request->filled('shift') && Schema::hasColumn('absensis', 'shift_id'), function ($query) use ($request) {
+                    $query->where('masuk.shift_id', $request->shift);
+                })
+                ->orderBy('masuk.tanggal', 'desc')
+                ->orderBy('masuk.user_id');
+
             return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('absen.edit', $row->id) . '" class="edit btn btn-primary btn-sm">Edit</a>
-                        <a href="javascript:void(0)"  data-id="' . $row->id . '" class="delete btn btn-danger btn-sm">Delete</a> ';
-                    if ($row->status == 'CUTI') {
-                        $btn .= '<a href="javascript:void(0)" data-id="' . $row->id . '" class="acc-cuti btn btn-success btn-sm">ACC Cuti</a>';
+                    $actionBtn = '<div class="btn-group" role="group">';
+
+                    // Edit button (menggunakan id masuk sebagai referensi)
+                    $actionBtn .= '<a href="' . route('absen.edit', $row->id_masuk) . '" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a>';
+
+                    // Delete button
+                    $actionBtn .= '<a href="javascript:void(0)" data-id="' . $row->id_masuk . '" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>';
+
+                    // ACC Cuti button jika diperlukan (disesuaikan dengan logika Anda)
+                    if (isset($row->jenis_absen_masuk) && $row->jenis_absen_masuk == 'Cuti') {
+                        $actionBtn .= '<a href="javascript:void(0)" data-id="' . $row->id_masuk . '" class="acc-cuti btn btn-success btn-sm"><i class="fas fa-check"></i> ACC Cuti</a>';
                     }
-                    return $btn;
+
+                    $actionBtn .= '</div>';
+                    return $actionBtn;
                 })
-                ->addColumn('ontime', function ($row) {
-                    if ($row->ontime == 'Y') {
-                        $ontime = '<span class="badge badge-success">Ontime</span>';
+                ->addColumn('status_masuk', function ($row) {
+                    if ($row->ontime_masuk == 'Y') {
+                        return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
                     } else {
-                        $ontime = '<span class="badge badge-danger">Terlambat</span>';
+                        return '<span class="badge bg-red text-red-fg">Terlambat</span>';
                     }
-                    return $ontime;
                 })
-                ->addColumn('selfie_photo', function ($row) {
-                    return '<img src="' . $row->selfie_photo . '" alt="Selfie" width="150" height="150">';
+                ->addColumn('status_keluar', function ($row) {
+                    if (!isset($row->jam_keluar)) {
+                        return '<span class="badge bg-red text-red-fg">Belum Absen</span>';
+                    } elseif ($row->ontime_keluar == 'Y') {
+                        return '<span class="badge bg-red text-red-fg">Tepat Waktu</span>';
+                    } else {
+                        return '<span class="badge bg-red text-red-fg">Terlambat</span>';
+                    }
                 })
-                ->rawColumns(['action', 'ontime', 'selfie_photo'])
+                ->addColumn('foto_masuk', function ($row) {
+                    if ($row->selfie_photo_masuk) {
+                        return '<img src="' . asset('storage/' . $row->selfie_photo_masuk) . '" alt="Foto Masuk" class="img-thumbnail" width="80">';
+                    }
+                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                })
+                ->addColumn('foto_keluar', function ($row) {
+                    if ($row->selfie_photo_keluar) {
+                        return '<img src="' . asset('storage/' . $row->selfie_photo_keluar) . '" alt="Foto Keluar" class="img-thumbnail" width="80">';
+                    }
+                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                })
+
+                ->editColumn('tanggal', function ($row) {
+                    return Carbon::parse($row->tanggal)->format('d/m/Y');
+                })
+                ->editColumn('jam_masuk', function ($row) {
+                    return $row->jam_masuk ?? '-';
+                })
+                ->editColumn('jam_keluar', function ($row) {
+                    return $row->jam_keluar ?? '-';
+                })
+                ->rawColumns(['action', 'status_masuk', 'status_keluar', 'foto_masuk', 'foto_keluar'])
                 ->make(true);
         }
+
+        // Load data untuk filter
         $users = User::orderBy('name', 'ASC')->get();
         $shifts = ShiftKerja::all();
         $company = MasterPerusahaan::orderBy('Nama')->get();
-        return view('absensi.index', compact('users', 'shifts'));
+
+        return view('absensi.index', compact('users', 'shifts', 'company'));
     }
 
     /**
