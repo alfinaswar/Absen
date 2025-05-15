@@ -103,15 +103,15 @@ class AbsensiController extends Controller
                         return '<span class="badge bg-red text-red-fg">Terlambat</span>';
                     }
                 })
-                ->addColumn('status_keluar', function ($row) {
-                    if (!isset($row->jam_keluar)) {
-                        return '<span class="badge bg-red text-red-fg">Belum Absen</span>';
-                    } elseif ($row->ontime_keluar == 'Y') {
-                        return '<span class="badge bg-red text-red-fg">Tepat Waktu</span>';
-                    } else {
-                        return '<span class="badge bg-red text-red-fg">Terlambat</span>';
-                    }
-                })
+                // ->addColumn('status_keluar', function ($row) {
+                //     if (!isset($row->jam_keluar)) {
+                //         return '<span class="badge bg-red text-red-fg">Belum Absen</span>';
+                //     } elseif ($row->ontime_keluar == 'Y') {
+                //         return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
+                //     } else {
+                //         return '<span class="badge bg-red text-red-fg">Terlambat</span>';
+                //     }
+                // })
                 ->addColumn('foto_masuk', function ($row) {
                     if ($row->selfie_photo_masuk) {
                         return '<img src="' . asset('storage/' . $row->selfie_photo_masuk) . '" alt="Foto Masuk" class="img-thumbnail" width="80">';
@@ -134,7 +134,7 @@ class AbsensiController extends Controller
                 ->editColumn('jam_keluar', function ($row) {
                     return $row->jam_keluar ?? '-';
                 })
-                ->rawColumns(['action', 'status_masuk', 'status_keluar', 'foto_masuk', 'foto_keluar'])
+                ->rawColumns(['action', 'status_masuk', 'foto_masuk', 'foto_keluar'])
                 ->make(true);
         }
 
@@ -198,11 +198,11 @@ class AbsensiController extends Controller
     {
         $UserData = User::with('getShift')->where('id', auth()->user()->id)->first();
         $waktu_absen = '';
+        $shift = ShiftKerja::find($request->shift_id);
         if ($request->jenis_absen == 'Masuk') {
-            $waktu_absen = $UserData->getShift->jam_masuk->format('H:i:s');
-
+            $waktu_absen = $shift->jam_masuk->format('H:i:s');
         } elseif ($request->jenis_absen == 'Keluar') {
-            $waktu_absen = $UserData->getShift->jam_keluar->format('H:i:s');
+            $waktu_absen = $shift->jam_keluar->format('H:i:s');
         }
 
         if ($request->hasFile('file_pendukung')) {
@@ -338,7 +338,7 @@ class AbsensiController extends Controller
         if ($request->jenis_laporan == 'excel') {
             return Excel::download(new AbsenExport($data, $request), $filename . '.xlsx');
         } elseif ($request->jenis_laporan == 'pdf') {
-            $pdf = Pdf::loadView('absensi.pdf', compact('data', 'request'));
+            $pdf = Pdf::loadView('laporan.absen.index', compact('data', 'request'));
             return $pdf->download($filename . '.pdf');
         } else {
             return redirect()->back()->with('error', 'Format laporan tidak valid.');

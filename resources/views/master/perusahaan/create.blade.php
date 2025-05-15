@@ -12,102 +12,102 @@
 @endpush
 
 @section('content')
-    <div class="page-wrapper mb-3">
-        <div class="page-header d-print-none">
-            <div class="container-xl">
-                <div class="row g-2 align-items-center">
-                    <div class="col">
-                        <div class="page-pretitle">Tambah Data</div>
-                        <h2 class="page-title">Master Perusahaan</h2>
+        <div class="page-wrapper mb-3">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <div class="page-pretitle">Tambah Data</div>
+                            <h2 class="page-title">Master Perusahaan</h2>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="page-body">
-            <div class="container-xl">
-                <div class="card">
-                    <div class="card-header text-white" style="background-color: #1F573A;">
-                        <h3 class="card-title">Form Tambah Master Perusahaan</h3>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('mp.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="nama_perusahaan" class="form-label">Nama Perusahaan</label>
-                                        <input type="text" class="form-control" id="nama_perusahaan" name="Nama"
-                                            placeholder="Masukkan Nama Perusahaan" required>
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="card">
+                        <div class="card-header text-white" style="background-color: #1F573A;">
+                            <h3 class="card-title">Form Tambah Master Perusahaan</h3>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('mp.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="nama_perusahaan" class="form-label">Nama Perusahaan</label>
+                                            <input type="text" class="form-control" id="nama_perusahaan" name="Nama"
+                                                placeholder="Masukkan Nama Perusahaan" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="alamat" class="form-label">Alamat</label>
+                                            <textarea class="form-control" id="alamat" name="Alamat" rows="3"
+                                                placeholder="Masukkan Alamat" required></textarea>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" name="Email"
+                                                placeholder="Masukkan Email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="telepon" class="form-label">Telepon / Wa</label>
+                                            <input type="text" class="form-control" id="telepon" name="Telepon"
+                                                placeholder="Masukkan Telepon / Wa" required>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="alamat" class="form-label">Alamat</label>
-                                        <textarea class="form-control" id="alamat" name="Alamat" rows="3"
-                                            placeholder="Masukkan Alamat" required></textarea>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="Email"
-                                            placeholder="Masukkan Email" required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="telepon" class="form-label">Telepon / Wa</label>
-                                        <input type="text" class="form-control" id="telepon" name="Telepon"
-                                            placeholder="Masukkan Telepon / Wa" required>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="provinsi" class="form-label">Provinsi</label>
+                                            <select class="form-control" name="Provinsi" id="provinsi" required>
+                                                <option>==Pilih Salah Satu==</option>
+                                                @php
+    $provinces = new App\Http\Controllers\DependantDropdownController;
+    $provinces = $provinces->provinces();
+                                                @endphp
+                                                @foreach ($provinces as $item)
+                                                    <option value="{{ $item->id ?? '' }}">{{ $item->name ?? '' }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="kota" class="form-label">Kabupaten / Kota</label>
+                                            <select class="form-control" name="Kota" id="kota" required>
+                                                <option>==Pilih Salah Satu==</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="kode_pos" class="form-label">Kode Pos</label>
+                                            <input type="text" class="form-control" id="kode_pos" name="KodePos"
+                                                placeholder="Masukkan Kode Pos">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="direktur" class="form-label">HR / Perwakilan</label>
+                                            <input type="text" class="form-control" id="direktur" name="Direktur"
+                                                placeholder="Masukkan HR / Perwakilan">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="latitude" class="form-label">Latitude</label>
+                                            <input type="text" class="form-control" id="latitude" name="Latitude"
+                                                placeholder="Masukkan Latitude" readonly required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="longitude" class="form-label">Longitude</label>
+                                            <input type="text" class="form-control" id="longitude" name="Longitude"
+                                                placeholder="Masukkan Longitude" readonly required>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="provinsi" class="form-label">Provinsi</label>
-                                        <select class="form-control" name="Provinsi" id="provinsi" required>
-                                            <option>==Pilih Salah Satu==</option>
-                                            @php
-                                                $provinces = new App\Http\Controllers\DependantDropdownController;
-                                                $provinces = $provinces->provinces();
-                                            @endphp
-                                            @foreach ($provinces as $item)
-                                                <option value="{{ $item->id ?? '' }}">{{ $item->name ?? '' }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="kota" class="form-label">Kabupaten / Kota</label>
-                                        <select class="form-control" name="Kota" id="kota" required>
-                                            <option>==Pilih Salah Satu==</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="kode_pos" class="form-label">Kode Pos</label>
-                                        <input type="text" class="form-control" id="kode_pos" name="KodePos"
-                                            placeholder="Masukkan Kode Pos">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="direktur" class="form-label">Direktur</label>
-                                        <input type="text" class="form-control" id="direktur" name="Direktur"
-                                            placeholder="Masukkan Direktur">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="latitude" class="form-label">Latitude</label>
-                                        <input type="text" class="form-control" id="latitude" name="Latitude"
-                                            placeholder="Masukkan Latitude" readonly required>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="longitude" class="form-label">Longitude</label>
-                                        <input type="text" class="form-control" id="longitude" name="Longitude"
-                                            placeholder="Masukkan Longitude" readonly required>
-                                    </div>
+                                <div class="mb-3">
+                                    <div id="map"></div>
                                 </div>
-                            </div>
-                            <div class="mb-3">
-                                <div id="map"></div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </form>
+                                <button type="submit" class="btn btn-primary">Simpan</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 @endsection
 
 @push('js')

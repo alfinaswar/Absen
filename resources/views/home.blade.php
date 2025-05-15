@@ -169,16 +169,34 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-6">
-                                    <button class="btn btn-success w-100" id="btn-masuk"
-                                        onclick="checkLocationMasuk()">Absen
-                                        Masuk</button>
-                                </div>
-                                <div class="col-6">
-                                    <button class="btn btn-danger w-100" id="btn-keluar"
-                                        onclick="checkLocationKeluar()">Absen
-                                        Keluar</button>
-                                </div>
+                                @if ($CekMasuk != null)
+                                    <div class="col-6">
+                                        <button class="btn btn-success w-100" id="btn-masuk" onclick="checkLocationMasuk()"
+                                            disabled>Absen
+                                            Masuk</button>
+                                    </div>
+                                @else
+                                    <div class="col-6">
+                                        <button class="btn btn-success w-100" id="btn-masuk"
+                                            onclick="checkLocationMasuk()">Absen
+                                            Masuk</button>
+                                    </div>
+                                @endif
+                                @if ($CekKeluar != null)
+                                    <div class="col-6">
+                                        <button class="btn btn-danger w-100" id="btn-keluar" disabled
+                                            onclick="checkLocationKeluar()">Absen
+                                            Keluar</button>
+                                    </div>
+                                @else
+                                    <div class="col-6">
+                                        <button class="btn btn-danger w-100" id="btn-keluar"
+                                            onclick="checkLocationKeluar()">Absen
+                                            Keluar</button>
+                                    </div>
+                                @endif
+
+
                             </div>
                         </div>
 
@@ -188,7 +206,7 @@
                     </div>
 
                 </div>
-                <button class="btn btn-primary w-100 mt-3" onclick="ShowCuti()">Ajukan Cuti</button>
+                {{-- <button class="btn btn-primary w-100 mt-3" onclick="ShowCuti()">Ajukan Cuti</button> --}}
             </div>
         </div>
         <div class="card mt-5" id="cutiform" style="display: none;">

@@ -73,7 +73,7 @@
                                         <th>Kota</th>
                                         <th>Provinsi</th>
                                         <th>Kode Pos</th>
-                                        <th>Direktur</th>
+                                        <th>HR / Perwakilan</th>
 
                                         <th width="12%">Action</th>
                                     </tr>

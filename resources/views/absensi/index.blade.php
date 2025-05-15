@@ -121,7 +121,7 @@
                                             <th>Jam Masuk</th>
                                             <th>Jam Keluar</th>
                                             <th>Status Masuk</th>
-                                            <th>Status Keluar</th>
+
                                             <th>Foto Masuk</th>
                                             <th>Foto Keluar</th>
 
@@ -153,7 +153,7 @@
                     { data: 'jam_masuk', name: 'jam_masuk' },
                     { data: 'jam_keluar', name: 'jam_keluar' },
                     { data: 'status_masuk', name: 'status_masuk', orderable: false, searchable: false },
-                    { data: 'status_keluar', name: 'status_keluar', orderable: false, searchable: false },
+
                     { data: 'foto_masuk', name: 'foto_masuk', orderable: false, searchable: false },
                     { data: 'foto_keluar', name: 'foto_keluar', orderable: false, searchable: false },
 

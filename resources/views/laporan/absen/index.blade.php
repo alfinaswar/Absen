@@ -152,23 +152,7 @@
         </div>
     </div>
 
-    <div class="summary-box">
-        <div class="summary-title">Ringkasan Absensi</div>
-        <div class="summary-grid">
-            <div class="summary-item">
-                <div class="summary-label">Total Kehadiran</div>
-                <div class="summary-value">{{ count($data) }}</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-label">Tepat Waktu</div>
-                <div class="summary-value">{{ $data->where('ontime_masuk', 'Y')->count() }}</div>
-            </div>
-            <div class="summary-item">
-                <div class="summary-label">Terlambat</div>
-                <div class="summary-value">{{ $data->where('ontime_masuk', 'N')->count() }}</div>
-            </div>
-        </div>
-    </div>
+
 
     <table>
         <thead>
@@ -179,8 +163,6 @@
                 <th>Jam Masuk</th>
                 <th>Jam Keluar</th>
                 <th>Status Masuk</th>
-                <th>Status Keluar</th>
-                <th>Approval</th>
             </tr>
         </thead>
         <tbody>
@@ -194,12 +176,7 @@
                     <td class="{{ $item->ontime_masuk == 'Y' ? 'ontime' : 'late' }}">
                         {{ $item->ontime_masuk == 'Y' ? 'Tepat Waktu' : 'Terlambat' }}
                     </td>
-                    <td class="{{ $item->ontime_keluar == 'Y' ? 'ontime' : ($item->ontime_keluar == 'N' ? 'late' : '') }}">
-                        {{ $item->ontime_keluar == 'Y' ? 'Tepat Waktu' : ($item->ontime_keluar == 'N' ? 'Terlambat' : '-') }}
-                    </td>
-                    <td class="{{ $item->approval_masuk == 'Y' ? 'approved' : 'pending' }}">
-                        {{ $item->approval_masuk == 'Y' ? 'Disetujui' : 'Pending' }}
-                    </td>
+
                 </tr>
             @empty
                 <tr>

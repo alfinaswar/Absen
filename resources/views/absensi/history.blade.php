@@ -49,7 +49,7 @@
 
             <div class="container-xl">
 
-                <div class="row mb-4">
+                {{-- <div class="row mb-4">
                     <div class="col-md-12">
                         <form action="{{ route('absen.download') }}" method="GET" class="row g-3">
                             @csrf
@@ -68,7 +68,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="card">
                     <div class="card-header text-white" style="background-color: #1F573A;">
