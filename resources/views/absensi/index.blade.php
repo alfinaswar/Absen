@@ -139,7 +139,36 @@
             </div>
 
         </div>
+
+        <!-- Modal Preview Foto dan Lokasi -->
+        <div class="modal fade" id="modalPreviewFoto" tabindex="-1" aria-labelledby="modalPreviewLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalPreviewLabel">Preview</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="previewFoto" src="" class="img-fluid mb-3" alt="Foto Preview" height="300px" width="300px">
+                        <p id="previewLokasi" class="text-muted"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript">
+            $(document).on('click', '.preview-foto', function () {
+                var fotoUrl = $(this).data('foto'); // base64 langsung
+                var lokasi = $(this).data('lokasi');
+                var title = $(this).data('title');
+
+                $('#modalPreviewLabel').text(title);
+                $('#previewFoto').attr('src', fotoUrl);
+                $('#previewLokasi').text('Lokasi: ' + lokasi);
+
+                $('#modalPreviewFoto').modal('show');
+            });
+
             $(document).ready(function () {
                 var table = $('.data-table').DataTable({
                     responsive: true,
@@ -251,4 +280,5 @@
 
             });
         </script>
+
 @endsection

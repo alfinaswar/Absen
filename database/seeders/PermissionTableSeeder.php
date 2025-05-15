@@ -16,14 +16,10 @@ class PermissionTableSeeder extends Seeder
         $permissions = [
             'kelola-karyawan',
             'monitoring-absen',
-            'data-laporan',
-            'kelola-pengajuan',
+            'riwayat-absen',
             'data-master',
-            'shift-kerja',
-            'role-list',
-            'role-create',
-            'role-edit',
-            'role-delete',
+            'data-master',
+            'management-user',
         ];
 
         foreach ($permissions as $permission) {

@@ -113,17 +113,36 @@ class AbsensiController extends Controller
                 //     }
                 // })
                 ->addColumn('foto_masuk', function ($row) {
-                    if ($row->selfie_photo_masuk) {
-                        return '<img src="' . asset('storage/' . $row->selfie_photo_masuk) . '" alt="Foto Masuk" class="img-thumbnail" width="80">';
+                    $foto = $row->selfie_photo_masuk;
+                    $lokasi = $row->lokasi_masuk;
+
+                    if ($foto) {
+                        return '<button class="btn btn-sm btn-info preview-foto"
+                        data-foto="' . $foto . '"
+                        data-lokasi="' . e($lokasi) . '"
+                        data-title="Foto Masuk">
+                    <i class="fas fa-eye"></i> Preview
+                </button>';
                     }
+
                     return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
                 })
                 ->addColumn('foto_keluar', function ($row) {
-                    if ($row->selfie_photo_keluar) {
-                        return '<img src="' . asset('storage/' . $row->selfie_photo_keluar) . '" alt="Foto Keluar" class="img-thumbnail" width="80">';
+                    $foto = $row->selfie_photo_keluar;
+                    $lokasi = $row->lokasi_keluar;
+
+                    if ($foto) {
+                        return '<button class="btn btn-sm btn-info preview-foto"
+                        data-foto="' . $foto . '"
+                        data-lokasi="' . e($lokasi) . '"
+                        data-title="Foto Keluar">
+                    <i class="fas fa-eye"></i> Preview
+                </button>';
                     }
+
                     return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
                 })
+
 
                 ->editColumn('tanggal', function ($row) {
                     return Carbon::parse($row->tanggal)->format('d/m/Y');
@@ -169,27 +188,103 @@ class AbsensiController extends Controller
     public function history(Request $request)
     {
         if ($request->ajax()) {
-            $data = Absensi::with('user')
-                ->where('user_id', auth()->user()->id)
-                ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->latest();
+            $data = DB::table('absensis as masuk')
+                ->select(
+                    'masuk.id as id_masuk',
+                    'masuk.user_id',
+                    'users.name as nama_karyawan',
+                    'masuk.tanggal',
+                    'masuk.waktu_absen as jam_masuk',
+                    'masuk.jenis_absen as jenis_absen_masuk',
+                    'masuk.ontime as ontime_masuk',
+                    'masuk.keterangan as keterangan_masuk',
+                    'masuk.approval as approval_masuk',
+                    'masuk.file_pendukung as file_pendukung_masuk',
+                    'masuk.selfie_photo as selfie_photo_masuk',
+                    'masuk.lokasi as lokasi_masuk',
+                    'masuk.latitude as latitude_masuk',
+                    'masuk.longitude as longitude_masuk',
+                    'masuk.ip_address as ip_address_masuk',
+                    'keluar.id as id_keluar',
+                    'keluar.waktu_absen as jam_keluar',
+                    'keluar.jenis_absen as jenis_absen_keluar',
+                    'keluar.ontime as ontime_keluar',
+                    'keluar.keterangan as keterangan_keluar',
+                    'keluar.approval as approval_keluar',
+                    'keluar.file_pendukung as file_pendukung_keluar',
+                    'keluar.selfie_photo as selfie_photo_keluar',
+                    'keluar.lokasi as lokasi_keluar',
+                    'keluar.latitude as latitude_keluar',
+                    'keluar.longitude as longitude_keluar',
+                    'keluar.ip_address as ip_address_keluar'
+                )
+                ->join('users', 'masuk.user_id', '=', 'users.id')
+                ->leftJoin('absensis as keluar', function ($join) {
+                    $join->on('masuk.user_id', '=', 'keluar.user_id')
+                        ->on('masuk.tanggal', '=', 'keluar.tanggal')
+                        ->where('keluar.jenis_absen', '=', 'Keluar');
+                })
+                ->where('masuk.jenis_absen', 'Masuk')
+                ->where('masuk.user_id', auth()->user()->id)
+                ->orderBy('masuk.tanggal', 'desc')
+                ->orderBy('masuk.user_id');
 
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('ontime', function ($row) {
-                    if ($row->ontime == 'Y') {
-                        $ontime = '<span class="badge badge-success">Ontime</span>';
+                ->addColumn('status_masuk', function ($row) {
+                    if ($row->ontime_masuk == 'Y') {
+                        return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
                     } else {
-                        $ontime = '<span class="badge badge-danger">Terlambat</span>';
+                        return '<span class="badge bg-red text-red-fg">Terlambat</span>';
                     }
-                    return $ontime;
                 })
-                ->rawColumns(['ontime'])
+                ->addColumn('foto_masuk', function ($row) {
+                    $foto = $row->selfie_photo_masuk;
+                    $lokasi = $row->lokasi_masuk;
+
+                    if ($foto) {
+                        return '<button class="btn btn-sm btn-info preview-foto"
+                        data-foto="' . $foto . '"
+                        data-lokasi="' . e($lokasi) . '"
+                        data-title="Foto Masuk">
+                    <i class="fas fa-eye"></i> Preview
+                </button>';
+                    }
+
+                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                })
+                ->addColumn('foto_keluar', function ($row) {
+                    $foto = $row->selfie_photo_keluar;
+                    $lokasi = $row->lokasi_keluar;
+
+                    if ($foto) {
+                        return '<button class="btn btn-sm btn-info preview-foto"
+                        data-foto="' . $foto . '"
+                        data-lokasi="' . e($lokasi) . '"
+                        data-title="Foto Keluar">
+                    <i class="fas fa-eye"></i> Preview
+                </button>';
+                    }
+
+                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                })
+
+                ->editColumn('tanggal', function ($row) {
+                    return \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y');
+                })
+                ->editColumn('jam_masuk', function ($row) {
+                    return $row->jam_masuk ?? '-';
+                })
+                ->editColumn('jam_keluar', function ($row) {
+                    return $row->jam_keluar ?? '-';
+                })
+                ->rawColumns(['status_masuk', 'foto_masuk', 'foto_keluar'])
                 ->make(true);
         }
+
         return view('absensi.history');
     }
+
 
     /**
      * Menyimpan absensi baru.
@@ -363,7 +458,6 @@ class AbsensiController extends Controller
             'tanggal' => 'required|date',
             'jam_masuk' => 'required',
             'jam_keluar' => 'nullable',
-            'status' => 'required',
             'ontime' => 'required|in:Y,N',
         ]);
 
@@ -373,7 +467,6 @@ class AbsensiController extends Controller
             'tanggal' => $request->tanggal,
             'jam_masuk' => $request->jam_masuk,
             'jam_keluar' => $request->jam_keluar,
-            'status' => $request->status,
             'ontime' => $request->ontime,
         ]);
 

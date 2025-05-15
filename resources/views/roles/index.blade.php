@@ -26,18 +26,18 @@
                     <!-- Page title actions -->
                     <div class="col-auto ms-auto d-print-none">
                         <div class="btn-list">
-                            @can('role-create')
-                                <a href="{{ route('roles.create') }}" class="btn btn-primary d-none d-sm-inline-block">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Tambah Hak Akses
-                                </a>
-                            @endcan
+
+                            <a href="{{ route('roles.create') }}" class="btn btn-primary d-none d-sm-inline-block">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                Tambah Hak Akses
+                            </a>
+
                         </div>
                     </div>
                 </div>
@@ -67,22 +67,21 @@
                                             <td>{{ $role->name }}</td>
                                             <td>
 
-                                                @can('role-edit')
-                                                    <a class="btn btn-primary btn-sm" href="{{ route('roles.edit', $role->id) }}">
-                                                        Edit
-                                                    </a>
-                                                @endcan
-                                                @can('role-delete')
-                                                    <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $role->id }}">
-                                                        Delete
-                                                    </button>
-                                                    <form id="delete-form-{{ $role->id }}"
-                                                        action="{{ route('roles.destroy', $role->id) }}" method="POST"
-                                                        style="display: none;">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                    </form>
-                                                @endcan
+
+                                                <a class="btn btn-primary btn-sm" href="{{ route('roles.edit', $role->id) }}">
+                                                    Edit
+                                                </a>
+
+                                                <button class="btn btn-danger btn-sm btn-delete" data-id="{{ $role->id }}">
+                                                    Delete
+                                                </button>
+                                                <form id="delete-form-{{ $role->id }}"
+                                                    action="{{ route('roles.destroy', $role->id) }}" method="POST"
+                                                    style="display: none;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                </form>
+
                                             </td>
                                         </tr>
                                     @endforeach
@@ -96,7 +95,7 @@
     </div>
 @endsection
 
-@push('scripts')
+@push('js')
     <script>
         $(document).ready(function () {
             var table = $('.data-table').DataTable({

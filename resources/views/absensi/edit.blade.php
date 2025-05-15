@@ -16,8 +16,8 @@
                             <!-- Nama -->
                             <div class="mb-3">
                                 <label for="user_id" class="form-label fw-bold">Nama</label>
-                                <input type="text" id="user_id" class="form-control"
-                                    value="{{ $data->user->name ?? '-' }}" disabled>
+                                <input type="text" id="user_id" class="form-control" value="{{ $data->user->name ?? '-' }}"
+                                    disabled>
                             </div>
 
                             <!-- Tanggal -->
@@ -41,14 +41,7 @@
                                     value="{{ $data->jam_keluar }}">
                             </div>
 
-                            <!-- Status -->
-                            <div class="mb-3">
-                                <label for="status" class="form-label fw-bold">Status</label>
-                                <select name="status" id="status" class="form-select" required>
-                                    <option value="Hadir" {{ $data->status == 'HADIR' ? 'selected' : '' }}>HADIR</option>
-                                    <option value="CUTI" {{ $data->status == 'CUTI' ? 'selected' : '' }}>CUTI</option>
-                                </select>
-                            </div>
+
 
                             <!-- Ontime -->
                             <div class="mb-3">

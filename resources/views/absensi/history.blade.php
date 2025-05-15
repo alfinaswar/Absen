@@ -81,13 +81,15 @@
                                     <thead>
                                         <tr>
                                             <th>No</th>
-                                            <th>Nama</th>
+                                            <th>Nama Karyawan</th>
                                             <th>Tanggal</th>
                                             <th>Jam Masuk</th>
                                             <th>Jam Keluar</th>
-                                            <th>Ontime</th>
-                                            <th>Status</th>
-                                            <th>Approval</th>
+                                            <th>Status Masuk</th>
+
+                                            <th>Foto Masuk</th>
+                                            <th>Foto Keluar</th>
+
 
                                         </tr>
                                     </thead>
@@ -110,40 +112,17 @@
                     processing: true,
                     ajax: "{{ route('absen.history') }}",
 
-                    columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'user.name',
-                        name: 'user.name'
-                    },
-                    {
-                        data: 'tanggal',
-                        name: 'tanggal'
-                    },
-                    {
-                        data: 'jam_masuk',
-                        name: 'jam_masuk'
-                    },
-                    {
-                        data: 'jam_keluar',
-                        name: 'jam_keluar'
-                    },
-                    {
-                        data: 'ontime',
-                        name: 'ontime'
-                    },
-                    {
-                        data: 'status',
-                        name: 'status'
-                    },
-                    {
-                        data: 'Approval',
-                        name: 'Approval'
-                    },
+                    columns: [{ data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                    { data: 'nama_karyawan', name: 'nama_karyawan' },
+                    { data: 'tanggal', name: 'tanggal' },
+                    { data: 'jam_masuk', name: 'jam_masuk' },
+                    { data: 'jam_keluar', name: 'jam_keluar' },
+                    { data: 'status_masuk', name: 'status_masuk', orderable: false, searchable: false },
+
+                    { data: 'foto_masuk', name: 'foto_masuk', orderable: false, searchable: false },
+                    { data: 'foto_keluar', name: 'foto_keluar', orderable: false, searchable: false },
+
+
 
                     ]
                 });
