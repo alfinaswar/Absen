@@ -37,8 +37,8 @@ class HomeController extends Controller
         $CountIzin = Absensi::where('jenis_absen', 'Cuti')->whereDate('created_at', $tanggalHariIni)->count();
         $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
         $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
-        $CekMasuk = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Masuk')->first()->whereDate('tanggal', $tanggalHariIni)->first();
-        $CekKeluar = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Keluar')->first()->whereDate('tanggal', $tanggalHariIni)->first();
+        $CekMasuk = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Masuk')->whereDate('tanggal', $tanggalHariIni)->first();
+        $CekKeluar = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Keluar')->whereDate('tanggal', $tanggalHariIni)->first();
         $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
         $shift = ShiftKerja::get();
         $token = Str::uuid();  // token unik
