@@ -34,20 +34,15 @@ class HomeController extends Controller
         $countKaryawan = User::count();
         $tanggalHariIni = now()->format('Y-m-d');
         $countOntime = Absensi::where('waktu_absen', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
-        $CountIzin = Absensi::where('jenis_absen', 'Cuti')->whereDate('created_at', $tanggalHariIni)->count();
+        $CountIzin = 0;
         $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
         $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
         $CekMasuk = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Masuk')->whereDate('tanggal', $tanggalHariIni)->first();
         $CekKeluar = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Keluar')->whereDate('tanggal', $tanggalHariIni)->first();
         $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
         $shift = ShiftKerja::get();
-        $token = Str::uuid();  // token unik
-        QrcodeToken::create([
-            'token' => $token,
-            'expires_at' => Carbon::now()->addMinutes(1),
-        ]);
 
-        $qrCodes = QrCode::size(200)->style('square')->generate(route('absen.store', ['token' => $token]));
-        return view('home', compact('qrCodes', 'AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan', 'shift', 'CekMasuk', 'CekKeluar'));
+
+        return view('home', compact('AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan', 'shift', 'CekMasuk', 'CekKeluar'));
     }
 }
