@@ -375,6 +375,7 @@ class AbsensiController extends Controller
             ->select(
                 'masuk.id as id_masuk',
                 'masuk.user_id',
+                'shift_kerjas.nama_shift as NamaShifitMasuk',
                 'users.name as nama_karyawan',
                 'masuk.tanggal',
                 'masuk.waktu_absen as jam_masuk',
@@ -386,9 +387,10 @@ class AbsensiController extends Controller
                 'masuk.selfie_photo as selfie_photo_masuk',
                 'masuk.lokasi as lokasi_masuk',
                 'masuk.latitude as latitude_masuk',
-                'masuk.longitude as longitude_masuk',
+                'masuk.longitude as longitude_mas_masuk',
                 'masuk.ip_address as ip_address_masuk',
                 'keluar.id as id_keluar',
+                'keluar.shift_id as NamaShifitKeluar',
                 'keluar.waktu_absen as jam_keluar',
                 'keluar.jenis_absen as jenis_absen_keluar',
                 'keluar.ontime as ontime_keluar',
@@ -400,8 +402,8 @@ class AbsensiController extends Controller
                 'keluar.latitude as latitude_keluar',
                 'keluar.longitude as longitude_keluar',
                 'keluar.ip_address as ip_address_keluar'
-            )
-            ->join('users', 'masuk.user_id', '=', 'users.id')
+            )->join('users', 'masuk.user_id', '=', 'users.id')
+            ->join('shift_kerjas', 'masuk.shift_id', '=', 'shift_kerjas.id')
             ->leftJoin('absensis as keluar', function ($join) {
                 $join->on('masuk.user_id', '=', 'keluar.user_id')
                     ->on('masuk.tanggal', '=', 'keluar.tanggal')

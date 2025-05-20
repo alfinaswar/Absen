@@ -57,7 +57,7 @@ class AbsenExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             'Jam Keluar',
             'Status Masuk',
             'Status Keluar',
-            'Approval',
+            'NamaShifitMasuk',
             'Lokasi Masuk',
             'Lokasi Keluar'
         ];
@@ -76,7 +76,7 @@ class AbsenExport implements FromCollection, WithHeadings, WithMapping, WithStyl
             $item->jam_keluar ?? '-',
             $item->ontime_masuk == 'Y' ? 'Tepat Waktu' : 'Terlambat',
             isset($item->ontime_keluar) ? ($item->ontime_keluar == 'Y' ? 'Tepat Waktu' : 'Terlambat') : '-',
-            $item->approval_masuk == 'Y' ? 'Disetujui' : 'Pending',
+            $item->NamaShifitMasuk ?? '-',
             $item->lokasi_masuk ?? '-',
             $item->lokasi_keluar ?? '-'
         ];
@@ -179,17 +179,7 @@ class AbsenExport implements FromCollection, WithHeadings, WithMapping, WithStyl
                 ]);
             }
 
-            // Approval
-            $approval = $sheet->getCell('H' . $row)->getValue();
-            if ($approval == 'Disetujui') {
-                $sheet->getStyle('H' . $row)->applyFromArray([
-                    'font' => ['color' => ['rgb' => '008000']],
-                ]);
-            } elseif ($approval == 'Pending') {
-                $sheet->getStyle('H' . $row)->applyFromArray([
-                    'font' => ['color' => ['rgb' => 'FFA500']],
-                ]);
-            }
+            $statusKeluar = $sheet->getCell('H' . $row)->getValue();
         }
 
         return [];

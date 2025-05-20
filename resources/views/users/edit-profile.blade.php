@@ -69,12 +69,6 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label class="form-label">NIP</label>
-                                            {!! Form::text('nip', null, ['placeholder' => 'Nomor Induk Pegawai', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
                                             <label class="form-label">NIK</label>
                                             {!! Form::text('nik', null, ['placeholder' => 'Nomor Induk Kependudukan', 'class' => 'form-control']) !!}
                                         </div>
@@ -124,80 +118,9 @@
                                 </div>
 
                                 <!-- Kepegawaian -->
-                                <h3 class="card-title mt-4">Informasi Kepegawaian</h3>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Jabatan</label>
-                                            {!! Form::text('jabatan', null, ['placeholder' => 'Jabatan', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Departemen</label>
-                                            {!! Form::text('departemen', null, ['placeholder' => 'Departemen', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Divisi</label>
-                                            {!! Form::text('divisi', null, ['placeholder' => 'Divisi', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Status Kepegawaian</label>
-                                            {!! Form::select('status_kepegawaian', ['Tetap' => 'Tetap', 'Kontrak' => 'Kontrak', 'Magang' => 'Magang', 'Outsource' => 'Outsource'], null, ['class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Tanggal Bergabung</label>
-                                            {!! Form::date('tanggal_bergabung', null, ['class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Tanggal Berakhir Kontrak</label>
-                                            {!! Form::date('tanggal_berakhir_kontrak', null, ['class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <!-- Bank & BPJS -->
-                                <h3 class="card-title mt-4">Informasi Bank & BPJS</h3>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Nama Bank</label>
-                                            {!! Form::text('nama_bank', null, ['placeholder' => 'Nama Bank', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">No. Rekening</label>
-                                            {!! Form::text('no_rekening', null, ['placeholder' => 'Nomor Rekening', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">BPJS Kesehatan</label>
-                                            {!! Form::text('no_bpjs_kesehatan', null, ['placeholder' => 'Nomor BPJS Kesehatan', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">BPJS Ketenagakerjaan</label>
-                                            {!! Form::text('no_bpjs_ketenagakerjaan', null, ['placeholder' => 'Nomor BPJS Ketenagakerjaan', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">NPWP</label>
-                                            {!! Form::text('no_npwp', null, ['placeholder' => 'Nomor NPWP', 'class' => 'form-control']) !!}
-                                        </div>
-                                    </div>
-                                </div>
+
+
 
                                 <h3 class="card-title mt-4">Kata Sandi</h3>
                                 <p class="card-subtitle">Anda dapat mengatur kata sandi permanen jika tidak ingin

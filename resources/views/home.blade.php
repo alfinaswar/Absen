@@ -157,7 +157,9 @@
                 <div class="row mt-4">
                     <div class="col-12">
                         <h1 class="text-center mb-3">Absen Berdasarkan Lokasi</h1>
-                        <!-- Leaflet map container -->
+                        <div id="current-time" class="text-center mb-3" style="font-size: 24px; font-weight: bold;">
+                            {{ now() }}
+                        </div>
                         <div id="map" style="height: 400px; width: 100%; border-radius: 8px;"></div>
 
                         <div class="mt-3">
@@ -200,9 +202,7 @@
                             </div>
                         </div>
 
-                        <div id="current-time" class="text-center mt-3" style="font-size: 24px; font-weight: bold;">
-                            {{ now() }}
-                        </div>
+
                     </div>
 
                 </div>

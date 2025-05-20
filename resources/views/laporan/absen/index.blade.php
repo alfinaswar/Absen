@@ -159,6 +159,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama Karyawan</th>
+                <th>Shift</th>
                 <th>Tanggal</th>
                 <th>Jam Masuk</th>
                 <th>Jam Keluar</th>
@@ -170,13 +171,13 @@
                 <tr>
                     <td>{{ $key + 1 }}</td>
                     <td style="text-align: left;">{{ $item->nama_karyawan }}</td>
+                    <td style="text-align: left;">{{ $item->NamaShifitMasuk }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
                     <td>{{ $item->jam_masuk }}</td>
                     <td>{{ $item->jam_keluar ?? '-' }}</td>
                     <td class="{{ $item->ontime_masuk == 'Y' ? 'ontime' : 'late' }}">
                         {{ $item->ontime_masuk == 'Y' ? 'Tepat Waktu' : 'Terlambat' }}
                     </td>
-
                 </tr>
             @empty
                 <tr>
