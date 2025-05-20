@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{asset('assets/css/custom-css/PageAbsen.css')}}">
     <title>Absensi</title>
 </head>
 
@@ -119,3 +120,333 @@
 </body>
 
 </html>
+@push('js')
+    <!-- Include Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
+    <script>
+        let map, marker, circle, userLatitude, userLongitude, userLocationAddress;
+        let confirmedInOfficeArea = false;
+        let currentAbsenType = null;
+        // Office coordinates (example - replace with your actual office coordinates)
+        const officeLatitude = {{$dataKaryawan->getPerusahaan->Latitude ?? '-6.2088'}}; // Jakarta example coordinate
+        const officeLongitude = {{$dataKaryawan->getPerusahaan->Longitude ?? '106.8456'}}; // Jakarta example coordinate
+        const maxDistanceMeters = 75; // Maximum allowed distance from office in meters
+
+        // Camera variables
+        let cameraStream = null;
+        let cameraView = null;
+        let cameraCanvas = null;
+        let cameraOutput = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize the map
+            map = L.map('map').setView([-6.2088, 106.8456], 15); // Default ke Jakarta
+
+            // Add tile layer (OpenStreetMap)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add office marker
+            const officeIcon = L.icon({
+                iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+
+            const officeMarker = L.marker([officeLatitude, officeLongitude], { icon: officeIcon }).addTo(map);
+            officeMarker.bindPopup("Lokasi Kantor").openPopup();
+
+            // Define allowed radius
+            const allowedRadius = L.circle([officeLatitude, officeLongitude], {
+                color: 'green',
+                fillColor: '#0f8',
+                fillOpacity: 0.2,
+                radius: maxDistanceMeters
+            }).addTo(map);
+
+            // Get user's current location
+            getUserLocation();
+
+            // Set up the modal confirmation button
+            document.getElementById('confirm-btn').addEventListener('click', function () {
+                document.getElementById('attendance-form').submit();
+            });
+
+            // Initialize camera elements
+            cameraView = document.getElementById('camera-view');
+            cameraCanvas = document.getElementById('camera-canvas');
+            cameraOutput = document.getElementById('camera-output');
+
+            // Capture button click event
+            document.getElementById('capture-btn').addEventListener('click', function () {
+                takeSelfie();
+            });
+
+            // Retake photo button
+            document.getElementById('retake-photo').addEventListener('click', function () {
+                // Reset UI
+                document.getElementById('camera-output').style.display = 'none';
+                document.getElementById('camera-view').style.display = 'block';
+                document.getElementById('capture-btn').style.display = 'block';
+                document.getElementById('submit-photo').style.display = 'none';
+                document.getElementById('retake-photo').style.display = 'none';
+            });
+
+            // Submit photo button
+            document.getElementById('submit-photo').addEventListener('click', function () {
+                const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
+                const cameraModal = bootstrap.Modal.getInstance(document.getElementById('cameraModal'));
+
+                // Get the selfie data
+                const selfieData = document.getElementById('camera-output').src;
+                document.getElementById('selfie_photo').value = selfieData;
+
+                // Close camera modal
+                cameraModal.hide();
+
+                // Show confirmation modal
+                document.getElementById('confirm-message').innerHTML =
+                    currentAbsenType === 'masuk'
+                        ? "Anda akan melakukan absen masuk. Lanjutkan?"
+                        : "Anda akan melakukan absen keluar. Lanjutkan?";
+
+                modal.show();
+            });
+
+            // Handle camera modal closing
+            document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function () {
+                stopCamera();
+            });
+        });
+
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        userLatitude = position.coords.latitude;
+                        userLongitude = position.coords.longitude;
+
+                        // If marker already exists, update position, otherwise create new
+                        if (marker) {
+                            marker.setLatLng([userLatitude, userLongitude]);
+                        } else {
+                            marker = L.marker([userLatitude, userLongitude]).addTo(map);
+                        }
+
+                        // Set map view to user location
+                        map.setView([userLatitude, userLongitude], 15);
+
+                        // Calculate distance to office
+                        const distance = calculateDistance(
+                            userLatitude, userLongitude,
+                            officeLatitude, officeLongitude
+                        );
+
+                        // Update user's location info
+                        getAddressFromCoordinates(userLatitude, userLongitude);
+
+                        // Check if user is within allowed distance
+                        if (distance <= maxDistanceMeters) {
+                            document.getElementById('location-status').className = 'alert alert-success';
+                            document.getElementById('location-status').innerHTML =
+                                `<strong>Lokasi Valid!</strong> Anda berada dalam radius kantor (${Math.round(distance)}m dari kantor)`;
+                            confirmedInOfficeArea = true;
+                        } else {
+                            document.getElementById('location-status').className = 'alert alert-danger';
+                            document.getElementById('location-status').innerHTML =
+                                `<strong>Lokasi Tidak Valid!</strong> Anda berada di luar radius kantor (${Math.round(distance)}m dari kantor)`;
+                            confirmedInOfficeArea = false;
+                        }
+                    },
+                    function (error) {
+                        console.error("Error getting location: ", error);
+                        document.getElementById('location-status').className = 'alert alert-danger';
+                        document.getElementById('location-status').innerHTML =
+                            `<strong>Error!</strong> Tidak dapat mengakses lokasi Anda. ${error.message}`;
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                document.getElementById('location-status').className = 'alert alert-danger';
+                document.getElementById('location-status').innerHTML =
+                    "<strong>Error!</strong> Geolocation tidak didukung oleh browser Anda.";
+            }
+        }
+
+        function getAddressFromCoordinates(lat, lng) {
+            // Using Nominatim Reverse Geocoding API
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    userLocationAddress = data.display_name;
+                })
+                .catch(error => {
+                    console.error("Error getting address: ", error);
+                    userLocationAddress = `Latitude: ${lat}, Longitude: ${lng}`;
+                });
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Earth radius in meters
+            const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // distance in meters
+        }
+
+        function checkLocationMasuk() {
+            // Re-check location before proceeding
+            getUserLocation();
+            currentAbsenType = 'masuk';
+
+            setTimeout(() => {
+                if (confirmedInOfficeArea) {
+                    // Prepare the data for submission
+                    document.getElementById('latitude').value = userLatitude;
+                    document.getElementById('longitude').value = userLongitude;
+                    document.getElementById('lokasi').value = userLocationAddress;
+                    document.getElementById('tipe_absen').value = 'masuk';
+
+                    // If location is valid, open camera for selfie
+                    openCamera();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lokasi Tidak Valid',
+                        text: 'Anda harus berada dalam radius kantor untuk melakukan absensi!',
+                    });
+                }
+            }, 1000); // Short delay to allow location check to complete
+        }
+
+        function checkLocationKeluar() {
+            // Re-check location before proceeding
+            getUserLocation();
+            currentAbsenType = 'keluar';
+
+            setTimeout(() => {
+                if (confirmedInOfficeArea) {
+                    // Prepare the data for submission
+                    document.getElementById('latitude').value = userLatitude;
+                    document.getElementById('longitude').value = userLongitude;
+                    document.getElementById('lokasi').value = userLocationAddress;
+                    document.getElementById('tipe_absen').value = 'keluar';
+
+                    // If location is valid, open camera for selfie
+                    openCamera();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lokasi Tidak Valid',
+                        text: 'Anda harus berada dalam radius kantor untuk melakukan absensi!',
+                    });
+                }
+            }, 1000); // Short delay to allow location check to complete
+        }
+
+        function openCamera() {
+            const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
+
+            // Reset UI elements
+            document.getElementById('camera-view').style.display = 'block';
+            document.getElementById('camera-output').style.display = 'none';
+            document.getElementById('capture-btn').style.display = 'block';
+            document.getElementById('submit-photo').style.display = 'none';
+            document.getElementById('retake-photo').style.display = 'none';
+
+            cameraModal.show();
+
+            // Start the camera
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: "user",
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                })
+                    .then(function (stream) {
+                        cameraStream = stream;
+                        cameraView.srcObject = stream;
+                    })
+                    .catch(function (error) {
+                        console.error("Camera error: ", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Kamera Error',
+                            text: 'Tidak dapat mengakses kamera. Mohon izinkan akses kamera.',
+                        });
+                    });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Browser Tidak Mendukung',
+                    text: 'Browser Anda tidak mendukung akses kamera.',
+                });
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                cameraStream = null;
+            }
+        }
+
+        function takeSelfie() {
+            // Set canvas dimensions to match video
+            cameraCanvas.width = cameraView.videoWidth;
+            cameraCanvas.height = cameraView.videoHeight;
+
+            // Draw the video frame to the canvas
+            cameraCanvas.getContext('2d').drawImage(cameraView, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+            // Get the data URL from the canvas
+            const dataURL = cameraCanvas.toDataURL('image/jpeg');
+
+            // Set the src of the img element to the data URL
+            cameraOutput.src = dataURL;
+
+            // Show the captured image and hide the video stream
+            cameraView.style.display = 'none';
+            cameraOutput.style.display = 'block';
+
+            // Update buttons
+            document.getElementById('capture-btn').style.display = 'none';
+            document.getElementById('submit-photo').style.display = 'inline-block';
+            document.getElementById('retake-photo').style.display = 'inline-block';
+        }
+
+        function ShowCuti() {
+            $("#cutiform").show();
+        }
+
+        // Update the clock every second
+        setInterval(function () {
+            document.getElementById('current-time').innerHTML = new Date().toLocaleTimeString();
+        }, 1000);
+
+        // Refresh location every 30 seconds
+        setInterval(function () {
+            getUserLocation();
+        }, 30000);
+    </script>
+@endpush
