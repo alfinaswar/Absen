@@ -47,4 +47,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(ShiftKerja::class, 'shift_kerja', 'id');
     }
+    public function getAbsensi()
+    {
+        return $this->hasMany(Absensi::class, 'user_id', 'id');
+    }
 }

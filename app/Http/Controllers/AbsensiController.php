@@ -16,6 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class AbsensiController extends Controller
 {
@@ -311,6 +312,12 @@ class AbsensiController extends Controller
         } else {
             $ontime = 'N';
         }
+        $image = explode('base64,', $request->selfie_photo);
+        $image = end($image);
+        $image = str_replace(' ', '+', $image);
+        $file = "A" . uniqid() . '.png';
+        Storage::disk('public/foto_absen')->put($file, base64_decode($image));
+
         $data['shift_id'] = $request->shift_id;
         $data['tanggal'] = now()->format('Y-m-d');
         $data['waktu_absen'] = now()->format('H:i:s');
@@ -318,6 +325,7 @@ class AbsensiController extends Controller
         $data['ontime'] = $ontime;
         $data['keterangan'] = $request->keterangan ?? null;
         $data['selfie_photo'] = $request->selfie_photo;
+        $data['foto_karyawan'] = $file;
         $data['ip_address'] = $request->ip();
         $data['lokasi'] = $request->lokasi ?? null;
         $data['latitude'] = $request->latitude ?? null;
@@ -361,9 +369,9 @@ class AbsensiController extends Controller
     /**
      * Menampilkan detail absensi.
      */
-    public function show(Absensi $absensi)
+    public function PageAbsen()
     {
-        //
+        return view('karyawan.absen.index');
     }
 
     /**

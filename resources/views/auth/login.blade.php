@@ -1,105 +1,235 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="id">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Sistem Absensi</title>
-    <!-- CSS files -->
-    <link href="{{ asset('') }}assets/css/tabler.min.css?1692870487" rel="stylesheet" />
-    <link href="{{ asset('') }}assets/css/tabler-flags.min.css?1692870487" rel="stylesheet" />
-    <link href="{{ asset('') }}assets/css/tabler-payments.min.css?1692870487" rel="stylesheet" />
-    <link href="{{ asset('') }}assets/css/tabler-vendors.min.css?1692870487" rel="stylesheet" />
-    <link href="{{ asset('') }}assets/css/demo.min.css?1692870487" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intrack - Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://rsms.me/inter/inter.css');
-
         :root {
-            --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+            --primary-color: #223276;
+            --secondary-color: #f8f9ff;
         }
 
         body {
-            font-feature-settings: "cv03", "cv04", "cv11";
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e4e7f5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            width: 390px;
+            padding: 30px 20px;
+        }
+
+        .logo {
+            margin-bottom: 40px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #202020;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .title-underline {
+            width: 30px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 8px 0 15px 0;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 25px;
+            padding: 12px 20px;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .input-icon-container {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            color: #777;
+        }
+
+        .input-with-icon {
+            padding-left: 45px;
+        }
+
+        .password-visibility {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .forgot-password {
+            text-align: right;
+            font-size: 14px;
+            color: var(--primary-color);
+            font-weight: 500;
+            text-decoration: none;
+        }
+
+        .login-btn {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 25px;
+            padding: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: #1a2861;
+        }
+
+        .login-btn i {
+            margin-left: 5px;
+        }
+
+        .terms {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .terms a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-top: 3px;
+        }
+
+        .form-check-label {
+            font-size: 14px;
+            color: #444;
+            margin-left: 5px;
         }
     </style>
 </head>
 
-<body class=" d-flex flex-column">
-    <script src="./dist/js/demo-theme.min.js?1692870487"></script>
-    <div class="page page-center">
-        <div class="container container-tight py-4">
-            <center>
-                <div class="text-center mb-4">
-                    <a href="." class="">
-                        <img src="{{ asset('assets/img/icon/login-logo.png') }}" width="30%" height="30%"
-                            alt="Tabler">
-                    </a>
+<body>
+    <div class="login-container">
+        <!-- Logo -->
+        <div class="logo">
+            <svg width="160" height="38" viewBox="0 0 160 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50.5 19H61" stroke="#223276" stroke-width="2" />
+                <path d="M64 12H78" stroke="#223276" stroke-width="2" />
+                <path d="M81 19H92" stroke="#223276" stroke-width="2" />
+                <path d="M95 12H109" stroke="#223276" stroke-width="2" />
+                <path d="M112 19H123" stroke="#223276" stroke-width="2" />
+                <path d="M126 12H140" stroke="#223276" stroke-width="2" />
+                <path d="M143 19H154" stroke="#223276" stroke-width="2" />
+                <path d="M18.5 7L25.5 14.5H31L18.5 1L6 14.5H11.5L18.5 7Z" fill="#223276" />
+                <path d="M18.5 30L11.5 22.5H6L18.5 36L31 22.5H25.5L18.5 30Z" fill="#223276" />
+                <path
+                    d="M42.8662 18.392H40.1742V27H37.1022V9.24H40.1742V15.68H42.9582L47.2502 9.24H50.8982L45.5022 16.968L51.2662 27H47.3422L42.8662 18.392ZM62.2491 23.728H55.7771L54.5371 27H51.3731L57.8451 9.24H60.2731L66.7451 27H63.4891L62.2491 23.728ZM61.4251 21.112L59.0131 14.64L56.6011 21.112H61.4251ZM79.897 22.688V16.6C79.897 15.992 79.761 15.496 79.489 15.112C79.217 14.712 78.833 14.416 78.337 14.224C77.857 14.032 77.297 13.936 76.657 13.936C76.065 13.936 75.537 14.016 75.073 14.176C74.625 14.336 74.265 14.568 73.993 14.872C73.737 15.176 73.609 15.544 73.609 15.976H70.537C70.537 15.168 70.753 14.44 71.185 13.792C71.617 13.144 72.241 12.632 73.057 12.256C73.873 11.864 74.841 11.668 75.961 11.668C77.129 11.668 78.145 11.864 79.009 12.256C79.873 12.648 80.537 13.2 81.001 13.912C81.481 14.624 81.721 15.456 81.721 16.408V23.104C81.721 23.792 81.777 24.392 81.889 24.904C82.017 25.4 82.193 25.824 82.417 26.176V27H79.249C79.057 26.648 78.913 26.176 78.817 25.584C78.721 24.976 78.673 24.392 78.673 23.832C78.289 24.872 77.713 25.68 76.945 26.256C76.193 26.816 75.273 27.096 74.185 27.096C73.225 27.096 72.369 26.904 71.617 26.52C70.881 26.136 70.305 25.608 69.889 24.936C69.489 24.248 69.289 23.472 69.289 22.608C69.289 21.632 69.513 20.816 69.961 20.16C70.425 19.488 71.073 18.968 71.905 18.6C72.753 18.232 73.737 17.984 74.857 17.856L78.673 17.4V16.6C78.673 15.88 78.473 15.328 78.073 14.944C77.689 14.56 77.137 14.368 76.417 14.368C75.713 14.368 75.161 14.552 74.761 14.92C74.361 15.288 74.121 15.776 74.041 16.384L78.529 17.04C78.529 17.04 79.897 22.688 79.897 22.688ZM72.193 22.512C72.193 23.072 72.377 23.528 72.745 23.88C73.113 24.216 73.649 24.384 74.353 24.384C74.929 24.384 75.457 24.256 75.937 24C76.433 23.728 76.825 23.352 77.113 22.872C77.417 22.376 77.569 21.8 77.569 21.144V19.488L74.857 19.848C73.825 20 73.073 20.248 72.601 20.592C72.129 20.936 71.889 21.424 71.889 22.056C71.889 22.12 71.873 22.216 71.841 22.344C71.841 22.344 72.193 22.512 72.193 22.512ZM84.7219 11.8H87.6979V14.064H84.7219V11.8ZM84.7219 18.6H87.6979V27H84.7219V18.6ZM97.7545 19.8C97.7545 18.984 97.5865 18.416 97.2505 18.096C96.9145 17.776 96.4185 17.616 95.7625 17.616C95.2825 17.616 94.8785 17.688 94.5505 17.832C94.2385 17.976 94.0025 18.184 93.8425 18.456C93.6825 18.712 93.6025 19.008 93.6025 19.344H90.5305C90.5305 18.576 90.7385 17.896 91.1545 17.304C91.5865 16.696 92.1945 16.224 92.9785 15.888C93.7625 15.552 94.6825 15.384 95.7385 15.384C96.7465 15.384 97.6345 15.544 98.4025 15.864C99.1705 16.168 99.7705 16.632 100.201 17.256C100.649 17.864 100.873 18.632 100.873 19.56V23.992C100.873 24.824 100.945 25.496 101.089 26.008C101.249 26.504 101.457 26.928 101.713 27.28V27.456H98.5905C98.3505 27.12 98.1665 26.672 98.0385 26.112C97.9265 25.552 97.8705 24.992 97.8705 24.432C97.4865 25.456 96.9225 26.248 96.1785 26.808C95.4505 27.352 94.5825 27.624 93.5745 27.624C92.6945 27.624 91.9105 27.448 91.2225 27.096C90.5345 26.744 89.9985 26.256 89.6145 25.632C89.2465 24.992 89.0625 24.264 89.0625 23.448C89.0625 22.552 89.2545 21.792 89.6385 21.168C90.0225 20.544 90.6025 20.056 91.3785 19.704C92.1705 19.336 93.1705 19.104 94.3785 19.008L97.7545 18.696V19.8ZM94.4825 25.104C95.0585 25.104 95.5785 24.992 96.0425 24.768C96.5225 24.544 96.9065 24.232 97.1945 23.832C97.4825 23.432 97.6425 22.976 97.6745 22.464V20.712L95.1865 20.952C94.1465 21.064 93.3865 21.288 92.9065 21.624C92.4265 21.944 92.1865 22.408 92.1865 23.016C92.1865 23.512 92.3545 23.92 92.6905 24.24C93.0265 24.544 93.3545 24.712 93.6745 24.744C93.9945 24.776 94.2905 25.104 94.4825 25.104ZM109.9 15.456C111.092 15.456 112.156 15.696 113.092 16.176C114.044 16.656 114.788 17.368 115.324 18.312C115.86 19.256 116.128 20.4 116.128 21.744C116.128 23.088 115.86 24.232 115.324 25.176C114.788 26.12 114.044 26.832 113.092 27.312C112.156 27.792 111.092 28.032 109.9 28.032C108.708 28.032 107.636 27.792 106.684 27.312C105.748 26.832 105.012 26.12 104.476 25.176C103.94 24.232 103.672 23.088 103.672 21.744C103.672 20.4 103.94 19.256 104.476 18.312C105.012 17.368 105.748 16.656 106.684 16.176C107.636 15.696 108.708 15.456 109.9 15.456ZM109.9 17.64C109.244 17.64 108.668 17.8 108.172 18.12C107.676 18.44 107.284 18.912 106.996 19.536C106.724 20.144 106.588 20.88 106.588 21.744C106.588 22.608 106.724 23.352 106.996 23.976C107.284 24.584 107.676 25.048 108.172 25.368C108.668 25.688 109.244 25.848 109.9 25.848C110.556 25.848 111.124 25.688 111.604 25.368C112.1 25.048 112.492 24.584 112.78 23.976C113.068 23.352 113.212 22.608 113.212 21.744C113.212 20.88 113.068 20.144 112.78 19.536C112.492 18.912 112.1 18.44 111.604 18.12C111.124 17.8 110.556 17.64 109.9 17.64ZM126.639 22.44C126.639 22.184 126.623 21.928 126.591 21.672C126.559 21.4 126.503 21.152 126.423 20.928C126.343 20.688 126.223 20.48 126.063 20.304C125.919 20.112 125.735 19.96 125.511 19.848C125.303 19.736 125.047 19.68 124.743 19.68C124.183 19.68 123.727 19.864 123.375 20.232C123.023 20.584 122.815 21.104 122.751 21.792L120.855 20.688C120.983 19.984 121.223 19.344 121.575 18.768C121.927 18.192 122.407 17.736 123.015 17.4C123.639 17.064 124.391 16.896 125.271 16.896C126.079 16.896 126.775 17.032 127.359 17.304C127.943 17.56 128.423 17.912 128.799 18.36C129.175 18.808 129.455 19.32 129.639 19.896C129.823 20.456 129.943 21.048 129.999 21.672C130.055 22.28 130.087 22.872 130.095 23.448C130.103 24.024 130.107 24.544 130.107 25.008C130.107 25.472 130.119 25.888 130.143 26.256C130.183 26.624 130.247 26.952 130.335 27.24H127.815C127.727 26.968 127.663 26.672 127.623 26.352C127.583 26.032 127.559 25.712 127.551 25.392C127.311 26.048 126.903 26.576 126.327 26.976C125.767 27.376 125.079 27.576 124.263 27.576C123.583 27.576 122.975 27.44 122.439 27.168C121.903 26.896 121.487 26.512 121.191 26.016C120.895 25.52 120.747 24.936 120.747 24.264C120.747 23.528 120.895 22.904 121.191 22.392C121.503 21.864 121.959 21.448 122.559 21.144C123.159 20.84 123.895 20.624 124.767 20.496L126.639 20.208V22.44ZM123.351 24.12C123.351 24.52 123.487 24.84 123.759 25.08C124.031 25.32 124.399 25.44 124.863 25.44C125.327 25.44 125.719 25.344 126.039 25.152C126.359 24.96 126.607 24.704 126.783 24.384C126.959 24.064 127.047 23.712 127.047 23.328V22.128L125.679 22.344C125.007 22.456 124.487 22.616 124.119 22.824C123.751 23.032 123.535 23.32 123.471 23.688C123.407 23.816 123.375 23.96 123.375 24.12C123.375 24.12 123.351 24.12 123.351 24.12ZM140.745 15.6V27H138.201L138.081 25.656C137.761 26.152 137.289 26.544 136.665 26.832C136.057 27.12 135.377 27.264 134.625 27.264C133.889 27.264 133.225 27.112 132.633 26.808C132.041 26.504 131.549 26.072 131.157 25.512C130.765 24.952 130.469 24.288 130.269 23.52C130.085 22.752 129.993 21.896 129.993 20.952C129.993 19.96 130.117 19.072 130.365 18.288C130.629 17.504 130.993 16.848 131.457 16.32C131.921 15.776 132.465 15.368 133.089 15.096C133.713 14.808 134.393 14.664 135.129 14.664C135.881 14.664 136.489 14.76 136.953 14.952C137.433 15.144 137.817 15.368 138.105 15.624V11.8H140.745V15.6ZM137.201 24.72C137.665 24.24 137.897 23.416 137.897 22.248C137.897 21.448 137.809 20.808 137.633 20.328C137.457 19.832 137.201 19.48 136.865 19.272C136.529 19.048 136.121 18.936 135.641 18.936C135.209 18.936 134.825 19.032 134.489 19.224C134.153 19.416 133.873 19.68 133.649 20.016C133.441 20.352 133.281 20.752 133.169 21.216C133.073 21.664 133.025 22.16 133.025 22.704C133.025 23.76 133.233 24.56 133.649 25.104C134.081 25.648 134.641 25.92 135.329 25.92C135.969 25.92 136.737 25.52 137.201 24.72ZM149.655 18.6C149.655 17.736 149.479 17.08 149.127 16.632C148.775 16.168 148.271 15.936 147.615 15.936C147.007 15.936 146.527 16.176 146.175 16.656C145.823 17.12 145.647 17.8 145.647 18.696V27H142.575V15.6H145.071L145.263 17.112C145.567 16.52 145.975 16.048 146.487 15.696C147.015 15.344 147.703 15.168 148.551 15.168C149.287 15.168 149.943 15.312 150.519 15.6C151.095 15.872 151.575 16.264 151.959 16.776C152.359 17.288 152.655 17.896 152.847 18.6C153.055 19.304 153.159 20.08 153.159 20.928V27H150.111V20.496C150.111 19.92 150.095 19.44 150.063 19.056C150.031 18.656 149.975 18.352 149.895 18.144C149.815 17.936 149.751 17.8 149.703 17.736C149.655 17.672 149.655 18.6 149.655 18.6Z"
+                    fill="#223276" />
+            </svg>
+        </div>
+
+        <!-- Login Form -->
+        <div class="mb-4">
+            <h1>Selamat datang di Intrack</h1>
+            <div class="title-underline"></div>
+            <p class="subtitle">Selamat datang! Silahkan memasukkan email dan password Intrack anda untuk absensi.</p>
+        </div>
+
+        <form method="POST" action="{{ route('login') }}" autocomplete="on" novalidate>
+            @csrf
+            <div class="mb-3">
+                <label for="email" class="form-label">Email*</label>
+                <div class="input-icon-container">
+                    <i class="fas fa-envelope input-icon"></i>
+                    <input type="email" class="form-control input-with-icon" id="email"
+                        placeholder="Karywawan@email.com" name="email" required autocomplete="email" autofocus>
                 </div>
-            </center>
-            <div class="card card-md">
-                <div class="card-body">
-                    <h2 class="h2 text-center mb-4">Login ke Akun Anda</h2>
-                    <form method="POST" action="{{ route('login') }}" autocomplete="on" novalidate>
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Email address</label>
-                            <input id="email" type="email" placeholder="Email Anda"
-                                class="form-control @error('email') is-invalid @enderror" name="email"
-                                value="{{ old('email') }}" required autocomplete="email" autofocus>
-                            @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">
-                                Password
-                            </label>
-                            <div class="input-group input-group-flat">
-                                <input id="password" type="password" placeholder="Password"
-                                    class="form-control @error('password') is-invalid @enderror" name="password"
-                                    required autocomplete="current-password">
-
-                                @error('password')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                <span class="input-group-text">
-                                    <a href="#" class="link-secondary" title="Show password"
-                                        data-bs-toggle="tooltip"><!-- Download SVG icon from http://tabler-icons.io/i/eye -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
-                                            height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-                                            fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <circle cx="12" cy="12" r="2" />
-                                            <path
-                                                d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
-                                        </svg>
-                                    </a>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-footer">
-                            <button type="submit" class="btn btn-primary w-100">
-                                {{ __('Login') }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-
             </div>
 
-        </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Kata Sandi*</label>
+                <div class="input-icon-container">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" class="form-control input-with-icon" id="password"
+                        placeholder="Masukkan kata sandi" name="password" required autocomplete="current-password">
+                    <i class="fas fa-eye password-visibility" id="togglePassword"></i>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="rememberMe" name="remember" {{ old('remember') ? 'checked' : '' }}>
+                    <label class="form-check-label" for="rememberMe">
+                        Ingat Saya
+                    </label>
+                </div>
+                <a href="{{ route('password.request') }}" class="forgot-password">Lupa Kata Sandi?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 login-btn">
+                Login <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <p class="terms mt-4">
+            Dengan Login Anda menyetujui <a href="#">Kebijakan Privasi</a> dan <a href="#">Syarat dan Ketentuan
+                Layanan</a>
+        </p>
     </div>
-    <!-- Libs JS -->
-    <!-- Tabler Core -->
-    <script src="./dist/js/tabler.min.js?1692870487" defer></script>
-    <script src="./dist/js/demo.min.js?1692870487" defer></script>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function () {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Toggle eye icon
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    </script>
 </body>
 
 </html>

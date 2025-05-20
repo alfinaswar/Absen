@@ -23,26 +23,32 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
     }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index(): View
     {
-        $countKaryawan = User::count();
-        $tanggalHariIni = now()->format('Y-m-d');
-        $countOntime = Absensi::where('waktu_absen', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
-        $CountIzin = 0;
-        $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
-        $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
-        $CekMasuk = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Masuk')->whereDate('tanggal', $tanggalHariIni)->first();
-        $CekKeluar = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Keluar')->whereDate('tanggal', $tanggalHariIni)->first();
-        $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
-        $shift = ShiftKerja::get();
+        if (auth()->user()->hasRole('admin')) {
+            $countKaryawan = User::count();
+            $tanggalHariIni = now()->format('Y-m-d');
+            $countOntime = Absensi::where('waktu_absen', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
+            $CountIzin = 0;
+            $total = Absensi::whereDate('created_at', $tanggalHariIni)->count();
+            $AbsenKu = Absensi::where('user_id', auth()->user()->id)->whereDate('tanggal', $tanggalHariIni)->first();
+            $CekMasuk = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Masuk')->whereDate('tanggal', $tanggalHariIni)->first();
+            $CekKeluar = Absensi::where('user_id', auth()->user()->id)->where('jenis_absen', '=', 'Keluar')->whereDate('tanggal', $tanggalHariIni)->first();
+            $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
+            $shift = ShiftKerja::get();
 
 
-        return view('home', compact('AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan', 'shift', 'CekMasuk', 'CekKeluar'));
+            return view('home', compact('AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan', 'shift', 'CekMasuk', 'CekKeluar'));
+        } else {
+            $user = User::with([
+                'getAbsensi' => function ($query) {
+                    $query->whereDate('tanggal', now()->format('Y-m-d'));
+                },
+                'getShift',
+                'getPerusahaan'
+            ])->find(auth()->user()->id);
+            // dd($user);
+            return view('karyawan.index', compact('user'));
+        }
     }
 }
