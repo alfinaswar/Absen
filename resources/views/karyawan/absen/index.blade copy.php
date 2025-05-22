@@ -463,15 +463,17 @@
             </div>
             <form action="/absen" method="POST" enctype="multipart/form-data">
                 @csrf
-                <video id="cameraFeed" autoplay></video>
-                <canvas id="capturedImage"></canvas>
-                <input type="file" name="foto" id="foto" accept="image/*" capture="camera" hidden>
-                <div class="camera-controls">
-                    <button class="capture-btn" id="captureButton" type="button">Ambil Foto</button>
-                </div>
-                <div class="preview-controls">
-                    <button class="retake-btn" id="retakeButton" type="button">Ambil Ulang</button>
-                    <button class="confirm-btn" id="confirmButton" type="submit">Konfirmasi</button>
+                <div class="camera-content">
+                    <video id="cameraFeed" autoplay></video>
+                    <canvas id="capturedImage"></canvas>
+                    <input type="file" name="foto" id="foto" accept="image/*" capture="camera" hidden>
+                    <div class="camera-controls">
+                        <button class="capture-btn" id="captureButton" type="button">Ambil Foto</button>
+                    </div>
+                    <div class="preview-controls">
+                        <button class="retake-btn" id="retakeButton" type="button">Ambil Ulang</button>
+                        <button class="confirm-btn" id="confirmButton" type="submit">Konfirmasi</button>
+                    </div>
                 </div>
             </form>
         </div>
@@ -492,8 +494,8 @@
     <script>
         // Configuration
         const officeLocation = {
-            lat: {{$user->getPerusahaan->Latitude}},
-            lng: {{$user->getPerusahaan->Longitude}}
+            lat: {{ $user-> getPerusahaan -> Latitude}},
+        lng: { { $user -> getPerusahaan -> Longitude } }
         };
         const officeRadius = 100; // in meters - adjust as needed
 

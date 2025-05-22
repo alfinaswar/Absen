@@ -292,6 +292,7 @@ class AbsensiController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         $UserData = User::with('getShift')->where('id', auth()->user()->id)->first();
         $waktu_absen = '';
         $shift = ShiftKerja::find($request->shift_id);
@@ -371,7 +372,14 @@ class AbsensiController extends Controller
      */
     public function PageAbsen()
     {
-        return view('karyawan.absen.index');
+        $user = User::with([
+            'getAbsensi' => function ($query) {
+                $query->whereDate('tanggal', now()->format('Y-m-d'));
+            },
+            'getShift',
+            'getPerusahaan'
+        ])->find(auth()->user()->id);
+        return view('karyawan.absen.index', compact('user'));
     }
 
     /**
