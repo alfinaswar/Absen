@@ -14,10 +14,10 @@ body {
 }
 
 .phone-container {
-    width: 390px;
-    /* iPhone 12/13 width */
-    height: 844px;
-    /* iPhone 12/13 height */
+    width: 100%;
+    /* Ukuran lebar untuk semua jenis layar */
+    height: 100%;
+    /* Ukuran tinggi untuk semua jenis layar */
     background-color: #222;
     border-radius: 50px;
     padding: 12px;

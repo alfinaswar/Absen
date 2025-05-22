@@ -290,53 +290,82 @@ class AbsensiController extends Controller
     /**
      * Menyimpan absensi baru.
      */
+    // public function store(Request $request)
+    // {
+    //     dd($request->all());
+    //     $UserData = User::with('getShift')->where('id', auth()->user()->id)->first();
+    //     $waktu_absen = '';
+    //     $shift = ShiftKerja::find($request->shift_id);
+    //     if ($request->jenis_absen == 'Masuk') {
+    //         $waktu_absen = $shift->jam_masuk->format('H:i:s');
+    //     } elseif ($request->jenis_absen == 'Keluar') {
+    //         $waktu_absen = $shift->jam_keluar->format('H:i:s');
+    //     }
+
+    //     if ($request->hasFile('file_pendukung')) {
+    //         $file = $request->file('file_pendukung');
+    //         $filename = time() . '.' . $file->getClientOriginalExtension();
+    //         $file->move(public_path('uploads/absensi'), $filename);
+    //         $data['file_pendukung'] = $filename;
+    //     }
+    //     if (now()->format('H:i:s') < $waktu_absen) {
+    //         $ontime = 'Y';
+    //     } else {
+    //         $ontime = 'N';
+    //     }
+    //     $image = explode('base64,', $request->selfie_photo);
+    //     $image = end($image);
+    //     $image = str_replace(' ', '+', $image);
+    //     $file = "A" . uniqid() . '.png';
+    //     Storage::disk('public/foto_absen')->put($file, base64_decode($image));
+
+    //     $data['shift_id'] = $request->shift_id;
+    //     $data['tanggal'] = now()->format('Y-m-d');
+    //     $data['waktu_absen'] = now()->format('H:i:s');
+    //     $data['jenis_absen'] = $request->tipe_absen;
+    //     $data['ontime'] = $ontime;
+    //     $data['keterangan'] = $request->keterangan ?? null;
+    //     $data['selfie_photo'] = $request->selfie_photo;
+    //     $data['foto_karyawan'] = $file;
+    //     $data['ip_address'] = $request->ip();
+    //     $data['lokasi'] = $request->lokasi ?? null;
+    //     $data['latitude'] = $request->latitude ?? null;
+    //     $data['longitude'] = $request->longitude ?? null;
+    //     $data['user_id'] = auth()->user()->id;
+    //     Absensi::create($data);
+
+    //     return view('absensi.sukses');
+    // }
     public function store(Request $request)
     {
-        dd($request->all());
-        $UserData = User::with('getShift')->where('id', auth()->user()->id)->first();
-        $waktu_absen = '';
-        $shift = ShiftKerja::find($request->shift_id);
-        if ($request->jenis_absen == 'Masuk') {
-            $waktu_absen = $shift->jam_masuk->format('H:i:s');
-        } elseif ($request->jenis_absen == 'Keluar') {
-            $waktu_absen = $shift->jam_keluar->format('H:i:s');
-        }
+        $request->validate([
+            'type' => 'required|in:checkin,checkout',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'accuracy' => 'required|numeric',
+            'photo' => 'required|file|image|max:2048',
+            'shift_id' => 'required_if:type,checkin|exists:shifts,id'
+        ]);
 
-        if ($request->hasFile('file_pendukung')) {
-            $file = $request->file('file_pendukung');
-            $filename = time() . '.' . $file->getClientOriginalExtension();
-            $file->move(public_path('uploads/absensi'), $filename);
-            $data['file_pendukung'] = $filename;
-        }
-        if (now()->format('H:i:s') < $waktu_absen) {
-            $ontime = 'Y';
-        } else {
-            $ontime = 'N';
-        }
-        $image = explode('base64,', $request->selfie_photo);
-        $image = end($image);
-        $image = str_replace(' ', '+', $image);
-        $file = "A" . uniqid() . '.png';
-        Storage::disk('public/foto_absen')->put($file, base64_decode($image));
+        // Simpan foto
+        $photoPath = $request->file('photo')->store('attendance-photos', 'public');
 
-        $data['shift_id'] = $request->shift_id;
-        $data['tanggal'] = now()->format('Y-m-d');
-        $data['waktu_absen'] = now()->format('H:i:s');
-        $data['jenis_absen'] = $request->tipe_absen;
-        $data['ontime'] = $ontime;
-        $data['keterangan'] = $request->keterangan ?? null;
-        $data['selfie_photo'] = $request->selfie_photo;
-        $data['foto_karyawan'] = $file;
-        $data['ip_address'] = $request->ip();
-        $data['lokasi'] = $request->lokasi ?? null;
-        $data['latitude'] = $request->latitude ?? null;
-        $data['longitude'] = $request->longitude ?? null;
-        $data['user_id'] = auth()->user()->id;
-        Absensi::create($data);
+        // Simpan data absensi
+        $attendance = new Absensi();
+        $attendance->user_id = auth()->id();
+        $attendance->type = $request->type;
+        $attendance->latitude = $request->latitude;
+        $attendance->longitude = $request->longitude;
+        $attendance->accuracy = $request->accuracy;
+        $attendance->photo_path = $photoPath;
+        $attendance->shift_id = $request->shift_id;
+        $attendance->save();
 
-        return view('absensi.sukses');
+        return response()->json([
+            'success' => true,
+            'message' => 'Absensi berhasil dicatat!'
+        ]);
     }
-
     /**
      * Menyimpan absensi cuti.
      */

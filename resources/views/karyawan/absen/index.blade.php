@@ -8,21 +8,41 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* Reset dan Base Styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
         }
 
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Container untuk membatasi maksimal lebar pada desktop */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Header Styles - Mobile First */
         .header {
             display: flex;
             align-items: center;
-            padding: 12px 16px;
+            justify-content: space-between;
+            padding: 8px 12px;
             background-color: #fff;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            width: 100%;
         }
 
         .back-button,
@@ -31,10 +51,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 32px;
-            height: 32px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             border-radius: 50%;
+            transition: background-color 0.2s ease;
+            flex-shrink: 0;
         }
 
         .back-button:hover,
@@ -47,18 +69,23 @@
             flex: 1;
             text-align: center;
             font-weight: 600;
-            font-size: 18px;
+            font-size: 16px;
+            margin: 0 12px;
         }
 
         .header-icons {
             display: flex;
-            gap: 10px;
+            gap: 4px;
+            align-items: center;
         }
 
+        /* Map Container - Mobile First */
         .map-container {
             position: relative;
-            height: 35vh;
+            height: 40vh;
+            min-height: 250px;
             background-color: #ddd;
+            width: 100%;
         }
 
         #map {
@@ -67,29 +94,33 @@
             z-index: 1;
         }
 
+        /* Info Panel - Mobile First */
         .info-panel {
             background-color: #fff;
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             margin-top: -20px;
-            padding: 20px 16px;
+            padding: 16px;
             position: relative;
             z-index: 2;
             box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+            min-height: 60vh;
         }
 
         .section-title {
             font-weight: 600;
             margin-bottom: 8px;
             color: #444;
+            font-size: 14px;
         }
 
         .location-status {
             background-color: #e8f5e9;
-            padding: 12px 16px;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 16px;
-            font-size: 14px;
+            font-size: 13px;
+            word-wrap: break-word;
         }
 
         .location-status.outside {
@@ -101,8 +132,9 @@
             align-items: center;
             margin-top: 8px;
             color: #666;
-            font-size: 12px;
+            font-size: 11px;
             gap: 4px;
+            flex-wrap: wrap;
         }
 
         .accuracy span {
@@ -111,11 +143,11 @@
 
         .date-info {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            gap: 8px;
             padding: 12px 0;
             border-bottom: 1px solid #eee;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 16px;
         }
 
@@ -129,25 +161,28 @@
 
         .work-hours {
             color: #666;
+            font-size: 12px;
         }
 
+        /* Action Buttons - Mobile First */
         .action-buttons {
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
         }
 
         .check-in,
         .check-out {
-            flex: 1;
             padding: 12px;
             border-radius: 8px;
             background-color: #f5f5f5;
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 13px;
             color: #666;
+            min-height: 44px;
         }
 
         .check-in {
@@ -157,13 +192,12 @@
 
         .check-in-time {
             font-weight: 600;
-            margin-left: 4px;
+            margin-left: auto;
         }
 
         .button-in,
         .button-out {
-            flex: 1;
-            padding: 12px;
+            padding: 14px 12px;
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -172,7 +206,11 @@
             font-weight: 600;
             cursor: pointer;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            min-height: 48px;
+            border: none;
+            width: 100%;
+            margin-bottom: 8px;
         }
 
         .button-in {
@@ -198,102 +236,184 @@
             cursor: not-allowed;
         }
 
-        /* Camera modal styles */
+        /* Modal Styles - Mobile First */
         .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background: rgba(0, 0, 0, 0.8);
             z-index: 100;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
+            padding: 12px;
+            overflow-y: auto;
         }
 
-        .camera-container {
-            width: 90%;
+        .modal-content {
+            width: 100%;
             max-width: 500px;
             background: #fff;
             border-radius: 12px;
             overflow: hidden;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            margin: auto;
         }
 
-        .camera-header {
+        .modal-header {
             padding: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #eee;
+            background: #fff;
+            flex-shrink: 0;
         }
 
-        .camera-title {
+        .modal-title {
             font-weight: 600;
             font-size: 16px;
         }
 
-        .close-camera {
+        .close-modal {
             cursor: pointer;
             padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-modal:hover {
+            background-color: #f5f5f5;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        /* Form Styles - Mobile First */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            background-color: #fff;
+            transition: border-color 0.2s ease;
+            min-height: 44px;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #233b81;
+        }
+
+        /* Camera Styles - Mobile First */
+        .camera-section {
+            margin-bottom: 16px;
         }
 
         #cameraFeed {
             width: 100%;
-            height: 50vh;
+            height: 30vh;
+            min-height: 200px;
             background: #000;
             object-fit: cover;
+            border-radius: 8px;
+        }
+
+        #previewCanvas {
+            width: 100%;
+            height: 30vh;
+            min-height: 200px;
+            background: #000;
+            object-fit: cover;
+            border-radius: 8px;
+            display: none;
         }
 
         .camera-controls {
-            padding: 16px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
         }
 
-        .capture-btn {
+        .btn {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
             background: #233b81;
             color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-weight: 600;
-            cursor: pointer;
         }
 
-        #capturedImage {
-            display: none;
-            width: 100%;
-            height: 50vh;
-            object-fit: cover;
+        .btn-primary:hover {
+            background: #1a2c61;
         }
 
-        .preview-controls {
-            display: none;
-            padding: 16px;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .retake-btn {
+        .btn-secondary {
             background: #f5f5f5;
             color: #333;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-weight: 600;
-            cursor: pointer;
         }
 
-        .confirm-btn {
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
             background: #4caf50;
             color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-weight: 600;
-            cursor: pointer;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .modal-footer {
+            padding: 16px;
+            border-top: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .loading-indicator {
@@ -311,10 +431,10 @@
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #233b81;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #233b81;
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -336,18 +456,292 @@
             transform: translateX(-50%);
             background: #4caf50;
             color: white;
-            padding: 12px 24px;
+            padding: 12px 16px;
             border-radius: 8px;
             display: none;
             z-index: 1001;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: calc(100% - 40px);
+            max-width: 300px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 13px;
+            word-wrap: break-word;
+        }
+
+        /* Tablet Styles (768px and up) */
+        @media (min-width: 768px) {
+            .header {
+                padding: 12px 24px;
+            }
+
+            .title {
+                font-size: 18px;
+            }
+
+            .map-container {
+                height: 45vh;
+                min-height: 300px;
+            }
+
+            .info-panel {
+                padding: 24px;
+                border-radius: 0;
+                margin-top: 0;
+                min-height: auto;
+            }
+
+            .date-info {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                gap: 12px;
+            }
+
+            .camera-controls {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .modal-footer {
+                flex-direction: row;
+                justify-content: flex-end;
+            }
+
+            #cameraFeed,
+            #previewCanvas {
+                height: 40vh;
+                min-height: 300px;
+            }
+
+            .btn {
+                min-width: 120px;
+            }
+
+            .attendance-success {
+                width: auto;
+                min-width: 300px;
+            }
+        }
+
+        /* Desktop Styles (1024px and up) */
+        @media (min-width: 1024px) {
+            body {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
+                max-width: 800px;
+                margin: 0 auto;
+                background: #fff;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .header {
+                border-radius: 0;
+            }
+
+            .map-container {
+                height: 50vh;
+                min-height: 400px;
+            }
+
+            .info-panel {
+                padding: 32px;
+                flex: 1;
+            }
+
+            .section-title {
+                font-size: 16px;
+            }
+
+            .location-status {
+                font-size: 14px;
+                padding: 16px;
+            }
+
+            .accuracy {
+                font-size: 12px;
+            }
+
+            .date-info {
+                font-size: 14px;
+            }
+
+            .modal {
+                padding: 24px;
+            }
+
+            .modal-content {
+                max-width: 600px;
+            }
+
+            .modal-body {
+                padding: 24px;
+            }
+
+            .modal-footer {
+                padding: 24px;
+            }
+
+            #cameraFeed,
+            #previewCanvas {
+                height: 45vh;
+                min-height: 350px;
+            }
+
+            .spinner {
+                width: 60px;
+                height: 60px;
+                border-width: 6px;
+            }
+        }
+
+        /* Large Desktop Styles (1440px and up) */
+        @media (min-width: 1440px) {
+            .container {
+                max-width: 1000px;
+            }
+
+            .info-panel {
+                padding: 40px;
+            }
+
+            .map-container {
+                height: 55vh;
+                min-height: 500px;
+            }
+
+            .section-title {
+                font-size: 18px;
+            }
+
+            .location-status {
+                font-size: 15px;
+                padding: 18px;
+            }
+
+            .date-info {
+                font-size: 15px;
+            }
+
+            .button-in,
+            .button-out {
+                font-size: 15px;
+                padding: 16px 12px;
+                min-height: 52px;
+            }
+        }
+
+        /* Landscape Orientation for Mobile */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .map-container {
+                height: 25vh;
+                min-height: 150px;
+            }
+
+            #cameraFeed,
+            #previewCanvas {
+                height: 25vh;
+                min-height: 150px;
+            }
+
+            .modal-content {
+                max-height: 90vh;
+            }
+        }
+
+        /* High DPI Displays */
+        @media (-webkit-min-device-pixel-ratio: 2),
+        (min-resolution: 192dpi),
+        (min-resolution: 2dppx) {
+            .spinner {
+                border-width: 3px;
+            }
+
+            .header {
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        /* Accessibility - Reduce Motion */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+
+            .spinner {
+                animation: none;
+                border: 4px solid #233b81;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #ffffff;
+            }
+
+            .header {
+                background-color: #1e1e1e;
+                box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+            }
+
+            .info-panel {
+                background-color: #1e1e1e;
+                box-shadow: 0 -4px 10px rgba(255, 255, 255, 0.05);
+            }
+
+            .location-status {
+                background-color: #2d4a2d;
+                color: #e8f5e9;
+            }
+
+            .location-status.outside {
+                background-color: #4a2d2d;
+                color: #ffebee;
+            }
+
+            .modal-content {
+                background: #1e1e1e;
+            }
+
+            .form-select {
+                background-color: #2d2d2d;
+                border-color: #444;
+                color: #ffffff;
+            }
+
+            .btn-secondary {
+                background: #2d2d2d;
+                color: #ffffff;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="header">
-        <div class="back-button">
+        <div class="back-button" onclick="history.back()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M15 18L9 12L15 6" stroke="#000" stroke-width="2" stroke-linecap="round"
                     stroke-linejoin="round" />
@@ -406,10 +800,7 @@
                 <span id="currentDate">Loading...</span>
             </div>
             <div class="work-hours">
-                {{$user->getShift->nama_shift}}, {{ \Carbon\Carbon::parse($user->getShift->jam_masuk)->format('H:i') }}
-                -
-                {{ \Carbon\Carbon::parse($user->getShift->jam_keluar)->format('H:i') }}
-
+                Shift Default, 08:00 - 17:00
             </div>
         </div>
 
@@ -449,29 +840,71 @@
         </div>
     </div>
 
-    <!-- Camera Modal -->
-    <div class="modal" id="cameraModal">
-        <div class="camera-container">
-            <div class="camera-header">
-                <div class="camera-title">Ambil Foto Selfie</div>
-                <div class="close-camera" id="closeCamera">
+    <!-- Attendance Modal -->
+    <div class="modal" id="attendanceModal" style="overflow-y: auto; max-height: 90vh;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Absen Masuk</div>
+                <div class="close-modal" id="closeModal">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18M6 6l12 12" stroke="#000" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
                 </div>
             </div>
-            <form action="/absen" method="POST" enctype="multipart/form-data">
-                @csrf
-                <video id="cameraFeed" autoplay></video>
-                <canvas id="capturedImage"></canvas>
-                <input type="file" name="foto" id="foto" accept="image/*" capture="camera" hidden>
-                <div class="camera-controls">
-                    <button class="capture-btn" id="captureButton" type="button">Ambil Foto</button>
+
+            <form id="attendanceForm" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="error-message" id="errorMessage"></div>
+
+                    <!-- Shift Selection (only for check-in) -->
+                    <div class="form-group" id="shiftGroup">
+                        <label class="form-label" for="shift">Pilih Shift</label>
+                        <select class="form-select" id="shift" name="shift_id" required>
+                            <option value="">-- Pilih Shift --</option>
+                            <option value="1">Shift Pagi (07:00 - 15:00)</option>
+                            <option value="2">Shift Siang (15:00 - 23:00)</option>
+                            <option value="3">Shift Malam (23:00 - 07:00)</option>
+                        </select>
+                    </div>
+
+                    <!-- Camera Section -->
+                    <div class="camera-section">
+                        <label class="form-label">Ambil Foto Selfie</label>
+                        <video id="cameraFeed" autoplay muted></video>
+                        <canvas id="previewCanvas"></canvas>
+
+                        <div class="camera-controls">
+                            <button type="button" class="btn btn-primary" id="captureButton">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                                        stroke="currentColor" stroke-width="2" />
+                                    <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" />
+                                </svg>
+                                Ambil Foto
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="retakeButton" style="display: none;">
+                                Ambil Ulang
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hidden inputs -->
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+                    <input type="hidden" name="accuracy" id="accuracy">
+                    <input type="hidden" name="type" id="attendanceType">
+                    <input type="hidden" name="photo" id="photoData">
                 </div>
-                <div class="preview-controls">
-                    <button class="retake-btn" id="retakeButton" type="button">Ambil Ulang</button>
-                    <button class="confirm-btn" id="confirmButton" type="submit">Konfirmasi</button>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="cancelButton">Batal</button>
+                    <button type="submit" class="btn btn-success" id="submitButton" disabled>
+                        <span id="submitText">Kirim Absensi</span>
+                    </button>
                 </div>
             </form>
         </div>
@@ -490,12 +923,12 @@
     <!-- Leaflet JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
     <script>
-        // Configuration
+        // Configuration - Replace with your actual values
         const officeLocation = {
-            lat: {{$user->getPerusahaan->Latitude}},
-            lng: {{$user->getPerusahaan->Longitude}}
+            lat: 0.532777, // Latitude kota Pekanbaru
+            lng: 101.444444 // Longitude kota Pekanbaru
         };
-        const officeRadius = 100; // in meters - adjust as needed
+        const officeRadius = 5500; // in meters - adjust as needed
 
         // DOM elements
         const locationStatus = document.getElementById('locationStatus');
@@ -506,13 +939,33 @@
         const checkInTime = document.getElementById('checkInTime');
         const checkOutTime = document.getElementById('checkOutTime');
         const currentDateElement = document.getElementById('currentDate');
-        const cameraModal = document.getElementById('cameraModal');
+
+        // Modal elements
+        const attendanceModal = document.getElementById('attendanceModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const closeModal = document.getElementById('closeModal');
+        const attendanceForm = document.getElementById('attendanceForm');
+        const shiftGroup = document.getElementById('shiftGroup');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Camera elements
         const cameraFeed = document.getElementById('cameraFeed');
+        const previewCanvas = document.getElementById('previewCanvas');
         const captureButton = document.getElementById('captureButton');
-        const closeCamera = document.getElementById('closeCamera');
-        const capturedImage = document.getElementById('capturedImage');
         const retakeButton = document.getElementById('retakeButton');
-        const confirmButton = document.getElementById('confirmButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const submitButton = document.getElementById('submitButton');
+        const submitText = document.getElementById('submitText');
+
+        // Form inputs
+        const latitudeInput = document.getElementById('latitude');
+        const longitudeInput = document.getElementById('longitude');
+        const accuracyInput = document.getElementById('accuracy');
+        const attendanceTypeInput = document.getElementById('attendanceType');
+        const photoDataInput = document.getElementById('photoData');
+        const shiftSelect = document.getElementById('shift');
+
+        // Other elements
         const loadingIndicator = document.getElementById('loadingIndicator');
         const attendanceSuccess = document.getElementById('attendanceSuccess');
 
@@ -525,9 +978,9 @@
         let userLocation = null;
         let locationAccuracy = 0;
         let mediaStream = null;
-        let isCheckingIn = true;
         let hasCheckedIn = false;
         let hasCheckedOut = false;
+        let capturedPhotoData = null;
 
         // Set current date
         function setCurrentDate() {
@@ -595,6 +1048,7 @@
                         locationText.textContent = "Tidak dapat mengakses lokasi Anda";
                         locationStatus.classList.add("outside");
                         accuracyText.textContent = "-";
+                        showError("Tidak dapat mengakses lokasi Anda. Pastikan GPS aktif dan izin lokasi diberikan.");
                     },
                     {
                         enableHighAccuracy: true,
@@ -605,6 +1059,7 @@
             } else {
                 locationText.textContent = "Browser Anda tidak mendukung geolokasi";
                 locationStatus.classList.add("outside");
+                showError("Browser Anda tidak mendukung geolokasi");
             }
         }
 
@@ -663,80 +1118,141 @@
             if (isWithinRadius) {
                 locationText.textContent = "Anda berada di dalam radius kantor";
                 locationStatus.classList.remove("outside");
-                enableCheckInButton();
+                enableAttendanceButtons();
             } else {
-                locationText.textContent = "Anda berada di luar radius kantor";
+                locationText.textContent = `Anda berada di luar radius kantor (${Math.round(distance)}m dari kantor)`;
                 locationStatus.classList.add("outside");
-                disableCheckInButton();
+                disableAttendanceButtons();
             }
         }
 
-        // Enable/disable check-in button
-        function enableCheckInButton() {
+        // Enable/disable attendance buttons
+        function enableAttendanceButtons() {
             if (!hasCheckedIn) {
                 checkInButton.classList.remove("disabled");
-                checkInButton.addEventListener("click", openCamera);
+            }
+            if (hasCheckedIn && !hasCheckedOut) {
+                checkOutButton.classList.remove("disabled");
             }
         }
 
-        function disableCheckInButton() {
+        function disableAttendanceButtons() {
             checkInButton.classList.add("disabled");
-            checkInButton.removeEventListener("click", openCamera);
+            checkOutButton.classList.add("disabled");
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            attendanceSuccess.textContent = message;
+            attendanceSuccess.style.display = 'block';
+            setTimeout(() => {
+                attendanceSuccess.style.display = 'none';
+            }, 3000);
+        }
+
+        // Modal functions
+        function openAttendanceModal(type) {
+            if (!isWithinRadius) {
+                showError("Anda harus berada di dalam radius kantor untuk melakukan absensi.");
+                return;
+            }
+
+            if (!userLocation) {
+                showError("Lokasi belum terdeteksi. Tunggu sebentar dan coba lagi.");
+                return;
+            }
+
+            attendanceTypeInput.value = type;
+
+            if (type === 'checkin') {
+                modalTitle.textContent = 'Absen Masuk';
+                shiftGroup.style.display = 'block';
+                submitText.textContent = 'Absen Masuk';
+            } else {
+                modalTitle.textContent = 'Absen Keluar';
+                shiftGroup.style.display = 'none';
+                submitText.textContent = 'Absen Keluar';
+            }
+
+            // Set location data
+            latitudeInput.value = userLocation.lat;
+            longitudeInput.value = userLocation.lng;
+            accuracyInput.value = locationAccuracy;
+
+            // Reset form
+            resetCameraState();
+            capturedPhotoData = null;
+            submitButton.disabled = true;
+
+            attendanceModal.style.display = 'flex';
+            startCamera();
+        }
+
+        function closeAttendanceModal() {
+            attendanceModal.style.display = 'none';
+            stopCamera();
+            resetForm();
+        }
+
+        function resetForm() {
+            attendanceForm.reset();
+            capturedPhotoData = null;
+            resetCameraState();
+            errorMessage.style.display = 'none';
         }
 
         // Camera functions
-        function openCamera() {
-            isCheckingIn = true;
-            cameraModal.style.display = "flex";
-
-            // Request camera access
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
+        function startCamera() {
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "user",
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
+                },
+                audio: false
+            })
                 .then((stream) => {
                     mediaStream = stream;
                     cameraFeed.srcObject = stream;
-                    showCameraUI();
+                    cameraFeed.play();
                 })
                 .catch((error) => {
                     console.error("Error accessing camera:", error);
-                    alert("Tidak dapat mengakses kamera");
-                    closeCamera.click();
+                    showError("Tidak dapat mengakses kamera. Pastikan izin kamera diberikan.");
                 });
         }
 
-        function openCameraForCheckout() {
-            isCheckingIn = false;
-            cameraModal.style.display = "flex";
-
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" }, audio: false })
-                .then((stream) => {
-                    mediaStream = stream;
-                    cameraFeed.srcObject = stream;
-                    showCameraUI();
-                })
-                .catch((error) => {
-                    console.error("Error accessing camera:", error);
-                    alert("Tidak dapat mengakses kamera");
-                    closeCamera.click();
-                });
+        function stopCamera() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
         }
 
-        function showCameraUI() {
-            cameraFeed.style.display = "block";
-            capturedImage.style.display = "none";
-            document.querySelector(".camera-controls").style.display = "flex";
-            document.querySelector(".preview-controls").style.display = "none";
-        }
-
-        function showPreviewUI() {
-            cameraFeed.style.display = "none";
-            capturedImage.style.display = "block";
-            document.querySelector(".camera-controls").style.display = "none";
-            document.querySelector(".preview-controls").style.display = "flex";
+        function resetCameraState() {
+            cameraFeed.style.display = 'block';
+            previewCanvas.style.display = 'none';
+            captureButton.style.display = 'inline-flex';
+            retakeButton.style.display = 'none';
         }
 
         function capturePhoto() {
-            const canvas = capturedImage;
-            const context = canvas.getContext("2d");
+            if (!mediaStream) {
+                showError("Kamera belum siap. Coba lagi dalam beberapa detik.");
+                return;
+            }
+
+            const canvas = previewCanvas;
+            const context = canvas.getContext('2d');
 
             // Set canvas dimensions to match video
             canvas.width = cameraFeed.videoWidth;
@@ -745,74 +1261,166 @@
             // Draw video frame to canvas
             context.drawImage(cameraFeed, 0, 0, canvas.width, canvas.height);
 
+            // Convert to base64
+            capturedPhotoData = canvas.toDataURL('image/jpeg', 0.8);
+            photoDataInput.value = capturedPhotoData;
+
             // Switch to preview mode
-            showPreviewUI();
+            showPreview();
+
+            // Enable submit button if all requirements are met
+            checkFormValidity();
+        }
+
+        function showPreview() {
+            cameraFeed.style.display = 'none';
+            previewCanvas.style.display = 'block';
+            captureButton.style.display = 'none';
+            retakeButton.style.display = 'inline-flex';
         }
 
         function retakePhoto() {
-            showCameraUI();
+            resetCameraState();
+            capturedPhotoData = null;
+            photoDataInput.value = '';
+            submitButton.disabled = true;
         }
 
-        function confirmPhoto() {
-            // Show loading indicator
-            loadingIndicator.style.display = "flex";
+        function checkFormValidity() {
+            const isPhotoTaken = capturedPhotoData !== null;
+            const isShiftSelected = attendanceTypeInput.value === 'checkout' || shiftSelect.value !== '';
 
-            // Simulate processing (would be an API call in real implementation)
-            setTimeout(() => {
-                // Hide loading indicator
-                loadingIndicator.style.display = "none";
+            submitButton.disabled = !(isPhotoTaken && isShiftSelected);
+        }
 
-                // Close camera
-                closeCameraModal();
+        // Form submission
+        function handleFormSubmit(event) {
+            event.preventDefault();
 
-                // Update attendance record
-                if (isCheckingIn) {
-                    recordCheckIn();
-                } else {
-                    recordCheckOut();
+            if (!capturedPhotoData) {
+                showError("Silakan ambil foto terlebih dahulu.");
+                return;
+            }
+
+            if (attendanceTypeInput.value === 'checkin' && !shiftSelect.value) {
+                showError("Silakan pilih shift terlebih dahulu.");
+                return;
+            }
+
+            // Show loading
+            loadingIndicator.style.display = 'flex';
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('_token', document.querySelector('input[name="_token"]').value);
+            formData.append('type', attendanceTypeInput.value);
+            formData.append('latitude', latitudeInput.value);
+            formData.append('longitude', longitudeInput.value);
+            formData.append('accuracy', accuracyInput.value);
+
+            if (attendanceTypeInput.value === 'checkin') {
+                formData.append('shift_id', shiftSelect.value);
+            }
+
+            // Convert base64 image to blob
+            const photoBlob = dataURLtoBlob(capturedPhotoData);
+            formData.append('photo', photoBlob, 'selfie.jpg');
+
+            // Submit to server
+            fetch('/absen', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    loadingIndicator.style.display = 'none';
 
-                // Show success message
-                attendanceSuccess.style.display = "block";
-                setTimeout(() => {
-                    attendanceSuccess.style.display = "none";
-                }, 3000);
-            }, 1500);
+                    if (data.success) {
+                        closeAttendanceModal();
+                        updateAttendanceStatus(attendanceTypeInput.value);
+                        showSuccess(data.message || 'Absensi berhasil dicatat!');
+                    } else {
+                        showError(data.message || 'Terjadi kesalahan saat mencatat absensi.');
+                    }
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = 'none';
+                    console.error('Error:', error);
+                    showError('Terjadi kesalahan saat mengirim data. Periksa koneksi internet Anda.');
+                });
         }
 
-        function closeCameraModal() {
-            cameraModal.style.display = "none";
+        // Helper function to convert base64 to blob
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
 
-            // Stop camera stream
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-                mediaStream = null;
+        // Update attendance status after successful submission
+        function updateAttendanceStatus(type) {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}`;
+
+            if (type === 'checkin') {
+                checkInTime.textContent = timeString;
+                hasCheckedIn = true;
+                checkInButton.classList.add("disabled");
+                if (isWithinRadius) {
+                    checkOutButton.classList.remove("disabled");
+                }
+            } else {
+                checkOutTime.textContent = timeString;
+                hasCheckedOut = true;
+                checkOutButton.classList.add("disabled");
             }
         }
 
-        // Record attendance
-        function recordCheckIn() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}`;
+        // Event listeners
+        function setupEventListeners() {
+            // Check-in button
+            checkInButton.addEventListener('click', () => {
+                if (!checkInButton.classList.contains('disabled')) {
+                    openAttendanceModal('checkin');
+                }
+            });
 
-            checkInTime.textContent = timeString;
-            hasCheckedIn = true;
-            checkInButton.classList.add("disabled");
-            checkOutButton.classList.remove("disabled");
-            checkOutButton.addEventListener("click", openCameraForCheckout);
-        }
+            // Check-out button
+            checkOutButton.addEventListener('click', () => {
+                if (!checkOutButton.classList.contains('disabled')) {
+                    openAttendanceModal('checkout');
+                }
+            });
 
-        function recordCheckOut() {
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}`;
+            // Modal controls
+            closeModal.addEventListener('click', closeAttendanceModal);
+            cancelButton.addEventListener('click', closeAttendanceModal);
 
-            checkOutTime.textContent = timeString;
-            hasCheckedOut = true;
-            checkOutButton.classList.add("disabled");
+            // Camera controls
+            captureButton.addEventListener('click', capturePhoto);
+            retakeButton.addEventListener('click', retakePhoto);
+
+            // Form controls
+            attendanceForm.addEventListener('submit', handleFormSubmit);
+            shiftSelect.addEventListener('change', checkFormValidity);
+
+            // Close modal when clicking outside
+            attendanceModal.addEventListener('click', (e) => {
+                if (e.target === attendanceModal) {
+                    closeAttendanceModal();
+                }
+            });
         }
 
         // Initialize application
@@ -820,13 +1428,10 @@
             setCurrentDate();
             initMap();
             getUserLocation();
+            setupEventListeners();
 
-            // Set up event listeners
+            // Initially disable check-out button
             checkOutButton.classList.add("disabled");
-            captureButton.addEventListener("click", capturePhoto);
-            closeCamera.addEventListener("click", closeCameraModal);
-            retakeButton.addEventListener("click", retakePhoto);
-            confirmButton.addEventListener("click", confirmPhoto);
         }
 
         // Start the application when page loads
