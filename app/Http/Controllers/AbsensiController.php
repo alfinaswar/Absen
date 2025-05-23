@@ -15,8 +15,10 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 use DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class AbsensiController extends Controller
 {
@@ -338,32 +340,115 @@ class AbsensiController extends Controller
     // }
     public function store(Request $request)
     {
-        $request->validate([
-            'type' => 'required|in:checkin,checkout',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-            'accuracy' => 'required|numeric',
-            'photo' => 'required|file|image|max:2048',
-            'shift_id' => 'required_if:type,checkin|exists:shifts,id'
+        $user = Auth::user();
+        $today = Carbon::today();
+        $now = Carbon::now();
+
+        // Check existing attendance for today
+        $todayAttendances = Absensi::where('user_id', $user->id)
+            ->whereDate('tanggal', $today)
+            ->get();
+
+        if ($request->type === 'Masuk') {
+            // Check if already checked in today
+            $hasCheckin = $todayAttendances->where('jenis_absen', 'Masuk')->first();
+            if ($hasCheckin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda sudah melakukan check-in hari ini.'
+                ], 400);
+            }
+
+            // Get shift info
+            $shift = ShiftKerja::find($request->shift_id);
+            if (!$shift) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Shift tidak ditemukan.'
+                ], 404);
+            }
+
+            // Check if within allowed time (example: 30 minutes before shift start)
+            $shiftStart = Carbon::createFromFormat('H:i:s', $shift->jam_masuk);
+            $allowedCheckinTime = $shiftStart->subMinutes(30);
+
+            // Determine if on time or late
+            $shiftStartOriginal = Carbon::createFromFormat('H:i:s', $shift->jam_masuk);
+            $ontime = $now->format('H:i:s') <= $shiftStartOriginal->format('H:i:s') ? 'Y' : 'N';
+
+        } else { // checkout
+            // Check if has checked in today
+            $hasCheckin = $todayAttendances->where('jenis_absen', 'Masuk')->first();
+            if (!$hasCheckin) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda belum melakukan check-in hari ini.'
+                ], 400);
+            }
+
+            // Check if already checked out
+            $hasCheckout = $todayAttendances->where('jenis_absen', 'Keluar')->first();
+            if ($hasCheckout) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda sudah melakukan check-out hari ini.'
+                ], 400);
+            }
+
+            $ontime = 'Y'; // Checkout is always considered on time
+        }
+
+        // Handle photo upload
+        $photoPath = null;
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $fileName = 'absen_' . $user->id . '_' . $request->type . '_' . $now->format('Y-m-d_H-i-s') . '.' . $photo->getClientOriginalExtension();
+            $photoPath = $photo->storeAs('attendance_photos', $fileName, 'public');
+        }
+
+        // Get IP Address
+        $ipAddress = $request->ip();
+
+        // Create new attendance record
+        $attendance = Absensi::create([
+            'user_id' => $user->id,
+            'shift_id' => $request->shift_id ?? null,
+            'tanggal' => $today,
+            'waktu_absen' => $now,
+            'jenis_absen' => $request->type,
+            'ontime' => $ontime,
+            'keterangan' => null,
+            'file_pendukung' => null,
+            'selfie_photo' => $photoPath,
+            'foto_karyawan' => $photoPath, // Same as selfie_photo or different logic
+            'lokasi' => $request->location_name,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'ip_addres' => $ipAddress, // Note: keeping your column name as is
         ]);
 
-        // Simpan foto
-        $photoPath = $request->file('photo')->store('attendance-photos', 'public');
+        // Prepare response message
+        $timeString = $now->format('H:i:s');
+        $statusText = $ontime ? 'tepat waktu' : 'terlambat';
 
-        // Simpan data absensi
-        $attendance = new Absensi();
-        $attendance->user_id = auth()->id();
-        $attendance->type = $request->type;
-        $attendance->latitude = $request->latitude;
-        $attendance->longitude = $request->longitude;
-        $attendance->accuracy = $request->accuracy;
-        $attendance->photo_path = $photoPath;
-        $attendance->shift_id = $request->shift_id;
-        $attendance->save();
+        if ($request->type === 'Masuk') {
+            $message = "Check-in berhasil dicatat pada {$timeString} ({$statusText})";
+        } else {
+            $message = "Check-out berhasil dicatat pada {$timeString}";
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Absensi berhasil dicatat!'
+            'message' => $message,
+            'data' => [
+                'id' => $attendance->id,
+                'type' => $request->type,
+                'time' => $timeString,
+                'date' => $today->format('Y-m-d'),
+                'location' => $request->location_name,
+                'ontime' => $ontime,
+                'status' => $statusText
+            ]
         ]);
     }
     /**
@@ -408,7 +493,9 @@ class AbsensiController extends Controller
             'getShift',
             'getPerusahaan'
         ])->find(auth()->user()->id);
-        return view('karyawan.absen.index', compact('user'));
+        // dd($user);
+        $shift = ShiftKerja::get();
+        return view('karyawan.absen.index', compact('user', 'shift'));
     }
 
     /**

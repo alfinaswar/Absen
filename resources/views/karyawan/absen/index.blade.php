@@ -7,6 +7,7 @@
     <title>Absensi dengan Map</title>
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* Reset dan Base Styles */
         * {
@@ -862,9 +863,13 @@
                         <label class="form-label" for="shift">Pilih Shift</label>
                         <select class="form-select" id="shift" name="shift_id" required>
                             <option value="">-- Pilih Shift --</option>
-                            <option value="1">Shift Pagi (07:00 - 15:00)</option>
-                            <option value="2">Shift Siang (15:00 - 23:00)</option>
-                            <option value="3">Shift Malam (23:00 - 07:00)</option>
+                            @foreach ($shift as $item)
+                                <option value="{{ $item->id }}" @if ($user->getShift->id == $item->id)
+                                    selected
+                                @endif>{{ $item->nama_shift }}, {{$item->jam_masuk}} -
+                                    {{$item->jam_keluar}}
+                                </option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -1173,7 +1178,7 @@
 
             attendanceTypeInput.value = type;
 
-            if (type === 'checkin') {
+            if (type === 'Masuk') {
                 modalTitle.textContent = 'Absen Masuk';
                 shiftGroup.style.display = 'block';
                 submitText.textContent = 'Absen Masuk';
@@ -1288,7 +1293,7 @@
 
         function checkFormValidity() {
             const isPhotoTaken = capturedPhotoData !== null;
-            const isShiftSelected = attendanceTypeInput.value === 'checkout' || shiftSelect.value !== '';
+            const isShiftSelected = attendanceTypeInput.value === 'Keluar' || shiftSelect.value !== '';
 
             submitButton.disabled = !(isPhotoTaken && isShiftSelected);
         }
@@ -1302,7 +1307,7 @@
                 return;
             }
 
-            if (attendanceTypeInput.value === 'checkin' && !shiftSelect.value) {
+            if (attendanceTypeInput.value === 'Masuk' && !shiftSelect.value) {
                 showError("Silakan pilih shift terlebih dahulu.");
                 return;
             }
@@ -1310,6 +1315,55 @@
             // Show loading
             loadingIndicator.style.display = 'flex';
 
+            // Get location name using reverse geocoding
+            getLocationName(latitudeInput.value, longitudeInput.value)
+                .then(locationName => {
+                    submitFormWithLocation(locationName);
+                })
+                .catch(error => {
+                    console.error('Error getting location name:', error);
+                    // Submit without location name if geocoding fails
+                    submitFormWithLocation('Lokasi tidak diketahui');
+                });
+        }
+
+        function getLocationName(lat, lng) {
+            return new Promise((resolve, reject) => {
+                // Using Nominatim (OpenStreetMap) reverse geocoding service
+                const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+
+                fetch(geocodeUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.display_name) {
+                            // Extract useful parts of the address
+                            const address = data.address || {};
+                            let locationName = '';
+
+                            // Build location name from available components
+                            if (address.road) locationName += address.road;
+                            if (address.village || address.suburb) {
+                                locationName += (locationName ? ', ' : '') + (address.village || address.suburb);
+                            }
+                            if (address.city || address.town) {
+                                locationName += (locationName ? ', ' : '') + (address.city || address.town);
+                            }
+
+                            // Fallback to display_name if no specific components found
+                            if (!locationName) {
+                                locationName = data.display_name.split(',').slice(0, 3).join(', ');
+                            }
+
+                            resolve(locationName);
+                        } else {
+                            reject('No location data found');
+                        }
+                    })
+                    .catch(error => reject(error));
+            });
+        }
+
+        function submitFormWithLocation(locationName) {
             // Prepare form data
             const formData = new FormData();
             formData.append('_token', document.querySelector('input[name="_token"]').value);
@@ -1317,8 +1371,9 @@
             formData.append('latitude', latitudeInput.value);
             formData.append('longitude', longitudeInput.value);
             formData.append('accuracy', accuracyInput.value);
+            formData.append('location_name', locationName); // Add location name
 
-            if (attendanceTypeInput.value === 'checkin') {
+            if (attendanceTypeInput.value === 'Masuk') {
                 formData.append('shift_id', shiftSelect.value);
             }
 
@@ -1326,8 +1381,8 @@
             const photoBlob = dataURLtoBlob(capturedPhotoData);
             formData.append('photo', photoBlob, 'selfie.jpg');
 
-            // Submit to server
-            fetch('/absen', {
+            // Submit to server using Fetch API
+            fetch('{{ route("absen.store") }}', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -1373,7 +1428,7 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const timeString = `${hours}:${minutes}`;
 
-            if (type === 'checkin') {
+            if (type === 'Masuk') {
                 checkInTime.textContent = timeString;
                 hasCheckedIn = true;
                 checkInButton.classList.add("disabled");
@@ -1392,14 +1447,14 @@
             // Check-in button
             checkInButton.addEventListener('click', () => {
                 if (!checkInButton.classList.contains('disabled')) {
-                    openAttendanceModal('checkin');
+                    openAttendanceModal('Masuk');
                 }
             });
 
             // Check-out button
             checkOutButton.addEventListener('click', () => {
                 if (!checkOutButton.classList.contains('disabled')) {
-                    openAttendanceModal('checkout');
+                    openAttendanceModal('Keluar');
                 }
             });
 

@@ -39,10 +39,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('users', UserController::class);
     Route::resource('akun', AkunController::class);
     Route::resource('master-status-pegawai', MasterStatusPegawaiController::class);
+
     Route::prefix('keola-absen')->group(function () {
         Route::GET('/', [AbsensiController::class, 'index'])->name('absen.index');
         Route::GET('/create', [AbsensiController::class, 'create'])->name('absen.create');
-        Route::POST('/simpan', [AbsensiController::class, 'store'])->name('absen.store');
+        Route::POST('/simpan-absen', [AbsensiController::class, 'store'])->name('absen.store');
         Route::POST('/simpan-cuti', [AbsensiController::class, 'Cutistore'])->name('absen.Cutistore');
         Route::GET('/edit/{id}', [AbsensiController::class, 'edit'])->name('absen.edit');
         Route::PUT('/update/{id}', [AbsensiController::class, 'update'])->name('absen.update');
