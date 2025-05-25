@@ -1,14 +1,16 @@
 @extends('layouts.app_karyawan')
 @section('content')
-    <!-- Header -->
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('assets/css/custom-css/index.css') }}">
+    @endpush
     <div class="header">
         <div class="user-info">
             <div class="avatar">
                 <img src="/api/placeholder/100/100" alt="User Avatar">
             </div>
             <div>
-                <div class="user-name">Hi, {{$user->name}} <span class="user-verified">👋</span></div>
-                <div class="user-position">{{$user->jabatan}} di {{$user->getPerusahaan->Nama}}</div>
+                <div class="user-name">Hi, {{ $user->name }} <span class="user-verified">👋</span></div>
+                <div class="user-position">{{ $user->jabatan }} di {{ $user->getPerusahaan->Nama }}</div>
             </div>
         </div>
         <div class="header-icons">
@@ -55,7 +57,7 @@
     <!-- Date Bar -->
     <div class="date-bar">
         <div><i class="fas fa-calendar-alt"></i> {{ \Carbon\Carbon::now()->format('l, j F Y') }}</div>
-        <div>{{$user->getShift->nama_shift}}, {{ \Carbon\Carbon::parse($user->getShift->jam_masuk)->format('H:i') }}
+        <div>{{ $user->getShift->nama_shift }}, {{ \Carbon\Carbon::parse($user->getShift->jam_masuk)->format('H:i') }}
             -
             {{ \Carbon\Carbon::parse($user->getShift->jam_keluar)->format('H:i') }}
         </div>
@@ -189,6 +191,4 @@
             <div class="nav-label">Data Absensi</div>
         </div>
     </div>
-
-
 @endsection
