@@ -420,11 +420,11 @@ class AbsensiController extends Controller
             'keterangan' => null,
             'file_pendukung' => null,
             'selfie_photo' => $photoPath,
-            'foto_karyawan' => $photoPath, // Same as selfie_photo or different logic
+            'foto_karyawan' => $photoPath,
             'lokasi' => $request->location_name,
             'latitude' => $request->latitude,
             'longitude' => $request->longitude,
-            'ip_addres' => $ipAddress, // Note: keeping your column name as is
+            'ip_address' => $ipAddress,
         ]);
 
         // Prepare response message
