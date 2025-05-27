@@ -10,8 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('master_perusahaans', function (Blueprint $table) {
-            $table->date('TanggalTutupBuku')->nullable()->after('Longitude');
+        Schema::table('absensis', function (Blueprint $table) {
+            $table->enum('kehadiran', ['H', 'S', 'I', 'C'])->nullable()->after('jenis_absen');
         });
     }
 
@@ -20,7 +20,7 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('master_perusahaans', function (Blueprint $table) {
+        Schema::table('absensis', function (Blueprint $table) {
             //
         });
     }

@@ -13,19 +13,18 @@
             {{ \Carbon\Carbon::parse($user->getShift->jam_keluar)->format('H:i') }}
         </div>
     </div>
-
     <!-- Attendance Controls -->
     <div class="attendance-controls">
         <div class="attendance-button fw-bold">
             <i class="fas fa-sign-in-alt"></i>
             <div>Masuk
-                {{ \Carbon\Carbon::parse($user->getAbsensi()->where('jenis_absen', 'Masuk')->first()->waktu_absen ?? '')->format('H:i') }}
+                {{ \Carbon\Carbon::parse($user->getAbsensi->first()->waktu_absen ?? '')->format('H:i') }}
             </div>
         </div>
         <div class="attendance-button">
             <i class="fas fa-sign-out-alt"></i>
             <div>Pulang
-                {{ \Carbon\Carbon::parse($user->getAbsensi()->where('jenis_absen', 'Keluar')->first()->waktu_absen ?? '')->format('H:i') }}
+                {{ \Carbon\Carbon::parse($user->getAbsensi->last()->waktu_absen ?? '')->format('H:i') }}
             </div>
         </div>
     </div>

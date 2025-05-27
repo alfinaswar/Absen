@@ -67,6 +67,15 @@
                                         <input type="date" name="end_date" id="end_date" class="form-control" required>
                                     </div>
                                     <div class="col-md-3">
+                                        <label for="perusahaan" class="form-label fw-bold">Perusahaan</label>
+                                        <select name="perusahaan" id="perusahaan" class="form-select">
+                                            <option value="">Semua Perusahaan</option>
+                                            @foreach($company as $pt)
+                                                <option value="{{ $pt->id }}">{{ $pt->Nama }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
                                         <label for="karyawan" class="form-label fw-bold">Karyawan</label>
                                         <select name="karyawan" id="karyawan" class="form-select">
                                             <option value="">Semua Karyawan</option>
@@ -93,9 +102,11 @@
                                         </select>
                                     </div>
                                     <div class="text-end">
-
+                                        <button type="button" id="filter-apply" class="btn btn-warning">
+                                            <i class="fas fa-filter"></i> Terapkan Filter
+                                        </button>
                                         <button type="submit" class="btn btn-success">
-                                            <i class="fas fa-download"></i> Download Laporan
+                                            <i class="fas fa-file-download"></i> Download Laporan
                                         </button>
 
                                     </div>
@@ -155,8 +166,60 @@
                 </div>
             </div>
         </div>
+        <script>
 
+            document.addEventListener("DOMContentLoaded", function () {
+                var el;
+                window.TomSelect && (new TomSelect(document.getElementById('karyawan'), {
+                    copyClassesToDropdown: false,
+                    dropdownParent: 'body',
+                    controlInput: '<input>',
+                    render: {
+                        item: function (data, escape) {
+                            if (data.customProperties) {
+                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                            }
+                            return '<div>' + escape(data.text) + '</div>';
+                        },
+                        option: function (data, escape) {
+                            if (data.customProperties) {
+                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                            }
+                            return '<div>' + escape(data.text) + '</div>';
+                        },
+                    },
+                }));
+            });
+
+        </script>
+        <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                var el;
+                window.TomSelect && (new TomSelect(document.getElementById('perusahaan'), {
+                    copyClassesToDropdown: false,
+                    dropdownParent: 'body',
+                    controlInput: '<input>',
+                    render: {
+                        item: function (data, escape) {
+                            if (data.customProperties) {
+                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                            }
+                            return '<div>' + escape(data.text) + '</div>';
+                        },
+                        option: function (data, escape) {
+                            if (data.customProperties) {
+                                return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                            }
+                            return '<div>' + escape(data.text) + '</div>';
+                        },
+                    },
+                }));
+            });
+
+        </script>
         <script type="text/javascript">
+
             $(document).on('click', '.preview-foto', function () {
                 var fotoUrl = $(this).data('foto'); // base64 langsung
                 var lokasi = $(this).data('lokasi');
@@ -170,24 +233,49 @@
             });
 
             $(document).ready(function () {
-                var table = $('.data-table').DataTable({
-                    responsive: true,
-                    serverSide: true,
-                    processing: true,
-                    ajax: "{{ route('absen.index') }}",
 
-                    columns: [{ data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                    { data: 'nama_karyawan', name: 'nama_karyawan' },
-                    { data: 'tanggal', name: 'tanggal' },
-                    { data: 'jam_masuk', name: 'jam_masuk' },
-                    { data: 'jam_keluar', name: 'jam_keluar' },
-                    { data: 'status_masuk', name: 'status_masuk', orderable: false, searchable: false },
+                var dataTable = function () {
+                    var table = $('.data-table');
+                    table.DataTable({
+                        responsive: true,
+                        serverSide: true,
+                        bDestroy: true,
+                        processing: true,
+                        language: {
+                            processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Memuat...</span> ',
+                            paginate: {
+                                next: '<i class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                                previous: '<i class="fa fa-angle-double-left" aria-hidden="true"></i>'
+                            }
+                        },
+                        ajax: {
+                            url: "{{ route('absen.index') }}",
+                            data: function (d) {
+                                d.start_date = $('#start_date').val();
+                                d.end_date = $('#end_date').val();
+                                d.shift = $('#shift').val();
+                                d.perusahaan = $('#perusahaan').val();
+                                d.karyawan = $('#karyawan').val();
+                            }
+                        },
+                        columns: [{ data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+                        { data: 'nama_karyawan', name: 'nama_karyawan' },
+                        { data: 'tanggal', name: 'tanggal' },
+                        { data: 'jam_masuk', name: 'jam_masuk' },
+                        { data: 'jam_keluar', name: 'jam_keluar' },
+                        { data: 'status_masuk', name: 'status_masuk', orderable: false, searchable: false },
 
-                    { data: 'foto_masuk', name: 'foto_masuk', orderable: false, searchable: false },
-                    { data: 'foto_keluar', name: 'foto_keluar', orderable: false, searchable: false },
+                        { data: 'foto_masuk', name: 'foto_masuk', orderable: false, searchable: false },
+                        { data: 'foto_keluar', name: 'foto_keluar', orderable: false, searchable: false },
 
-                    { data: 'action', name: 'action', orderable: false, searchable: false },
-                    ]
+                        { data: 'action', name: 'action', orderable: false, searchable: false },
+                        ],
+                    });
+                };
+
+                dataTable();
+                $('#filter-apply').click(function () {
+                    $('.data-table').DataTable().ajax.reload();
                 });
                 $('body').on('click', '.acc-cuti', function () {
                     var id = $(this).data('id'); // Ambil ID data

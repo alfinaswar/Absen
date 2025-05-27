@@ -33,6 +33,7 @@ class AbsensiController extends Controller
                     'masuk.id as id_masuk',
                     'masuk.user_id',
                     'users.name as nama_karyawan',
+                    'users.IdPerusahaan as namaPerusahaan',
                     'masuk.tanggal',
                     'masuk.waktu_absen as jam_masuk',
                     'masuk.jenis_absen as jenis_absen_masuk',
@@ -78,6 +79,10 @@ class AbsensiController extends Controller
                 ->when($request->filled('shift') && Schema::hasColumn('absensis', 'shift_id'), function ($query) use ($request) {
                     $query->where('masuk.shift_id', $request->shift);
                 })
+                // Filter perusahaan jika ada
+                ->when($request->filled('perusahaan'), function ($query) use ($request) {
+                    $query->where('users.IdPerusahaan', $request->perusahaan);
+                })
                 ->orderBy('masuk.tanggal', 'desc')
                 ->orderBy('masuk.user_id');
 
@@ -107,15 +112,6 @@ class AbsensiController extends Controller
                         return '<span class="badge bg-red text-red-fg">Terlambat</span>';
                     }
                 })
-                // ->addColumn('status_keluar', function ($row) {
-                //     if (!isset($row->jam_keluar)) {
-                //         return '<span class="badge bg-red text-red-fg">Belum Absen</span>';
-                //     } elseif ($row->ontime_keluar == 'Y') {
-                //         return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
-                //     } else {
-                //         return '<span class="badge bg-red text-red-fg">Terlambat</span>';
-                //     }
-                // })
                 ->addColumn('foto_masuk', function ($row) {
                     $foto = $row->selfie_photo_masuk;
                     $lokasi = $row->lokasi_masuk;
@@ -289,102 +285,112 @@ class AbsensiController extends Controller
 
     public function historyMobile(Request $request)
     {
-        if ($request->ajax()) {
-            $data = DB::table('absensis as masuk')
-                ->select(
-                    'masuk.id as id_masuk',
-                    'masuk.user_id',
-                    'users.name as nama_karyawan',
-                    'masuk.tanggal',
-                    'masuk.waktu_absen as jam_masuk',
-                    'masuk.jenis_absen as jenis_absen_masuk',
-                    'masuk.ontime as ontime_masuk',
-                    'masuk.keterangan as keterangan_masuk',
-                    'masuk.approval as approval_masuk',
-                    'masuk.file_pendukung as file_pendukung_masuk',
-                    'masuk.selfie_photo as selfie_photo_masuk',
-                    'masuk.lokasi as lokasi_masuk',
-                    'masuk.latitude as latitude_masuk',
-                    'masuk.longitude as longitude_masuk',
-                    'masuk.ip_address as ip_address_masuk',
-                    'keluar.id as id_keluar',
-                    'keluar.waktu_absen as jam_keluar',
-                    'keluar.jenis_absen as jenis_absen_keluar',
-                    'keluar.ontime as ontime_keluar',
-                    'keluar.keterangan as keterangan_keluar',
-                    'keluar.approval as approval_keluar',
-                    'keluar.file_pendukung as file_pendukung_keluar',
-                    'keluar.selfie_photo as selfie_photo_keluar',
-                    'keluar.lokasi as lokasi_keluar',
-                    'keluar.latitude as latitude_keluar',
-                    'keluar.longitude as longitude_keluar',
-                    'keluar.ip_address as ip_address_keluar'
-                )
-                ->join('users', 'masuk.user_id', '=', 'users.id')
-                ->leftJoin('absensis as keluar', function ($join) {
-                    $join
-                        ->on('masuk.user_id', '=', 'keluar.user_id')
-                        ->on('masuk.tanggal', '=', 'keluar.tanggal')
-                        ->where('keluar.jenis_absen', '=', 'Keluar');
-                })
-                ->where('masuk.jenis_absen', 'Masuk')
-                ->where('masuk.user_id', auth()->user()->id)
-                ->orderBy('masuk.tanggal', 'desc')
-                ->orderBy('masuk.user_id');
+        $query = DB::table('absensis as masuk')
+            ->select(
+                'masuk.id as id_masuk',
+                'masuk.user_id',
+                'users.name as nama_karyawan',
+                'masuk.tanggal',
+                'masuk.waktu_absen as jam_masuk',
+                'masuk.jenis_absen as jenis_absen_masuk',
+                'masuk.ontime as ontime_masuk',
+                'masuk.keterangan as keterangan_masuk',
+                'masuk.approval as approval_masuk',
+                'masuk.file_pendukung as file_pendukung_masuk',
+                'masuk.selfie_photo as selfie_photo_masuk',
+                'masuk.lokasi as lokasi_masuk',
+                'masuk.latitude as latitude_masuk',
+                'masuk.longitude as longitude_masuk',
+                'masuk.ip_address as ip_address_masuk',
+                'keluar.id as id_keluar',
+                'keluar.waktu_absen as jam_keluar',
+                'keluar.jenis_absen as jenis_absen_keluar',
+                'keluar.ontime as ontime_keluar',
+                'keluar.keterangan as keterangan_keluar',
+                'keluar.approval as approval_keluar',
+                'keluar.file_pendukung as file_pendukung_keluar',
+                'keluar.selfie_photo as selfie_photo_keluar',
+                'keluar.lokasi as lokasi_keluar',
+                'keluar.latitude as latitude_keluar',
+                'keluar.longitude as longitude_keluar',
+                'keluar.ip_address as ip_address_keluar'
+            )
+            ->join('users', 'masuk.user_id', '=', 'users.id')
+            ->leftJoin('absensis as keluar', function ($join) {
+                $join
+                    ->on('masuk.user_id', '=', 'keluar.user_id')
+                    ->on('masuk.tanggal', '=', 'keluar.tanggal')
+                    ->where('keluar.jenis_absen', '=', 'Keluar');
+            })
+            ->where('masuk.jenis_absen', 'Masuk')
+            ->where('masuk.user_id', auth()->user()->id);
 
-            return DataTables::of($data)
-                ->addIndexColumn()
-                ->addColumn('status_masuk', function ($row) {
-                    if ($row->ontime_masuk == 'Y') {
-                        return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
-                    } else {
-                        return '<span class="badge bg-red text-red-fg">Terlambat</span>';
-                    }
-                })
-                ->addColumn('foto_masuk', function ($row) {
-                    $foto = $row->selfie_photo_masuk;
-                    $lokasi = $row->lokasi_masuk;
-
-                    if ($foto) {
-                        return '<button class="btn btn-sm btn-info preview-foto"
-                        data-foto="' . $foto . '"
-                        data-lokasi="' . e($lokasi) . '"
-                        data-title="Foto Masuk">
-                    <i class="fas fa-eye"></i> Preview
-                </button>';
-                    }
-
-                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
-                })
-                ->addColumn('foto_keluar', function ($row) {
-                    $foto = $row->selfie_photo_keluar;
-                    $lokasi = $row->lokasi_keluar;
-
-                    if ($foto) {
-                        return '<button class="btn btn-sm btn-info preview-foto"
-                        data-foto="' . $foto . '"
-                        data-lokasi="' . e($lokasi) . '"
-                        data-title="Foto Keluar">
-                    <i class="fas fa-eye"></i> Preview
-                </button>';
-                    }
-
-                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
-                })
-                ->editColumn('tanggal', function ($row) {
-                    return \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y');
-                })
-                ->editColumn('jam_masuk', function ($row) {
-                    return $row->jam_masuk ?? '-';
-                })
-                ->editColumn('jam_keluar', function ($row) {
-                    return $row->jam_keluar ?? '-';
-                })
-                ->rawColumns(['status_masuk', 'foto_masuk', 'foto_keluar'])
-                ->make(true);
+        // Filter berdasarkan bulan jika ada parameter bulan
+        if ($request->has('bulan') && !empty($request->bulan)) {
+            $tahun = $request->tahun ?? date('Y'); // Default tahun sekarang jika tidak ada
+            $query->whereYear('masuk.tanggal', $tahun)
+                ->whereMonth('masuk.tanggal', $request->bulan);
         }
 
-        return view('absensi.history');
+        $data = $query->orderBy('masuk.tanggal', 'desc')
+            ->orderBy('masuk.user_id')
+            ->get();
+
+        // Hitung statistik untuk bulan yang dipilih
+        $stats = $this->calculateStats($data, $request->bulan, $request->tahun);
+
+        // Jika request AJAX, return JSON
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'stats' => $stats
+            ]);
+        }
+
+        return view('karyawan.absen.history', compact('data', 'stats'));
+    }
+
+    private function calculateStats($data, $bulan = null, $tahun = null)
+    {
+        $currentYear = $tahun ?? date('Y');
+        $currentMonth = $bulan ?? date('m');
+
+        // Query untuk mendapatkan semua data absensi dalam bulan yang dipilih
+        $monthlyData = DB::table('absensis')
+            ->where('user_id', auth()->user()->id)
+            ->whereYear('tanggal', $currentYear)
+            ->whereMonth('tanggal', $currentMonth)
+            ->get();
+
+        // Hitung jumlah hari kerja dalam bulan (exclude weekend)
+        $startOfMonth = \Carbon\Carbon::create($currentYear, $currentMonth, 1);
+        $endOfMonth = $startOfMonth->copy()->endOfMonth();
+        $workingDays = 0;
+
+        for ($date = $startOfMonth->copy(); $date <= $endOfMonth; $date->addDay()) {
+            if (!$date->isWeekend()) {
+                $workingDays++;
+            }
+        }
+
+        // Hitung statistik
+        $presentDays = $monthlyData->where('jenis_absen', 'Masuk')->unique('tanggal')->count();
+        $lateDays = $monthlyData->where('jenis_absen', 'Masuk')->where('ontime', 'Terlambat')->count();
+        $noClockIn = $workingDays - $presentDays;
+        $noClockOut = $monthlyData->where('jenis_absen', 'Masuk')
+            ->filter(function ($item) use ($monthlyData) {
+                return !$monthlyData->where('tanggal', $item->tanggal)
+                    ->where('jenis_absen', 'Keluar')
+                    ->count();
+            })->count();
+
+        return [
+            'absent' => $noClockIn,
+            'late_clockin' => $lateDays,
+            'no_clockin' => $noClockIn,
+            'no_clockout' => $noClockOut
+        ];
     }
 
     /**
@@ -603,6 +609,8 @@ class AbsensiController extends Controller
                 'masuk.id as id_masuk',
                 'masuk.user_id',
                 'shift_kerjas.nama_shift as NamaShifitMasuk',
+                'shift_kerjas.jam_masuk as jam_masuk_shift',
+                'shift_kerjas.jam_keluar as jam_keluar_shift',
                 'users.name as nama_karyawan',
                 'masuk.tanggal',
                 'masuk.waktu_absen as jam_masuk',
