@@ -17,7 +17,7 @@
         <div class="header">
             <div class="user-info">
                 <div class="avatar">
-                    <img src="/api/placeholder/100/100" alt="User Avatar">
+                    <i class="fas fa-user-circle fa-5x"></i>
                 </div>
                 <div>
                     <div class="user-name">Hi, {{ $user->name }} <span class="user-verified">👋</span></div>

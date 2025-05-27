@@ -23,6 +23,7 @@ class HomeController extends Controller
     {
         $this->middleware('auth');
     }
+
     public function index(): View
     {
         if (auth()->user()->hasRole('admin')) {
@@ -37,7 +38,6 @@ class HomeController extends Controller
             $dataKaryawan = User::with('getPerusahaan')->where('id', auth()->user()->id)->first();
             $shift = ShiftKerja::get();
 
-
             return view('home', compact('AbsenKu', 'countKaryawan', 'countOntime', 'total', 'CountIzin', 'dataKaryawan', 'shift', 'CekMasuk', 'CekKeluar'));
         } else {
             $user = User::with([
@@ -47,8 +47,10 @@ class HomeController extends Controller
                 'getShift',
                 'getPerusahaan'
             ])->find(auth()->user()->id);
-            // dd($user);
-            return view('karyawan.index', compact('user'));
+            $Masuk = Absensi::where('jenis_absen', 'Masuk')->where('kehadiran', 'H')->count();
+            $Cuti = Absensi::where('jenis_absen', 'Masuk')->where('kehadiran', 'C')->count();
+
+            return view('karyawan.index', compact('user', 'Masuk', 'Cuti'));
         }
     }
 }

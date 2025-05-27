@@ -41,7 +41,7 @@
                 </div>
                 <div class="summary-label">Hadir</div>
                 <div class="summary-value">
-                    <span class="summary-number">23</span>
+                    <span class="summary-number">{{ $Masuk }}</span>
                     <span class="summary-unit">hari</span>
                     <i class="fas fa-arrow-up trend-up"></i>
                 </div>
@@ -53,7 +53,7 @@
                 </div>
                 <div class="summary-label">Izin</div>
                 <div class="summary-value">
-                    <span class="summary-number">0</span>
+                    <span class="summary-number">{{ $Cuti }}</span>
                     <span class="summary-unit">hari</span>
                     <i class="fas fa-arrow-up trend-up"></i>
                 </div>
@@ -65,7 +65,7 @@
                 </div>
                 <div class="summary-label">Saldo Cuti</div>
                 <div class="summary-value">
-                    <span class="summary-number">0</span>
+                    <span class="summary-number">{{ 12 - $Cuti }}</span>
                     <span class="summary-unit">hari</span>
                     <i class="fas fa-arrow-up trend-up"></i>
                 </div>
