@@ -52,7 +52,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('/absen/acc-cuti', [AbsensiController::class, 'accCuti'])->name('absen.accCuti');
         Route::get('/absen/history', [AbsensiController::class, 'history'])->name('absen.history');
         Route::get('/berhasil-absen', [AbsensiController::class, 'AbsenSukses'])->name('absen.sukses');
+        // mobile
         Route::get('/absen', [AbsensiController::class, 'PageAbsen'])->name('absen.PageAbsen');
+        Route::get('/history-absen', [AbsensiController::class, 'historyMobile'])->name('absen.RiwayatAbsen');
     });
     Route::prefix('shift')->group(function () {
         Route::GET('/', [ShiftKerjaController::class, 'index'])->name('shift.index');

@@ -3,56 +3,7 @@
     @push('css')
         <link rel="stylesheet" href="{{ asset('assets/css/custom-css/index.css') }}">
     @endpush
-    <div class="header">
-        <div class="user-info">
-            <div class="avatar">
-                <img src="/api/placeholder/100/100" alt="User Avatar">
-            </div>
-            <div>
-                <div class="user-name">Hi, {{ $user->name }} <span class="user-verified">👋</span></div>
-                <div class="user-position">{{ $user->jabatan }} di {{ $user->getPerusahaan->Nama }}</div>
-            </div>
-        </div>
-        <div class="header-icons">
-            <i class="fas fa-bell icon"></i>
-            <i class="fas fa-bars icon" id="menuToggle"></i>
-        </div>
-    </div>
 
-    <!-- Dropdown Menu -->
-    <div class="dropdown-menu" id="dropdownMenu">
-        <div class="menu-item active">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-check"></i>
-            <span>Absensi</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-umbrella-beach"></i>
-            <span>Izin / Cuti</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-history"></i>
-            <span>Riwayat</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Kalender Kerja</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-user-cog"></i>
-            <span>Pengaturan Akun</span>
-        </div>
-        <div class="menu-item">
-            <i class="fas fa-headset"></i>
-            <span>Bantuan Kontak HR</span>
-        </div>
-        <div class="close-menu">
-            <i class="fas fa-times"></i>
-        </div>
-    </div>
 
     <!-- Date Bar -->
     <div class="date-bar">
@@ -161,34 +112,6 @@
                 </div>
                 <div class="menu-label">Slip Gaji</div>
             </div>
-        </div>
-    </div>
-
-    <div class="nav-spacer"></div>
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-        <div class="nav-item">
-            <div class="nav-icon normal">
-                <i class="fas fa-home"></i>
-            </div>
-            <div class="nav-label active">Home</div>
-        </div>
-
-        <div class="nav-item">
-            <a href="{{ route('absen.PageAbsen') }}">
-                <div class="nav-icon">
-                    <i class="fas fa-fingerprint"></i>
-                </div>
-                <div class="nav-label">Absensi</div>
-            </a>
-        </div>
-
-        <div class="nav-item">
-            <div class="nav-icon normal">
-                <i class="fas fa-list-alt"></i>
-            </div>
-            <div class="nav-label">Data Absensi</div>
         </div>
     </div>
 @endsection

@@ -12,13 +12,13 @@ use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel;
-use Yajra\DataTables\Facades\DataTables;
-use DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
+use DB;
 
 class AbsensiController extends Controller
 {
@@ -60,7 +60,8 @@ class AbsensiController extends Controller
                 )
                 ->join('users', 'masuk.user_id', '=', 'users.id')
                 ->leftJoin('absensis as keluar', function ($join) {
-                    $join->on('masuk.user_id', '=', 'keluar.user_id')
+                    $join
+                        ->on('masuk.user_id', '=', 'keluar.user_id')
                         ->on('masuk.tanggal', '=', 'keluar.tanggal')
                         ->where('keluar.jenis_absen', '=', 'Keluar');
                 })
@@ -145,8 +146,6 @@ class AbsensiController extends Controller
 
                     return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
                 })
-
-
                 ->editColumn('tanggal', function ($row) {
                     return Carbon::parse($row->tanggal)->format('d/m/Y');
                 })
@@ -223,7 +222,8 @@ class AbsensiController extends Controller
                 )
                 ->join('users', 'masuk.user_id', '=', 'users.id')
                 ->leftJoin('absensis as keluar', function ($join) {
-                    $join->on('masuk.user_id', '=', 'keluar.user_id')
+                    $join
+                        ->on('masuk.user_id', '=', 'keluar.user_id')
                         ->on('masuk.tanggal', '=', 'keluar.tanggal')
                         ->where('keluar.jenis_absen', '=', 'Keluar');
                 })
@@ -271,7 +271,6 @@ class AbsensiController extends Controller
 
                     return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
                 })
-
                 ->editColumn('tanggal', function ($row) {
                     return \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y');
                 })
@@ -288,6 +287,105 @@ class AbsensiController extends Controller
         return view('absensi.history');
     }
 
+    public function historyMobile(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = DB::table('absensis as masuk')
+                ->select(
+                    'masuk.id as id_masuk',
+                    'masuk.user_id',
+                    'users.name as nama_karyawan',
+                    'masuk.tanggal',
+                    'masuk.waktu_absen as jam_masuk',
+                    'masuk.jenis_absen as jenis_absen_masuk',
+                    'masuk.ontime as ontime_masuk',
+                    'masuk.keterangan as keterangan_masuk',
+                    'masuk.approval as approval_masuk',
+                    'masuk.file_pendukung as file_pendukung_masuk',
+                    'masuk.selfie_photo as selfie_photo_masuk',
+                    'masuk.lokasi as lokasi_masuk',
+                    'masuk.latitude as latitude_masuk',
+                    'masuk.longitude as longitude_masuk',
+                    'masuk.ip_address as ip_address_masuk',
+                    'keluar.id as id_keluar',
+                    'keluar.waktu_absen as jam_keluar',
+                    'keluar.jenis_absen as jenis_absen_keluar',
+                    'keluar.ontime as ontime_keluar',
+                    'keluar.keterangan as keterangan_keluar',
+                    'keluar.approval as approval_keluar',
+                    'keluar.file_pendukung as file_pendukung_keluar',
+                    'keluar.selfie_photo as selfie_photo_keluar',
+                    'keluar.lokasi as lokasi_keluar',
+                    'keluar.latitude as latitude_keluar',
+                    'keluar.longitude as longitude_keluar',
+                    'keluar.ip_address as ip_address_keluar'
+                )
+                ->join('users', 'masuk.user_id', '=', 'users.id')
+                ->leftJoin('absensis as keluar', function ($join) {
+                    $join
+                        ->on('masuk.user_id', '=', 'keluar.user_id')
+                        ->on('masuk.tanggal', '=', 'keluar.tanggal')
+                        ->where('keluar.jenis_absen', '=', 'Keluar');
+                })
+                ->where('masuk.jenis_absen', 'Masuk')
+                ->where('masuk.user_id', auth()->user()->id)
+                ->orderBy('masuk.tanggal', 'desc')
+                ->orderBy('masuk.user_id');
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('status_masuk', function ($row) {
+                    if ($row->ontime_masuk == 'Y') {
+                        return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
+                    } else {
+                        return '<span class="badge bg-red text-red-fg">Terlambat</span>';
+                    }
+                })
+                ->addColumn('foto_masuk', function ($row) {
+                    $foto = $row->selfie_photo_masuk;
+                    $lokasi = $row->lokasi_masuk;
+
+                    if ($foto) {
+                        return '<button class="btn btn-sm btn-info preview-foto"
+                        data-foto="' . $foto . '"
+                        data-lokasi="' . e($lokasi) . '"
+                        data-title="Foto Masuk">
+                    <i class="fas fa-eye"></i> Preview
+                </button>';
+                    }
+
+                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                })
+                ->addColumn('foto_keluar', function ($row) {
+                    $foto = $row->selfie_photo_keluar;
+                    $lokasi = $row->lokasi_keluar;
+
+                    if ($foto) {
+                        return '<button class="btn btn-sm btn-info preview-foto"
+                        data-foto="' . $foto . '"
+                        data-lokasi="' . e($lokasi) . '"
+                        data-title="Foto Keluar">
+                    <i class="fas fa-eye"></i> Preview
+                </button>';
+                    }
+
+                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                })
+                ->editColumn('tanggal', function ($row) {
+                    return \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y');
+                })
+                ->editColumn('jam_masuk', function ($row) {
+                    return $row->jam_masuk ?? '-';
+                })
+                ->editColumn('jam_keluar', function ($row) {
+                    return $row->jam_keluar ?? '-';
+                })
+                ->rawColumns(['status_masuk', 'foto_masuk', 'foto_keluar'])
+                ->make(true);
+        }
+
+        return view('absensi.history');
+    }
 
     /**
      * Menyimpan absensi baru.
@@ -303,7 +401,6 @@ class AbsensiController extends Controller
     //     } elseif ($request->jenis_absen == 'Keluar') {
     //         $waktu_absen = $shift->jam_keluar->format('H:i:s');
     //     }
-
     //     if ($request->hasFile('file_pendukung')) {
     //         $file = $request->file('file_pendukung');
     //         $filename = time() . '.' . $file->getClientOriginalExtension();
@@ -320,7 +417,6 @@ class AbsensiController extends Controller
     //     $image = str_replace(' ', '+', $image);
     //     $file = "A" . uniqid() . '.png';
     //     Storage::disk('public/foto_absen')->put($file, base64_decode($image));
-
     //     $data['shift_id'] = $request->shift_id;
     //     $data['tanggal'] = now()->format('Y-m-d');
     //     $data['waktu_absen'] = now()->format('H:i:s');
@@ -335,7 +431,6 @@ class AbsensiController extends Controller
     //     $data['longitude'] = $request->longitude ?? null;
     //     $data['user_id'] = auth()->user()->id;
     //     Absensi::create($data);
-
     //     return view('absensi.sukses');
     // }
     public function store(Request $request)
@@ -375,8 +470,7 @@ class AbsensiController extends Controller
             // Determine if on time or late
             $shiftStartOriginal = Carbon::createFromFormat('H:i:s', $shift->jam_masuk);
             $ontime = $now->format('H:i:s') <= $shiftStartOriginal->format('H:i:s') ? 'Y' : 'N';
-
-        } else { // checkout
+        } else {  // checkout
             // Check if has checked in today
             $hasCheckin = $todayAttendances->where('jenis_absen', 'Masuk')->first();
             if (!$hasCheckin) {
@@ -395,7 +489,7 @@ class AbsensiController extends Controller
                 ], 400);
             }
 
-            $ontime = 'Y'; // Checkout is always considered on time
+            $ontime = 'Y';  // Checkout is always considered on time
         }
 
         // Handle photo upload
@@ -451,6 +545,7 @@ class AbsensiController extends Controller
             ]
         ]);
     }
+
     /**
      * Menyimpan absensi cuti.
      */
@@ -534,10 +629,12 @@ class AbsensiController extends Controller
                 'keluar.latitude as latitude_keluar',
                 'keluar.longitude as longitude_keluar',
                 'keluar.ip_address as ip_address_keluar'
-            )->join('users', 'masuk.user_id', '=', 'users.id')
+            )
+            ->join('users', 'masuk.user_id', '=', 'users.id')
             ->join('shift_kerjas', 'masuk.shift_id', '=', 'shift_kerjas.id')
             ->leftJoin('absensis as keluar', function ($join) {
-                $join->on('masuk.user_id', '=', 'keluar.user_id')
+                $join
+                    ->on('masuk.user_id', '=', 'keluar.user_id')
                     ->on('masuk.tanggal', '=', 'keluar.tanggal')
                     ->where('keluar.jenis_absen', '=', 'Keluar');
             })
