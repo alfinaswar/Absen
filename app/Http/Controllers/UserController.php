@@ -68,7 +68,6 @@ class UserController extends Controller
         return view('users.create', compact('roles', 'status', 'shift', 'perusahaan'));
     }
 
-
     public function store(Request $request): RedirectResponse
     {
         $input = $request->all();
@@ -82,6 +81,7 @@ class UserController extends Controller
     public function edit($id): View
     {
         $user = User::find($id);
+        // dd($user);
         $roles = Role::all();
         $status = MasterStatusPegawai::all();
         $shift = ShiftKerja::all();
@@ -101,21 +101,24 @@ class UserController extends Controller
 
     public function update(Request $request, $id): RedirectResponse
     {
+        // Validasi bisa ditambahkan di sini kalau diperlukan
         $input = $request->all();
+
+        // Enkripsi password jika diisi
         if (!empty($input['password'])) {
-            $input['password'] = Hash::make($input['password']);
+            $input['password'] = bcrypt($input['password']);
         } else {
-            $input = Arr::except($input, array('password'));
+            unset($input['password']);
+        }
+        $user = User::findOrFail($id);
+        $user->update($input);
+
+        // Update roles
+        if ($request->has('role')) {
+            $user->syncRoles($request->input('role'));
         }
 
-        $user = User::find($id);
-        $user->update($input);
-        DB::table('model_has_roles')->where('model_id', $id)->delete();
-
-        $user->assignRole($request->input('roles'));
-        return redirect()
-            ->route('users.index')
-            ->with('success', 'Data Karyawan Berhasil Di Perbarui');
+        return redirect()->route('users.index')->with('success', 'Data Karyawan berhasil diperbarui.');
     }
 
     /**

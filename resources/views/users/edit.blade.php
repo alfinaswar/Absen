@@ -38,9 +38,11 @@
                                         <strong>Jenis Kelamin:</strong>
                                         <select name="jenis_kelamin" class="form-control">
                                             <option value="">Pilih Jenis Kelamin</option>
-                                            <option value="L" {{ $user->jenis_kelamin == 'L' ? 'selected' : '' }}>Laki-laki
+                                            <option value="L" {{ $user->jenis_kelamin == 'L' ? 'selected' : '' }}>
+                                                Laki-laki
                                             </option>
-                                            <option value="P" {{ $user->jenis_kelamin == 'P' ? 'selected' : '' }}>Perempuan
+                                            <option value="P" {{ $user->jenis_kelamin == 'P' ? 'selected' : '' }}>
+                                                Perempuan
                                             </option>
                                         </select>
                                     </div>
@@ -62,15 +64,14 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <strong>Alamat Domisili:</strong>
-                                        <textarea name="alamat_domisili" placeholder="Alamat Domisili" class="form-control"
-                                            rows="3">{{ $user->alamat_domisili }}</textarea>
+                                        <textarea name="alamat_domisili" placeholder="Alamat Domisili" class="form-control" rows="3">{{ $user->alamat_domisili }}</textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <strong>Nomor WhatsApp:</strong>
-                                        <input type="text" name="no_hp" placeholder="Nomor WhatsApp" class="form-control"
-                                            value="{{ $user->no_hp }}">
+                                        <input type="text" name="no_hp" placeholder="Nomor WhatsApp"
+                                            class="form-control" value="{{ $user->no_hp }}">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -92,7 +93,8 @@
                                         <select name="role" class="form-control">
                                             <option value="">Pilih Role</option>
                                             @foreach ($roles as $role)
-                                                <option value="{{ $role->id }}" {{ $user->roles()->pluck('id')->contains($role->id) ? 'selected' : '' }}>
+                                                <option value="{{ $role->id }}"
+                                                    @if ($user->role == $role->id) selected @endif>
                                                     {{ $role->name }}
                                                 </option>
                                             @endforeach
@@ -110,7 +112,9 @@
                                         <select name="IdPerusahaan" id="select-perusahaan" class="form-control">
                                             <option value="">Pilih Perusahaan</option>
                                             @foreach ($perusahaan as $per)
-                                                <option value="{{ $per->id }}" {{ $user->IdPerusahaan == $per->id ? 'selected' : '' }}>{{ $per->Nama }}</option>
+                                                <option value="{{ $per->id }}"
+                                                    {{ $user->IdPerusahaan == $per->id ? 'selected' : '' }}>
+                                                    {{ $per->Nama }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -142,7 +146,9 @@
                                         <select name="status_kepegawaian" class="form-control">
                                             <option value="">Pilih Status Karyawan</option>
                                             @foreach ($status as $st)
-                                                <option value="{{ $st->id }}" {{ $user->status_kepegawaian == $st->id ? 'selected' : '' }}>{{ $st->nama }}</option>
+                                                <option value="{{ $st->id }}"
+                                                    {{ $user->status_kepegawaian == $st->id ? 'selected' : '' }}>
+                                                    {{ $st->nama }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -152,8 +158,10 @@
                                         <strong>Status Kontrak:</strong>
                                         <select name="is_active" class="form-control">
                                             <option value="">Pilih Status Kontrak</option>
-                                            <option value="1" {{ $user->is_active == '1' ? 'selected' : '' }}>Aktif</option>
-                                            <option value="0" {{ $user->is_active == '0' ? 'selected' : '' }}>Tidak Aktif
+                                            <option value="1" {{ $user->is_active == '1' ? 'selected' : '' }}>Aktif
+                                            </option>
+                                            <option value="0" {{ $user->is_active == '0' ? 'selected' : '' }}>Tidak
+                                                Aktif
                                             </option>
                                         </select>
                                     </div>
@@ -178,7 +186,8 @@
                                         <select name="shift_kerja" class="form-control">
                                             <option value="">Pilih Shift Kerja</option>
                                             @foreach ($shift as $s)
-                                                <option value="{{ $s->id }}" {{ $user->shift_kerja == $s->id ? 'selected' : '' }}>
+                                                <option value="{{ $s->id }}"
+                                                    {{ $user->shift_kerja == $s->id ? 'selected' : '' }}>
                                                     {{ $s->nama_shift }}
                                                 </option>
                                             @endforeach
@@ -199,23 +208,24 @@
 @endsection
 @push('js')
     <script>
-
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             var el;
             window.TomSelect && (new TomSelect(el = document.getElementById('select-perusahaan'), {
                 copyClassesToDropdown: false,
                 dropdownParent: 'body',
                 controlInput: '<input>',
                 render: {
-                    item: function (data, escape) {
+                    item: function(data, escape) {
                         if (data.customProperties) {
-                            return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                            return '<div><span class="dropdown-item-indicator">' + data
+                                .customProperties + '</span>' + escape(data.text) + '</div>';
                         }
                         return '<div>' + escape(data.text) + '</div>';
                     },
-                    option: function (data, escape) {
+                    option: function(data, escape) {
                         if (data.customProperties) {
-                            return '<div><span class="dropdown-item-indicator">' + data.customProperties + '</span>' + escape(data.text) + '</div>';
+                            return '<div><span class="dropdown-item-indicator">' + data
+                                .customProperties + '</span>' + escape(data.text) + '</div>';
                         }
                         return '<div>' + escape(data.text) + '</div>';
                     },

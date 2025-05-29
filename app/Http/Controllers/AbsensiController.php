@@ -327,12 +327,14 @@ class AbsensiController extends Controller
 
         // Filter berdasarkan bulan jika ada parameter bulan
         if ($request->has('bulan') && !empty($request->bulan)) {
-            $tahun = $request->tahun ?? date('Y'); // Default tahun sekarang jika tidak ada
-            $query->whereYear('masuk.tanggal', $tahun)
+            $tahun = $request->tahun ?? date('Y');  // Default tahun sekarang jika tidak ada
+            $query
+                ->whereYear('masuk.tanggal', $tahun)
                 ->whereMonth('masuk.tanggal', $request->bulan);
         }
 
-        $data = $query->orderBy('masuk.tanggal', 'desc')
+        $data = $query
+            ->orderBy('masuk.tanggal', 'desc')
             ->orderBy('masuk.user_id')
             ->get();
 
@@ -378,12 +380,15 @@ class AbsensiController extends Controller
         $presentDays = $monthlyData->where('jenis_absen', 'Masuk')->unique('tanggal')->count();
         $lateDays = $monthlyData->where('jenis_absen', 'Masuk')->where('ontime', 'Terlambat')->count();
         $noClockIn = $workingDays - $presentDays;
-        $noClockOut = $monthlyData->where('jenis_absen', 'Masuk')
+        $noClockOut = $monthlyData
+            ->where('jenis_absen', 'Masuk')
             ->filter(function ($item) use ($monthlyData) {
-                return !$monthlyData->where('tanggal', $item->tanggal)
+                return !$monthlyData
+                    ->where('tanggal', $item->tanggal)
                     ->where('jenis_absen', 'Keluar')
                     ->count();
-            })->count();
+            })
+            ->count();
 
         return [
             'absent' => $noClockIn,
@@ -604,6 +609,7 @@ class AbsensiController extends Controller
      */
     public function download(Request $request)
     {
+        // dd($request->all());
         $data = DB::table('absensis as masuk')
             ->select(
                 'masuk.id as id_masuk',
@@ -659,6 +665,7 @@ class AbsensiController extends Controller
             ->orderBy('masuk.tanggal', 'desc')
             ->orderBy('masuk.user_id')
             ->get();
+        // dd($data);
 
         // Hapus dd() yang tidak diperlukan
 
@@ -677,6 +684,18 @@ class AbsensiController extends Controller
         } else {
             return redirect()->back()->with('error', 'Format laporan tidak valid.');
         }
+    }
+
+    public function TimeOff()
+    {
+        $user = User::with([
+            'getAbsensi' => function ($query) {
+                $query->whereDate('tanggal', now()->format('Y-m-d'));
+            },
+            'getShift',
+            'getPerusahaan'
+        ])->find(auth()->user()->id);
+        return view('karyawan.absen.time-off', compact('user'));
     }
 
     /**

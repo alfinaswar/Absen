@@ -751,7 +751,8 @@
         <div class="title">Absensi</div>
         <div class="header-icons">
             <div class="notification-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#000" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" />
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#000" stroke-width="2" stroke-linecap="round"
@@ -759,7 +760,8 @@
                 </svg>
             </div>
             <div class="menu-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 12h18M3 6h18M3 18h18" stroke="#000" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
@@ -779,11 +781,12 @@
             <div class="location-status" id="locationStatus">
                 <div id="locationText">Mendapatkan lokasi saat ini...</div>
                 <div class="accuracy">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="#666" stroke-width="2"
                             stroke-linecap="round" stroke-linejoin="round" />
-                        <circle cx="12" cy="10" r="3" stroke="#666" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
+                        <circle cx="12" cy="10" r="3" stroke="#666" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Akurasi <span id="accuracyText">-</span>
                 </div>
@@ -793,8 +796,10 @@
         <div class="date-info">
             <div class="date">
                 <div class="calendar-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="4" width="18" height="18" rx="2" stroke="#93331B" stroke-width="2" />
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="4" width="18" height="18" rx="2" stroke="#93331B"
+                            stroke-width="2" />
                         <path d="M16 2v4M8 2v4M3 10h18" stroke="#93331B" stroke-width="2" />
                     </svg>
                 </div>
@@ -807,14 +812,16 @@
 
         <div class="action-buttons">
             <div class="check-in">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" stroke="#233b81"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 Masuk <span class="check-in-time" id="checkInTime">-</span>
             </div>
             <div class="check-out">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                         d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1"
                         stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -825,14 +832,16 @@
 
         <div class="action-buttons" style="margin-top: 15px;">
             <div class="button-in" id="checkInButton">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="currentColor"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 Absen Masuk
             </div>
             <div class="button-out" id="checkOutButton">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M15 12H3" stroke="white"
                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
@@ -847,7 +856,8 @@
             <div class="modal-header">
                 <div class="modal-title" id="modalTitle">Absen Masuk</div>
                 <div class="close-modal" id="closeModal">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
                         <path d="M18 6L6 18M6 6l12 12" stroke="#000" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" />
                     </svg>
@@ -864,10 +874,9 @@
                         <select class="form-select" id="shift" name="shift_id" required>
                             <option value="">-- Pilih Shift --</option>
                             @foreach ($shift as $item)
-                                <option value="{{ $item->id }}" @if ($user->getShift->id == $item->id)
-                                    selected
-                                @endif>{{ $item->nama_shift }}, {{$item->jam_masuk}} -
-                                    {{$item->jam_keluar}}
+                                <option value="{{ $item->id }}" @if ($user->getShift->id == $item->id) selected @endif>
+                                    {{ $item->nama_shift }}, {{ $item->jam_masuk }} -
+                                    {{ $item->jam_keluar }}
                                 </option>
                             @endforeach
                         </select>
@@ -886,11 +895,13 @@
                                     <path
                                         d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
                                         stroke="currentColor" stroke-width="2" />
-                                    <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" />
+                                    <circle cx="12" cy="13" r="4" stroke="currentColor"
+                                        stroke-width="2" />
                                 </svg>
                                 Ambil Foto
                             </button>
-                            <button type="button" class="btn btn-secondary" id="retakeButton" style="display: none;">
+                            <button type="button" class="btn btn-secondary" id="retakeButton"
+                                style="display: none;">
                                 Ambil Ulang
                             </button>
                         </div>
@@ -1022,7 +1033,9 @@
                 shadowSize: [41, 41]
             });
 
-            officeMarker = L.marker([officeLocation.lat, officeLocation.lng], { icon: officeIcon }).addTo(map);
+            officeMarker = L.marker([officeLocation.lat, officeLocation.lng], {
+                icon: officeIcon
+            }).addTo(map);
             officeMarker.bindPopup("Lokasi Kantor").openPopup();
 
             // Add office radius
@@ -1054,8 +1067,7 @@
                         locationStatus.classList.add("outside");
                         accuracyText.textContent = "-";
                         showError("Tidak dapat mengakses lokasi Anda. Pastikan GPS aktif dan izin lokasi diberikan.");
-                    },
-                    {
+                    }, {
                         enableHighAccuracy: true,
                         timeout: 10000,
                         maximumAge: 0
@@ -1094,7 +1106,9 @@
                 [officeLocation.lat, officeLocation.lng],
                 [userLocation.lat, userLocation.lng]
             ]);
-            map.fitBounds(bounds, { padding: [50, 50] });
+            map.fitBounds(bounds, {
+                padding: [50, 50]
+            });
 
             // Update accuracy text
             accuracyText.textContent = `${locationAccuracy} Meter`;
@@ -1218,13 +1232,17 @@
         // Camera functions
         function startCamera() {
             navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: "user",
-                    width: { ideal: 640 },
-                    height: { ideal: 480 }
-                },
-                audio: false
-            })
+                    video: {
+                        facingMode: "user",
+                        width: {
+                            ideal: 640
+                        },
+                        height: {
+                            ideal: 480
+                        }
+                    },
+                    audio: false
+                })
                 .then((stream) => {
                     mediaStream = stream;
                     cameraFeed.srcObject = stream;
@@ -1330,7 +1348,8 @@
         function getLocationName(lat, lng) {
             return new Promise((resolve, reject) => {
                 // Using Nominatim (OpenStreetMap) reverse geocoding service
-                const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+                const geocodeUrl =
+                    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
 
                 fetch(geocodeUrl)
                     .then(response => response.json())
@@ -1343,7 +1362,8 @@
                             // Build location name from available components
                             if (address.road) locationName += address.road;
                             if (address.village || address.suburb) {
-                                locationName += (locationName ? ', ' : '') + (address.village || address.suburb);
+                                locationName += (locationName ? ', ' : '') + (address.village || address
+                                .suburb);
                             }
                             if (address.city || address.town) {
                                 locationName += (locationName ? ', ' : '') + (address.city || address.town);
@@ -1375,7 +1395,7 @@
 
             if (attendanceTypeInput.value === 'Masuk') {
                 formData.append('shift_id', shiftSelect.value);
-            }else{
+            } else {
                 formData.append('shift_id', shiftSelect.value);
             }
 
@@ -1384,13 +1404,13 @@
             formData.append('photo', photoBlob, 'selfie.jpg');
 
             // Submit to server using Fetch API
-            fetch('{{ route("absen.store") }}', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
+            fetch('{{ route('absen.store') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     loadingIndicator.style.display = 'none';
@@ -1420,7 +1440,9 @@
             while (n--) {
                 u8arr[n] = bstr.charCodeAt(n);
             }
-            return new Blob([u8arr], { type: mime });
+            return new Blob([u8arr], {
+                type: mime
+            });
         }
 
         // Update attendance status after successful submission

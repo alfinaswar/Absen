@@ -8,9 +8,9 @@
                     <div class="card-stamp">
                         <div class="card-stamp-icon bg-white text-primary">
                             <!-- Download SVG icon from http://tabler-icons.io/i/star -->
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                                stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                                stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                stroke-linecap="round" stroke-linejoin="round">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path
                                     d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z">
@@ -61,9 +61,9 @@
                                     <div class="col-auto">
                                         <span
                                             class="bg-green text-white avatar"><!-- Download SVG icon from http://tabler-icons.io/i/shopping-cart -->
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                                stroke-linecap="round" stroke-linejoin="round">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                 <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                                 <path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
                                                 <path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
@@ -123,9 +123,9 @@
                             <div class="card-body">
                                 <div class="row align-items-center">
                                     <div class="col-auto">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round"
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round"
                                             class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-cart-dollar">
                                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
                                             <path d="M4 19a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
@@ -173,8 +173,8 @@
                             <div class="row">
                                 @if ($CekMasuk != null)
                                     <div class="col-6">
-                                        <button class="btn btn-success w-100" id="btn-masuk" onclick="checkLocationMasuk()"
-                                            disabled>Absen
+                                        <button class="btn btn-success w-100" id="btn-masuk"
+                                            onclick="checkLocationMasuk()" disabled>Absen
                                             Masuk</button>
                                     </div>
                                 @else
@@ -274,7 +274,8 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-primary" id="capture-btn">Ambil Foto</button>
-                    <button type="button" class="btn btn-success" id="submit-photo" style="display: none;">Kirim</button>
+                    <button type="button" class="btn btn-success" id="submit-photo"
+                        style="display: none;">Kirim</button>
                     <button type="button" class="btn btn-warning" id="retake-photo" style="display: none;">Foto
                         Ulang</button>
                 </div>
@@ -350,9 +351,9 @@
         let confirmedInOfficeArea = false;
         let currentAbsenType = null;
         // Office coordinates (example - replace with your actual office coordinates)
-        const officeLatitude = {{$dataKaryawan->getPerusahaan->Latitude ?? '-6.2088'}}; // Jakarta example coordinate
-        const officeLongitude = {{$dataKaryawan->getPerusahaan->Longitude ?? '106.8456'}}; // Jakarta example coordinate
-        const maxDistanceMeters = 75; // Maximum allowed distance from office in meters
+        const officeLatitude = {{ $dataKaryawan->getPerusahaan->Latitude ?? '-6.2088' }}; // Jakarta example coordinate
+        const officeLongitude = {{ $dataKaryawan->getPerusahaan->Longitude ?? '106.8456' }}; // Jakarta example coordinate
+        const maxDistanceMeters = 9999; // Maximum allowed distance from office in meters
 
         // Camera variables
         let cameraStream = null;
@@ -360,7 +361,7 @@
         let cameraCanvas = null;
         let cameraOutput = null;
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Initialize the map
             map = L.map('map').setView([-6.2088, 106.8456], 15); // Default ke Jakarta
 
@@ -379,7 +380,9 @@
                 shadowSize: [41, 41]
             });
 
-            const officeMarker = L.marker([officeLatitude, officeLongitude], { icon: officeIcon }).addTo(map);
+            const officeMarker = L.marker([officeLatitude, officeLongitude], {
+                icon: officeIcon
+            }).addTo(map);
             officeMarker.bindPopup("Lokasi Kantor").openPopup();
 
             // Define allowed radius
@@ -394,7 +397,7 @@
             getUserLocation();
 
             // Set up the modal confirmation button
-            document.getElementById('confirm-btn').addEventListener('click', function () {
+            document.getElementById('confirm-btn').addEventListener('click', function() {
                 document.getElementById('attendance-form').submit();
             });
 
@@ -404,12 +407,12 @@
             cameraOutput = document.getElementById('camera-output');
 
             // Capture button click event
-            document.getElementById('capture-btn').addEventListener('click', function () {
+            document.getElementById('capture-btn').addEventListener('click', function() {
                 takeSelfie();
             });
 
             // Retake photo button
-            document.getElementById('retake-photo').addEventListener('click', function () {
+            document.getElementById('retake-photo').addEventListener('click', function() {
                 // Reset UI
                 document.getElementById('camera-output').style.display = 'none';
                 document.getElementById('camera-view').style.display = 'block';
@@ -419,7 +422,7 @@
             });
 
             // Submit photo button
-            document.getElementById('submit-photo').addEventListener('click', function () {
+            document.getElementById('submit-photo').addEventListener('click', function() {
                 const modal = new bootstrap.Modal(document.getElementById('confirmAttendanceModal'));
                 const cameraModal = bootstrap.Modal.getInstance(document.getElementById('cameraModal'));
 
@@ -432,15 +435,15 @@
 
                 // Show confirmation modal
                 document.getElementById('confirm-message').innerHTML =
-                    currentAbsenType === 'masuk'
-                        ? "Anda akan melakukan absen masuk. Lanjutkan?"
-                        : "Anda akan melakukan absen keluar. Lanjutkan?";
+                    currentAbsenType === 'masuk' ?
+                    "Anda akan melakukan absen masuk. Lanjutkan?" :
+                    "Anda akan melakukan absen keluar. Lanjutkan?";
 
                 modal.show();
             });
 
             // Handle camera modal closing
-            document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function () {
+            document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function() {
                 stopCamera();
             });
         });
@@ -448,7 +451,7 @@
         function getUserLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    function (position) {
+                    function(position) {
                         userLatitude = position.coords.latitude;
                         userLongitude = position.coords.longitude;
 
@@ -484,13 +487,14 @@
                             confirmedInOfficeArea = false;
                         }
                     },
-                    function (error) {
+                    function(error) {
                         console.error("Error getting location: ", error);
                         document.getElementById('location-status').className = 'alert alert-danger';
                         document.getElementById('location-status').innerHTML =
                             `<strong>Error!</strong> Tidak dapat mengakses lokasi Anda. ${error.message}`;
-                    },
-                    { enableHighAccuracy: true }
+                    }, {
+                        enableHighAccuracy: true
+                    }
                 );
             } else {
                 document.getElementById('location-status').className = 'alert alert-danger';
@@ -592,18 +596,22 @@
             // Start the camera
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: "user",
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    },
-                    audio: false
-                })
-                    .then(function (stream) {
+                        video: {
+                            facingMode: "user",
+                            width: {
+                                ideal: 1280
+                            },
+                            height: {
+                                ideal: 720
+                            }
+                        },
+                        audio: false
+                    })
+                    .then(function(stream) {
                         cameraStream = stream;
                         cameraView.srcObject = stream;
                     })
-                    .catch(function (error) {
+                    .catch(function(error) {
                         console.error("Camera error: ", error);
                         Swal.fire({
                             icon: 'error',
@@ -658,12 +666,12 @@
         }
 
         // Update the clock every second
-        setInterval(function () {
+        setInterval(function() {
             document.getElementById('current-time').innerHTML = new Date().toLocaleTimeString();
         }, 1000);
 
         // Refresh location every 30 seconds
-        setInterval(function () {
+        setInterval(function() {
             getUserLocation();
         }, 30000);
     </script>

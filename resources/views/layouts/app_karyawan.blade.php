@@ -41,8 +41,10 @@
                 <span>Absensi</span>
             </div>
             <div class="menu-item">
-                <i class="fas fa-umbrella-beach"></i>
-                <span>Izin / Cuti</span>
+                <a href="{{ route('absen.TimeOff') }}">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <span>Izin / Cuti</span>
+                </a>
             </div>
             <div class="menu-item">
                 <i class="fas fa-history"></i>

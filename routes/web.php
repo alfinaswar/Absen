@@ -55,6 +55,7 @@ Route::group(['middleware' => ['auth']], function () {
         // mobile
         Route::get('/absen', [AbsensiController::class, 'PageAbsen'])->name('absen.PageAbsen');
         Route::get('/history-absen', [AbsensiController::class, 'historyMobile'])->name('absen.RiwayatAbsen');
+        Route::get('/time-off', [AbsensiController::class, 'TimeOff'])->name('absen.TimeOff');
     });
     Route::prefix('shift')->group(function () {
         Route::GET('/', [ShiftKerjaController::class, 'index'])->name('shift.index');

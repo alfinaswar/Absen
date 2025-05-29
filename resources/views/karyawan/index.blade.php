@@ -17,17 +17,24 @@
     <div class="attendance-controls">
         <div class="attendance-button fw-bold">
             <i class="fas fa-sign-in-alt"></i>
-            <div>Masuk
-                {{ \Carbon\Carbon::parse($user->getAbsensi->first()->waktu_absen ?? '')->format('H:i') }}
+            <div>
+                Masuk
+                {{ optional($user->getAbsensi->first())->waktu_absen
+                    ? \Carbon\Carbon::parse($user->getAbsensi->first()->waktu_absen)->format('H:i')
+                    : '-' }}
             </div>
         </div>
         <div class="attendance-button">
             <i class="fas fa-sign-out-alt"></i>
-            <div>Pulang
-                {{ \Carbon\Carbon::parse($user->getAbsensi->last()->waktu_absen ?? '')->format('H:i') }}
+            <div>
+                Pulang
+                {{ optional($user->getAbsensi->last())->waktu_absen
+                    ? \Carbon\Carbon::parse($user->getAbsensi->last()->waktu_absen)->format('H:i')
+                    : '-' }}
             </div>
         </div>
     </div>
+
 
     <!-- Monthly Summary -->
     <div class="monthly-summary">
@@ -78,10 +85,12 @@
         <div class="section-title">Menu Utama</div>
         <div class="menu-grid">
             <div class="menu-item">
-                <div class="menu-icon">
-                    <i class="fas fa-calendar-alt"></i>
-                </div>
-                <div class="menu-label">Izin</div>
+                <a href="{{ route('absen.TimeOff') }}">
+                    <div class="menu-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="menu-label">Izin</div>
+                </a>
             </div>
 
             <div class="menu-item">

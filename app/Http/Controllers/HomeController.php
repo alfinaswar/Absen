@@ -26,7 +26,8 @@ class HomeController extends Controller
 
     public function index(): View
     {
-        if (auth()->user()->hasRole('admin')) {
+        // dd(auth()->user()->getRoleNames());
+        if (auth()->user()->hasRole('Admin')) {
             $countKaryawan = User::count();
             $tanggalHariIni = now()->format('Y-m-d');
             $countOntime = Absensi::where('waktu_absen', '<=', '08:00:00')->whereDate('created_at', $tanggalHariIni)->count();
