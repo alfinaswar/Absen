@@ -604,6 +604,10 @@ class AbsensiController extends Controller
         return view('karyawan.absen.index', compact('user', 'shift'));
     }
 
+    public function FormCuti()
+    {
+        return view('karyawan.absen.cuti');
+    }
     /**
      * Mengunduh laporan absensi dalam format Excel.
      */

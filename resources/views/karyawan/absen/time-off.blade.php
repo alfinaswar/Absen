@@ -260,8 +260,7 @@
         <div class="title">Pengajuan Cuti</div>
         <div class="header-icons">
             <div class="notification-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#000" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" />
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#000" stroke-width="2" stroke-linecap="round"
@@ -269,8 +268,7 @@
                 </svg>
             </div>
             <div class="menu-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 12h18M3 6h18M3 18h18" stroke="#000" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
@@ -375,45 +373,45 @@
     <script>
         // Sample data untuk demo
         const sampleCutiData = [{
-                id: 1,
-                tanggal_mulai: '2024-05-15',
-                tanggal_selesai: '2024-05-17',
-                jenis_cuti: 'Cuti Tahunan',
-                status: 'approved',
-                durasi: 3,
-                keterangan: 'Liburan keluarga'
-            },
-            {
-                id: 2,
-                tanggal_mulai: '2024-05-10',
-                tanggal_selesai: '2024-05-10',
-                jenis_cuti: 'Cuti Sakit',
-                status: 'pending',
-                durasi: 1,
-                keterangan: 'Demam tinggi'
-            },
-            {
-                id: 3,
-                tanggal_mulai: '2024-04-20',
-                tanggal_selesai: '2024-04-22',
-                jenis_cuti: 'Cuti Tahunan',
-                status: 'approved',
-                durasi: 3,
-                keterangan: 'Acara keluarga'
-            },
-            {
-                id: 4,
-                tanggal_mulai: '2024-04-05',
-                tanggal_selesai: '2024-04-05',
-                jenis_cuti: 'Cuti Pribadi',
-                status: 'rejected',
-                durasi: 1,
-                keterangan: 'Keperluan pribadi'
-            }
+            id: 1,
+            tanggal_mulai: '2024-05-15',
+            tanggal_selesai: '2024-05-17',
+            jenis_cuti: 'Cuti Tahunan',
+            status: 'approved',
+            durasi: 3,
+            keterangan: 'Liburan keluarga'
+        },
+        {
+            id: 2,
+            tanggal_mulai: '2024-05-10',
+            tanggal_selesai: '2024-05-10',
+            jenis_cuti: 'Cuti Sakit',
+            status: 'pending',
+            durasi: 1,
+            keterangan: 'Demam tinggi'
+        },
+        {
+            id: 3,
+            tanggal_mulai: '2024-04-20',
+            tanggal_selesai: '2024-04-22',
+            jenis_cuti: 'Cuti Tahunan',
+            status: 'approved',
+            durasi: 3,
+            keterangan: 'Acara keluarga'
+        },
+        {
+            id: 4,
+            tanggal_mulai: '2024-04-05',
+            tanggal_selesai: '2024-04-05',
+            jenis_cuti: 'Cuti Pribadi',
+            status: 'rejected',
+            durasi: 1,
+            keterangan: 'Keperluan pribadi'
+        }
         ];
 
         // Load data saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadInitialData();
         });
 
@@ -436,7 +434,7 @@
 
             // Show loading
             document.getElementById('cuti-table').innerHTML =
-            '<tr><td colspan="3" class="loading">Memuat data...</td></tr>';
+                '<tr><td colspan="3" class="loading">Memuat data...</td></tr>';
 
             // Simulate API delay
             setTimeout(() => {
@@ -489,7 +487,7 @@
                     'approved': 'Disetujui',
                     'pending': 'Menunggu',
                     'rejected': 'Ditolak'
-                } [item.status];
+                }[item.status];
 
                 const periode = item.tanggal_mulai === item.tanggal_selesai ?
                     tanggalMulai :
@@ -521,8 +519,8 @@
 
         function ajukanCuti() {
             // Redirect ke halaman form pengajuan cuti
-            alert('Redirect ke halaman form pengajuan cuti baru');
-            // window.location.href = '/cuti/create';
+
+            window.location.href = '{{ route('absen.formCuti') }}';
         }
 
         function detailCuti(id) {

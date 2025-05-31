@@ -4,6 +4,7 @@ use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AkunController;
 use App\Http\Controllers\DependantDropdownController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\JenisCutiController;
 use App\Http\Controllers\MasterPerusahaanController;
 use App\Http\Controllers\MasterStatusPegawaiController;
 use App\Http\Controllers\ProductController;
@@ -56,6 +57,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/absen', [AbsensiController::class, 'PageAbsen'])->name('absen.PageAbsen');
         Route::get('/history-absen', [AbsensiController::class, 'historyMobile'])->name('absen.RiwayatAbsen');
         Route::get('/time-off', [AbsensiController::class, 'TimeOff'])->name('absen.TimeOff');
+        Route::get('/form-time-off', [AbsensiController::class, 'FormCuti'])->name('absen.formCuti');
     });
     Route::prefix('shift')->group(function () {
         Route::GET('/', [ShiftKerjaController::class, 'index'])->name('shift.index');
@@ -65,6 +67,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::GET('/edit/{id}', [ShiftKerjaController::class, 'edit'])->name('shift.edit');
         Route::PUT('/update/{id}', [ShiftKerjaController::class, 'update'])->name('shift.update');
         Route::delete('/hapus/{id}', [ShiftKerjaController::class, 'destroy'])->name('shift.destroy');
+    });
+    Route::prefix('master-cuti')->group(function () {
+        Route::GET('/', [JenisCutiController::class, 'index'])->name('cuti.index');
+        Route::GET('/create', [JenisCutiController::class, 'create'])->name('cuti.create');
+        Route::post('/simpan', [JenisCutiController::class, 'store'])->name('cuti.store');
+        Route::POST('/simpan-cuti', [JenisCutiController::class, 'Cutistore'])->name('cuti.Cutistore');
+        Route::GET('/edit/{id}', [JenisCutiController::class, 'edit'])->name('cuti.edit');
+        Route::PUT('/update/{id}', [JenisCutiController::class, 'update'])->name('cuti.update');
+        Route::delete('/hapus/{id}', [JenisCutiController::class, 'destroy'])->name('cuti.destroy');
     });
     Route::prefix('users')->group(function () {
         Route::GET('/edit-profile/{id}', [UserController::class, 'UpdateProfile'])->name('users.update-profile');

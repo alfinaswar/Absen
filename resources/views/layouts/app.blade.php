@@ -272,10 +272,13 @@
                                                 Perusahaan
                                             </a>
                                             <a class="dropdown-item" href="{{ route('master-status-pegawai.index') }}">
-                                                Status Kepegawaiyan
+                                                Status Kepegweawaiyan
                                             </a>
                                             <a class="dropdown-item" href="{{ route('shift.index') }}">
                                                 Shift Kerja
+                                            </a>
+                                            <a class="dropdown-item" href="{{ route('cuti.index') }}">
+                                                Jenis Cuti
                                             </a>
                                         </div>
                                     </div>
