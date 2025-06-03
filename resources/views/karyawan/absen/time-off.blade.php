@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengajuan Cuti</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>Form Pengajuan Cuti</title>
     <style>
         body {
             margin: 0;
@@ -65,33 +68,44 @@
         .card-title {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             color: #1f2937;
         }
 
-        .saldo-cuti {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
-            margin: -20px -20px 20px -20px;
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .saldo-title {
+        .form-label {
+            display: block;
+            font-weight: 500;
             font-size: 14px;
-            opacity: 0.9;
+            color: #374151;
             margin-bottom: 8px;
         }
 
-        .saldo-number {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 5px;
+        .required {
+            color: #ef4444;
         }
 
-        .saldo-subtitle {
-            font-size: 12px;
-            opacity: 0.8;
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-control:invalid {
+            border-color: #ef4444;
         }
 
         .form-select {
@@ -102,9 +116,30 @@
             font-size: 14px;
             background: white;
             transition: border-color 0.2s;
+            box-sizing: border-box;
+            cursor: pointer;
         }
 
         .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .form-textarea:focus {
             outline: none;
             border-color: #3b82f6;
         }
@@ -115,9 +150,9 @@
             margin: -10px;
         }
 
-        .col-3 {
-            flex: 0 0 25%;
-            max-width: 25%;
+        .col-6 {
+            flex: 0 0 50%;
+            max-width: 50%;
             padding: 10px;
         }
 
@@ -127,124 +162,123 @@
             padding: 10px;
         }
 
-        .stat-card {
-            text-align: center;
-            padding: 15px 10px;
-            background: #f8fafc;
+        .info-card {
+            background: #f0f9ff;
+            border: 1px solid #bfdbfe;
             border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .stat-label {
-            font-weight: 500;
-            font-size: 11px;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .stat-number {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .table {
-            width: 100%;
-            margin-bottom: 0;
-        }
-
-        .table td {
             padding: 15px;
-            border-bottom: 1px solid #f3f4f6;
-            vertical-align: middle;
+            margin-bottom: 20px;
         }
 
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .date-cell {
+        .info-card-title {
             font-weight: 600;
-            color: #1f2937;
+            color: #1e40af;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .type-cell {
-            color: #6b7280;
+        .info-card-text {
+            color: #1e40af;
             font-size: 14px;
+            line-height: 1.5;
         }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-approved {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status-pending {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-rejected {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px 20px;
-            color: #6b7280;
-        }
-
-        .floating-button {
+        .floating-buttons {
             position: fixed;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             width: calc(100% - 40px);
             max-width: 400px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            flex: 2;
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 16px 24px;
+            border-radius: 10px;
+            padding: 14px 20px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
             transition: all 0.2s;
-            z-index: 1000;
         }
 
-        .floating-button:hover {
-            transform: translateX(-50%) translateY(-2px);
+        .btn-primary:hover {
+            transform: translateY(-2px);
             box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
         }
 
-        .floating-button:active {
-            transform: translateX(-50%) translateY(0);
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
+        .form-help {
+            font-size: 12px;
             color: #6b7280;
+            margin-top: 5px;
         }
 
-        .empty-icon {
-            width: 64px;
-            height: 64px;
-            margin: 0 auto 16px;
-            opacity: 0.5;
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .date-range-display {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .date-range-text {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .date-range-duration {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .col-6 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -257,10 +291,11 @@
                     stroke-linejoin="round" />
             </svg>
         </div>
-        <div class="title">Pengajuan Cuti</div>
+        <div class="title">Form Pengajuan Cuti</div>
         <div class="header-icons">
             <div class="notification-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="#000" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" />
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="#000" stroke-width="2" stroke-linecap="round"
@@ -268,7 +303,8 @@
                 </svg>
             </div>
             <div class="menu-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path d="M3 12h18M3 6h18M3 18h18" stroke="#000" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round" />
                 </svg>
@@ -277,258 +313,121 @@
     </div>
 
     <div class="page-body">
-        <!-- Saldo Cuti Card -->
-        <div class="card">
-            <div class="card-body">
-                <div class="saldo-cuti">
-                    <div class="saldo-title">Sisa Saldo Cuti</div>
-                    <div class="saldo-number" id="saldo-cuti">12</div>
-                    <div class="saldo-subtitle">hari tersisa tahun ini</div>
-                </div>
-
-                <div class="row">
-                    <div class="col-3">
-                        <div class="stat-card">
-                            <div class="stat-label">Terpakai</div>
-                            <div class="stat-number" id="cuti-terpakai">8</div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="stat-card">
-                            <div class="stat-label">Pending</div>
-                            <div class="stat-number" id="cuti-pending">2</div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="stat-card">
-                            <div class="stat-label">Approved</div>
-                            <div class="stat-number" id="cuti-approved">6</div>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="stat-card">
-                            <div class="stat-label">Total</div>
-                            <div class="stat-number" id="cuti-total">20</div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Info Card -->
+        <div class="info-card">
+            <div class="info-card-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+                    <path d="M12 16V12M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                Sisa Saldo Cuti Anda
+            </div>
+            <div class="info-card-text">
+                Anda memiliki <strong id="saldo-display">12 hari</strong> sisa cuti untuk tahun ini.
+                Pastikan untuk merencanakan cuti Anda dengan baik.
             </div>
         </div>
 
-        <!-- Filter Card -->
+        <!-- Form Card -->
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-12">
-                        <form id="filterForm">
-                            <select id="bulan" name="bulan" class="form-select" onchange="filterData()">
-                                <option value="">Semua Bulan</option>
-                                <option value="1">Januari</option>
-                                <option value="2">Februari</option>
-                                <option value="3">Maret</option>
-                                <option value="4">April</option>
-                                <option value="5">Mei</option>
-                                <option value="6">Juni</option>
-                                <option value="7">Juli</option>
-                                <option value="8">Agustus</option>
-                                <option value="9">September</option>
-                                <option value="10">Oktober</option>
-                                <option value="11">November</option>
-                                <option value="12">Desember</option>
-                            </select>
-                        </form>
+                <h3 class="card-title">Detail Pengajuan Cuti</h3>
+
+                <form id="cutiForm" action="{{ route('absen.SimpanCuti') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                        <label for="jenis_cuti" class="form-label">Jenis Cuti <span class="required">*</span></label>
+                        <select id="jenis_cuti" name="jenis_cuti" class="form-select" required>
+                            <option value="">Pilih jenis cuti</option>
+                            @foreach ($jenis as $item)
+                                <option value="{{ $item->Kode }}">{{ $item->Nama }}</option>
+                            @endforeach
+                        </select>
+                        <div class="error-message" id="error-jenis-cuti">Silakan pilih jenis cuti</div>
                     </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- History Cuti Card -->
-        <div class="card">
-            <div class="card-body">
-                <h3 class="card-title">Riwayat Pengajuan Cuti</h3>
-            </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="tanggal_mulai" class="form-label">Tanggal Mulai <span
+                                        class="required">*</span></label>
+                                <input type="date" id="tanggal_mulai" name="tanggal_mulai" class="form-control"
+                                    required>
+                                <div class="error-message" id="error-tanggal-mulai">Tanggal mulai harus diisi</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-group">
+                                <label for="tanggal_selesai" class="form-label">Tanggal Selesai <span
+                                        class="required">*</span></label>
+                                <input type="date" id="tanggal_selesai" name="tanggal_selesai" class="form-control"
+                                    required>
+                                <div class="error-message" id="error-tanggal-selesai">Tanggal selesai harus diisi
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <div class="table-responsive">
-                <table class="table">
-                    <tbody id="cuti-table">
-                        <tr>
-                            <td colspan="3" class="loading">Memuat data riwayat cuti...</td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <div class="date-range-display" id="date-range-display">
+                        <div class="date-range-text" id="date-range-text"></div>
+                        <div class="date-range-duration" id="date-range-duration"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keterangan" class="form-label">Keterangan/Alasan <span
+                                class="required">*</span></label>
+                        <textarea id="keterangan" name="keterangan" class="form-textarea"
+                            placeholder="Jelaskan alasan pengajuan cuti Anda..." required></textarea>
+                        <div class="form-help">Minimal 10 karakter</div>
+                        <div class="error-message" id="error-keterangan">Keterangan minimal 10 karakter</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pengganti" class="form-label">Penanggung Jawab Pengganti</label>
+                        <select id="pengganti" name="pengganti" class="form-select">
+                            <option value="">Pilih penanggung jawab (opsional)</option>
+                            <option value="john_doe">John Doe - Manager</option>
+                            <option value="jane_smith">Jane Smith - Senior Staff</option>
+                            <option value="ahmad_ali">Ahmad Ali - Team Lead</option>
+                            <option value="siti_nurhaliza">Siti Nurhaliza - Supervisor</option>
+                        </select>
+                        <div class="form-help">Pilih rekan kerja yang akan menggantikan tugas Anda selama cuti</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="file_upload" class="form-label">Upload File</label>
+                        <input type="file" id="file_upload" name="file_upload" class="form-control">
+                        <div class="form-help">Upload file yang relevan dengan pengajuan cuti Anda</div>
+                    </div>
+
+                    <!-- Tambahkan tombol di dalam form -->
+                    <div class="floating-buttons">
+                        <button type="button" class="btn-secondary" onclick="resetForm()">
+                            Reset
+                        </button>
+                        <button type="submit" class="btn-primary" id="submit-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                                style="display: inline-block; margin-right: 6px; vertical-align: middle;">
+                                <path
+                                    d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4905 2.02168 11.3363C2.16356 9.18203 2.99721 7.13214 4.39828 5.49883C5.79935 3.86553 7.69279 2.72636 9.79619 2.24335C11.8996 1.76034 14.1003 1.95578 16.07 2.81"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M22 4L12 14.01L9 11.01" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Ajukan Cuti
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Floating Action Button -->
-    <button class="floating-button" onclick="ajukanCuti()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-            style="display: inline-block; margin-right: 8px; vertical-align: middle;">
-            <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-        </svg>
-        Ajukan Cuti Baru
-    </button>
+    <!-- Floating Action Buttons -->
 
-    <script>
-        // Sample data untuk demo
-        const sampleCutiData = [{
-            id: 1,
-            tanggal_mulai: '2024-05-15',
-            tanggal_selesai: '2024-05-17',
-            jenis_cuti: 'Cuti Tahunan',
-            status: 'approved',
-            durasi: 3,
-            keterangan: 'Liburan keluarga'
-        },
-        {
-            id: 2,
-            tanggal_mulai: '2024-05-10',
-            tanggal_selesai: '2024-05-10',
-            jenis_cuti: 'Cuti Sakit',
-            status: 'pending',
-            durasi: 1,
-            keterangan: 'Demam tinggi'
-        },
-        {
-            id: 3,
-            tanggal_mulai: '2024-04-20',
-            tanggal_selesai: '2024-04-22',
-            jenis_cuti: 'Cuti Tahunan',
-            status: 'approved',
-            durasi: 3,
-            keterangan: 'Acara keluarga'
-        },
-        {
-            id: 4,
-            tanggal_mulai: '2024-04-05',
-            tanggal_selesai: '2024-04-05',
-            jenis_cuti: 'Cuti Pribadi',
-            status: 'rejected',
-            durasi: 1,
-            keterangan: 'Keperluan pribadi'
-        }
-        ];
-
-        // Load data saat halaman dimuat
-        document.addEventListener('DOMContentLoaded', function () {
-            loadInitialData();
-        });
-
-        function loadInitialData() {
-            // Update stats
-            updateStats({
-                saldo: 12,
-                terpakai: 8,
-                pending: 2,
-                approved: 6,
-                total: 20
-            });
-
-            // Load all data initially
-            updateTable(sampleCutiData);
-        }
-
-        function filterData() {
-            const bulan = document.getElementById('bulan').value;
-
-            // Show loading
-            document.getElementById('cuti-table').innerHTML =
-                '<tr><td colspan="3" class="loading">Memuat data...</td></tr>';
-
-            // Simulate API delay
-            setTimeout(() => {
-                let filteredData = sampleCutiData;
-
-                if (bulan) {
-                    filteredData = sampleCutiData.filter(item => {
-                        const itemMonth = new Date(item.tanggal_mulai).getMonth() + 1;
-                        return itemMonth == bulan;
-                    });
-                }
-
-                updateTable(filteredData);
-            }, 500);
-        }
-
-        function updateTable(data) {
-            const tbody = document.getElementById('cuti-table');
-
-            if (data.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="3" class="empty-state">
-                            <div class="empty-icon">
-                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M9 12L11 14L15 10M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            </div>
-                            <div>Belum ada pengajuan cuti</div>
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            let html = '';
-            data.forEach(item => {
-                const tanggalMulai = new Date(item.tanggal_mulai).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short'
-                });
-
-                const tanggalSelesai = new Date(item.tanggal_selesai).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'short'
-                });
-
-                const statusClass = `status-${item.status}`;
-                const statusText = {
-                    'approved': 'Disetujui',
-                    'pending': 'Menunggu',
-                    'rejected': 'Ditolak'
-                }[item.status];
-
-                const periode = item.tanggal_mulai === item.tanggal_selesai ?
-                    tanggalMulai :
-                    `${tanggalMulai} - ${tanggalSelesai}`;
-
-                html += `
-                    <tr onclick="detailCuti(${item.id})" style="cursor: pointer;">
-                        <td>
-                            <div class="date-cell">${periode}</div>
-                            <div class="type-cell">${item.jenis_cuti} • ${item.durasi} hari</div>
-                        </td>
-                        <td style="text-align: right;">
-                            <span class="status-badge ${statusClass}">${statusText}</span>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tbody.innerHTML = html;
-        }
-
-        function updateStats(stats) {
-            document.getElementById('saldo-cuti').textContent = stats.saldo || 0;
-            document.getElementById('cuti-terpakai').textContent = stats.terpakai || 0;
-            document.getElementById('cuti-pending').textContent = stats.pending || 0;
-            document.getElementById('cuti-approved').textContent = stats.approved || 0;
-            document.getElementById('cuti-total').textContent = stats.total || 0;
-        }
-
-        function ajukanCuti() {
-            // Redirect ke halaman form pengajuan cuti
-
-            window.location.href = '{{ route('absen.formCuti') }}';
-        }
-
-        function detailCuti(id) {
-            // Redirect ke halaman detail cuti
-            alert(`Lihat detail cuti ID: ${id}`);
-            // window.location.href = `/cuti/${id}`;
-        }
-    </script>
 </body>
 
 </html>

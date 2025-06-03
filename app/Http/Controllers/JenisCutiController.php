@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Absensi;
 use App\Models\JenisCuti;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -76,8 +77,15 @@ class JenisCutiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(JenisCuti $jenisCuti)
+    public function destroy($id)
     {
-        //
+        // dd($id);
+        $Cuti = JenisCuti::find($id);
+        if ($Cuti) {
+            $Cuti->delete();
+            return response()->json(['message' => 'Shift berhasil dihapus'], 200);
+        } else {
+            return response()->json(['message' => 'Shift tidak ditemukan'], 404);
+        }
     }
 }

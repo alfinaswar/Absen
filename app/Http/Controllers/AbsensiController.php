@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AbsenExport;
 use App\Models\Absensi;
+use App\Models\JenisCuti;
 use App\Models\MasterPerusahaan;
 use App\Models\QrcodeToken;
 use App\Models\ShiftKerja;
@@ -32,6 +33,7 @@ class AbsensiController extends Controller
                 ->select(
                     'masuk.id as id_masuk',
                     'masuk.user_id',
+                    'masuk.kehadiran',
                     'users.name as nama_karyawan',
                     'users.IdPerusahaan as namaPerusahaan',
                     'masuk.tanggal',
@@ -98,7 +100,7 @@ class AbsensiController extends Controller
                     $actionBtn .= '<a href="javascript:void(0)" data-id="' . $row->id_masuk . '" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i> Delete</a>';
 
                     // ACC Cuti button jika diperlukan (disesuaikan dengan logika Anda)
-                    if (isset($row->jenis_absen_masuk) && $row->jenis_absen_masuk == 'Cuti') {
+                    if (isset($row->kehadiran) && $row->kehadiran == 'C') {
                         $actionBtn .= '<a href="javascript:void(0)" data-id="' . $row->id_masuk . '" class="acc-cuti btn btn-success btn-sm"><i class="fas fa-check"></i> ACC Cuti</a>';
                     }
 
@@ -108,8 +110,10 @@ class AbsensiController extends Controller
                 ->addColumn('status_masuk', function ($row) {
                     if ($row->ontime_masuk == 'Y') {
                         return '<span class="badge bg-green text-green-fg">Tepat Waktu</span>';
-                    } else {
+                    } elseif ($row->ontime_masuk == 'N') {
                         return '<span class="badge bg-red text-red-fg">Terlambat</span>';
+                    } else {
+                        return '<span class="badge bg-info text-dark">Sedang Cuti</span>';
                     }
                 })
                 ->addColumn('foto_masuk', function ($row) {
@@ -170,10 +174,9 @@ class AbsensiController extends Controller
     {
         $absensi = Absensi::findOrFail($request->id);
 
-        if ($absensi->status == 'CUTI') {
+        if ($absensi->kehadiran == 'C') {
             $absensi->Approval = 'Y';
             $absensi->save();
-
             return response()->json(['message' => 'Cuti berhasil di-ACC.']);
         }
 
@@ -522,6 +525,7 @@ class AbsensiController extends Controller
             'waktu_absen' => $now,
             'jenis_absen' => $request->type,
             'ontime' => $ontime,
+            'kehadiran' => 'H',
             'keterangan' => null,
             'file_pendukung' => null,
             'selfie_photo' => $photoPath,
@@ -557,35 +561,7 @@ class AbsensiController extends Controller
         ]);
     }
 
-    /**
-     * Menyimpan absensi cuti.
-     */
-    public function Cutistore(Request $request)
-    {
-        $cek = Absensi::where('user_id', auth()->user()->id)
-            ->whereDate('tanggal', now()->format('Y-m-d'))
-            ->first();
-        if (now()->format('H:i:s') < '08:00:00') {
-            $ontime = 'Y';
-        } else {
-            $ontime = 'N';
-        }
-        if ($cek) {
-            return redirect()->back()->with('error', 'Anda Sudah Absen Hari Ini');
-        }
-        $data = $request->all();
-        $data['tanggal'] = now()->format('Y-m-d');
-        $data['jam_masuk'] = now()->format('H:i:s');
-        $data['jam_keluar'] = null;
-        $data['status'] = 'CUTI';
-        $data['Approval'] = 'N';
-        $data['ontime'] = $ontime;
-        $data['keterangan'] = $request->keterangan;
-        $data['user_id'] = auth()->user()->id;
-        $data['ip_address'] = $request->ip();
-        Absensi::create($data);
-        return redirect()->back()->with('success', 'Absensi Berhasil Ditambahkan');
-    }
+    /** Menyimpan absensi cuti. */
 
     /**
      * Menampilkan detail absensi.
@@ -606,11 +582,69 @@ class AbsensiController extends Controller
 
     public function FormCuti()
     {
-        return view('karyawan.absen.cuti');
+        $jenis = JenisCuti::get();
+        return view('karyawan.absen.cuti', compact('jenis'));
     }
-    /**
-     * Mengunduh laporan absensi dalam format Excel.
-     */
+
+    public function StoreCuti(Request $request)
+    {
+        // Cek apakah user sudah mengajukan cuti di tanggal yang sama
+        $cek = Absensi::where('user_id', auth()->user()->id)
+            ->where('kehadiran', 'C')
+            ->where(function ($query) use ($request) {
+                $query->whereBetween('tanggal', [$request->tanggal_mulai, $request->tanggal_selesai]);
+            })
+            ->first();
+        if ($cek) {
+            return redirect()->back()->with('error', 'Anda sudah mengajukan cuti pada rentang tanggal tersebut.');
+        }
+
+        $filePath = null;
+        if ($request->hasFile('file_upload')) {
+            $file = $request->file('file_upload');
+            $filePath = $file->storeAs('cuti_files', $file->getClientOriginalName(), 'public');
+        }
+
+        $tanggalMulai = \Carbon\Carbon::parse($request->tanggal_mulai);
+        $tanggalSelesai = \Carbon\Carbon::parse($request->tanggal_selesai);
+
+        for ($date = $tanggalMulai; $date->lte($tanggalSelesai); $date->addDay()) {
+            // Simpan absen MASUK
+            Absensi::create([
+                'user_id' => auth()->user()->id,
+                'tanggal' => $date->format('Y-m-d'),
+                'waktu_absen' => now()->format('H:i:s'),
+                'jam_keluar' => null,
+                'status' => null,
+                'kehadiran' => 'C',
+                'jenis_absen' => 'Masuk',
+                'keterangan' => $request->keterangan,
+                'approval' => 'N',
+                'ontime' => null,
+                'ip_address' => $request->ip(),
+                'file_pendukung' => $filePath,
+            ]);
+
+            // Simpan absen KELUAR
+            Absensi::create([
+                'user_id' => auth()->user()->id,
+                'tanggal' => $date->format('Y-m-d'),
+                'waktu_absen' => null,
+                'jam_keluar' => now()->format('H:i:s'),
+                'status' => null,
+                'kehadiran' => 'C',
+                'jenis_absen' => 'Keluar',
+                'keterangan' => $request->keterangan,
+                'approval' => 'N',
+                'ontime' => null,
+                'ip_address' => $request->ip(),
+                'file_pendukung' => $filePath,
+            ]);
+        }
+
+        return redirect()->route('absen.index')->with('success', 'Pengajuan cuti berhasil disimpan.');
+    }
+
     public function download(Request $request)
     {
         // dd($request->all());
@@ -699,7 +733,8 @@ class AbsensiController extends Controller
             'getShift',
             'getPerusahaan'
         ])->find(auth()->user()->id);
-        return view('karyawan.absen.time-off', compact('user'));
+        $jenis = JenisCuti::get();
+        return view('karyawan.absen.time-off', compact('user', 'jenis'));
     }
 
     /**
