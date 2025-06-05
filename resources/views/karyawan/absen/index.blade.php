@@ -929,8 +929,8 @@
     <script>
         // Configuration - Replace with your actual values
         const officeLocation = {
-            lat:{{ $dataKaryawan->getPerusahaan->Latitude ?? '-6.2088' }}, // Latitude kota Pekanbaru
-            lng: {{ $dataKaryawan->getPerusahaan->Longitude ?? '106.8456' }} // Longitude kota Pekanbaru
+            lat:{{ $user->getPerusahaan->Latitude ?? '-6.2088' }}, // Latitude kota Pekanbaru
+            lng: {{ $user->getPerusahaan->Longitude ?? '106.8456' }} // Longitude kota Pekanbaru
         };
         const officeRadius = 60; // in meters - adjust as needed
 
