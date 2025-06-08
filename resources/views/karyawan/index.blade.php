@@ -487,8 +487,10 @@
                 <div class="profile-info">
                     <div class="profile-avatar">👋</div>
                     <div>
-                        <div class="profile-name">Hi, Rina Indriani</div>
-                        <div class="profile-role">Programmer di Indotambang</div>
+                        <div class="profile-name">Hi, {{ auth()->user()->name }}</div>
+                        <div class="profile-role">{{ auth()->user()->jabatan }} di
+                            {{ $user->getPerusahaan->Nama }}
+                        </div>
                     </div>
                 </div>
                 <div class="nav-icons">
@@ -502,26 +504,49 @@
     <!-- Main Content -->
     <div class="container">
         <!-- Schedule Card -->
+        @php
+            use Carbon\Carbon;
+
+            Carbon::setLocale('id');
+
+            $tanggal = Carbon::parse('2024-05-13'); // Atau sesuaikan jika dinamis
+            $masuk = $user->getAbsensi->where('jenis_absen', 'Masuk')->first();
+            $pulang = $user->getAbsensi->where('jenis_absen', 'Pulang')->first();
+        @endphp
+
         <div class="schedule-card">
             <div class="schedule-header">
-                <div class="schedule-date">📅 Selasa, 13 Mei 2024</div>
-                <div class="schedule-time">Reguler 08:00 - 17:00</div>
+                <div class="schedule-date">📅 {{ $tanggal->translatedFormat('l, d F Y') }}</div>
+                <div class="schedule-time">
+                    {{ $user->getShift->nama_shift ?? '-' }},
+                    {{ isset($user->getShift->jam_masuk) ? \Carbon\Carbon::parse($user->getShift->jam_masuk)->format('H:i') : '-' }}
+                    -
+                    {{ isset($user->getShift->jam_keluar) ? \Carbon\Carbon::parse($user->getShift->jam_keluar)->format('H:i') : '-' }}
+                </div>
             </div>
             <div class="schedule-content">
                 <div class="schedule-item">
                     <i class="fas fa-sign-in-alt schedule-icon"></i>
                     <div>
-                        <div class="schedule-text">Masuk 09:41</div>
+                        <div class="schedule-text">
+                            Masuk
+                            {{ isset($masuk->waktu_masuk) ? \Carbon\Carbon::parse($masuk->waktu_masuk)->format('H:i') : '-' }}
+                        </div>
                     </div>
                 </div>
                 <div class="schedule-item">
                     <i class="fas fa-sign-out-alt schedule-icon"></i>
                     <div>
-                        <div class="schedule-text">Pulang -</div>
+                        <div class="schedule-text">
+                            Pulang
+                            {{ isset($pulang->waktu_keluar) ? \Carbon\Carbon::parse($pulang->waktu_keluar)->format('H:i') : '-' }}
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
+
 
         <!-- Attendance Summary -->
         <div class="attendance-summary">
@@ -529,17 +554,17 @@
             <div class="summary-date">1 April 2025 - 30 April 2025</div>
             <div class="summary-stats">
                 <div class="stat-item">
-                    <span class="stat-number">23</span>
+                    <span class="stat-number">{{ $jumlahHadir }}</span>
                     <div class="stat-label">Hadir</div>
                     <div class="stat-unit">hari</div>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number">{{ $jumlahCuti }}</span>
                     <div class="stat-label">Izin</div>
                     <div class="stat-unit">hari</div>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number">{{ 12 - $jumlahCuti }}</span>
                     <div class="stat-label">Saldo Cuti</div>
                     <div class="stat-unit">hari</div>
                 </div>
@@ -624,13 +649,13 @@
                 <i class="fas fa-home bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Home</span>
             </a>
-            <a href="#" class="bottom-nav-item active">
+            <a href="{{ route('absen.PageAbsen') }}" class="bottom-nav-item active">
                 <div class="fingerprint-icon">
                     <i class="fas fa-fingerprint"></i>
                 </div>
                 <span class="bottom-nav-label">Absensi</span>
             </a>
-            <a href="#" class="bottom-nav-item">
+            <a href="{{ route('absen.RiwayatAbsen') }}" class="bottom-nav-item">
                 <i class="fas fa-chart-bar bottom-nav-icon"></i>
                 <span class="bottom-nav-label">Data Absensi</span>
             </a>
@@ -641,7 +666,7 @@
     <script>
         // Add click effects and interactions
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function (e) {
+            item.addEventListener('click', function(e) {
                 e.preventDefault();
                 // Add ripple effect
                 this.style.transform = 'scale(0.95)';
@@ -652,17 +677,18 @@
         });
 
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
-            item.addEventListener('click', function (e) {
-                e.preventDefault();
+            item.addEventListener('click', function(e) {
+                // e.preventDefault();
                 // Remove active class from all items
-                document.querySelectorAll('.bottom-nav-item').forEach(nav => nav.classList.remove('active'));
+                document.querySelectorAll('.bottom-nav-item').forEach(nav => nav.classList.remove(
+                    'active'));
                 // Add active class to clicked item
                 this.classList.add('active');
             });
         });
 
         // Add notification bell animation
-        document.querySelector('.fa-bell').addEventListener('click', function () {
+        document.querySelector('.fa-bell').addEventListener('click', function() {
             this.style.animation = 'shake 0.5s';
             setTimeout(() => {
                 this.style.animation = '';
@@ -692,7 +718,7 @@
         menuOverlay.addEventListener('click', closeSlideMenu);
 
         // Close menu with Escape key
-        document.addEventListener('keydown', function (e) {
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && slideMenu.classList.contains('active')) {
                 closeSlideMenu();
             }
@@ -700,7 +726,7 @@
 
         // Add click effects to slide menu items
         document.querySelectorAll('.menu-item-slide').forEach(item => {
-            item.addEventListener('click', function (e) {
+            item.addEventListener('click', function(e) {
                 e.preventDefault();
                 // Add click effect
                 this.style.transform = 'translateX(10px)';

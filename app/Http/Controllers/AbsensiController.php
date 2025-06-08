@@ -576,8 +576,10 @@ class AbsensiController extends Controller
             'getPerusahaan'
         ])->find(auth()->user()->id);
         // dd($user);
+        $jumlahHadir = $user->getAbsensi->where('kehadiran', 'H')->count();
+        $jumlahCuti = $user->getAbsensi->where('kehadiran', 'C')->count();
         $shift = ShiftKerja::get();
-        return view('karyawan.absen.index', compact('user', 'shift'));
+        return view('karyawan.absen.index', compact('user', 'shift', 'jumlahHadir', 'jumlahCuti'));
     }
 
     public function FormCuti()

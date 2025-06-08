@@ -48,10 +48,10 @@ class HomeController extends Controller
                 'getShift',
                 'getPerusahaan'
             ])->find(auth()->user()->id);
-            $Masuk = Absensi::where('jenis_absen', 'Masuk')->where('kehadiran', 'H')->count();
-            $Cuti = Absensi::where('jenis_absen', 'Masuk')->where('kehadiran', 'C')->count();
+            $jumlahHadir = $user->getAbsensi->where('kehadiran', 'H')->count();
+            $jumlahCuti = $user->getAbsensi->where('kehadiran', 'C')->count();
 
-            return view('karyawan.index', compact('user', 'Masuk', 'Cuti'));
+            return view('karyawan.index', compact('user', 'jumlahHadir', 'jumlahCuti'));
         }
     }
 }
