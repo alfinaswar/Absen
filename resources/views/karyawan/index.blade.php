@@ -509,7 +509,7 @@
 
             Carbon::setLocale('id');
 
-            $tanggal = Carbon::parse('2024-05-13'); // Atau sesuaikan jika dinamis
+            $tanggal = Carbon::today();
             $masuk = $user->getAbsensi->where('jenis_absen', 'Masuk')->first();
             $pulang = $user->getAbsensi->where('jenis_absen', 'Pulang')->first();
         @endphp
@@ -530,7 +530,8 @@
                     <div>
                         <div class="schedule-text">
                             Masuk
-                            {{ isset($masuk->waktu_masuk) ? \Carbon\Carbon::parse($masuk->waktu_masuk)->format('H:i') : '-' }}
+
+                            {{ isset($masuk->waktu_absen) ? \Carbon\Carbon::parse($masuk->waktu_absen)->format('H:i') : '-' }}
                         </div>
                     </div>
                 </div>
@@ -539,7 +540,7 @@
                     <div>
                         <div class="schedule-text">
                             Pulang
-                            {{ isset($pulang->waktu_keluar) ? \Carbon\Carbon::parse($pulang->waktu_keluar)->format('H:i') : '-' }}
+                            {{ isset($pulang->waktu_absen) ? \Carbon\Carbon::parse($pulang->waktu_absen)->format('H:i') : '-' }}
                         </div>
                     </div>
                 </div>
@@ -551,7 +552,10 @@
         <!-- Attendance Summary -->
         <div class="attendance-summary">
             <div class="summary-title">Rekap Absensi Bulanan</div>
-            <div class="summary-date">1 April 2025 - 30 April 2025</div>
+            <div class="summary-date">
+                {{ \Carbon\Carbon::parse($user->getPerusahaan->TanggalTutupBuku)->subDays(30)->format('d-m-Y') }} s/d
+                {{ \Carbon\Carbon::parse($user->getPerusahaan->TanggalTutupBuku)->format('d-m-Y') }}
+            </div>
             <div class="summary-stats">
                 <div class="stat-item">
                     <span class="stat-number">{{ $jumlahHadir }}</span>
@@ -575,7 +579,7 @@
         <div class="menu-grid">
             <div class="menu-title">Menu Utama</div>
             <div class="menu-items">
-                <a href="#" class="menu-item">
+                <a href="{{route('absen.TimeOff')}}" class="menu-item">
                     <i class="fas fa-calendar-check menu-icon"></i>
                     <span class="menu-label">Izin</span>
                 </a>
@@ -666,8 +670,8 @@
     <script>
         // Add click effects and interactions
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
+            item.addEventListener('click', function (e) {
+                // e.preventDefault();
                 // Add ripple effect
                 this.style.transform = 'scale(0.95)';
                 setTimeout(() => {
@@ -677,7 +681,7 @@
         });
 
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
+            item.addEventListener('click', function (e) {
                 // e.preventDefault();
                 // Remove active class from all items
                 document.querySelectorAll('.bottom-nav-item').forEach(nav => nav.classList.remove(
@@ -688,7 +692,7 @@
         });
 
         // Add notification bell animation
-        document.querySelector('.fa-bell').addEventListener('click', function() {
+        document.querySelector('.fa-bell').addEventListener('click', function () {
             this.style.animation = 'shake 0.5s';
             setTimeout(() => {
                 this.style.animation = '';
@@ -718,7 +722,7 @@
         menuOverlay.addEventListener('click', closeSlideMenu);
 
         // Close menu with Escape key
-        document.addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape' && slideMenu.classList.contains('active')) {
                 closeSlideMenu();
             }
@@ -726,8 +730,8 @@
 
         // Add click effects to slide menu items
         document.querySelectorAll('.menu-item-slide').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
+            item.addEventListener('click', function (e) {
+                // e.preventDefault();
                 // Add click effect
                 this.style.transform = 'translateX(10px)';
                 setTimeout(() => {

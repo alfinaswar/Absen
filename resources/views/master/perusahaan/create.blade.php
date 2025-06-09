@@ -55,6 +55,11 @@
                                             <input type="text" class="form-control" id="telepon" name="Telepon"
                                                 placeholder="Masukkan Telepon / Wa" required>
                                         </div>
+                                        <div class="mb-3">
+                                            <label for="tanggal_tutup_buku" class="form-label">Tanggal Tutup Buku</label>
+                                            <input type="date" class="form-control" id="tanggal_tutup_buku" name="TanggalTutupBuku"
+                                                placeholder="Masukkan Tanggal Tutup Buku" required>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
