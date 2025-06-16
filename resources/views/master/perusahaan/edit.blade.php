@@ -98,6 +98,11 @@
                                                     placeholder="Masukkan Longitude" value="{{ $data->Longitude }}" readonly
                                                     required>
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="tanggal_tutup_buku" class="form-label">Tanggal Tutup Buku</label>
+                                                <input type="date" class="form-control" id="tanggal_tutup_buku" name="TanggalTutupBuku"
+                                                    placeholder="Masukkan Tanggal Tutup Buku" value="{{ $data->TanggalTutupBuku }}" required>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="mb-3">
