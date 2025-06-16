@@ -59,6 +59,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/time-off', [AbsensiController::class, 'TimeOff'])->name('absen.TimeOff');
         Route::get('/form-time-off', [AbsensiController::class, 'FormCuti'])->name('absen.formCuti');
         Route::POST('/store-time-off', [AbsensiController::class, 'StoreCuti'])->name('absen.SimpanCuti');
+        Route::get('/absensi/filter/{bulan}', [AbsensiController::class, 'filter'])->name('absen.filterbulan');
     });
     Route::prefix('shift')->group(function () {
         Route::GET('/', [ShiftKerjaController::class, 'index'])->name('shift.index');

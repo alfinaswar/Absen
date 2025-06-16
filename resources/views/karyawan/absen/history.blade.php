@@ -543,13 +543,15 @@
                 </div>
                 <div id="attendance-table">
                     <div class="loading">
-                        <i class="fas fa-calendar-alt"></i>
-                        <br><br>
+                        <i class="fas fa-calendar-alt"></i><br><br>
                         Pilih bulan untuk melihat data absensi
                     </div>
                 </div>
             </div>
+
+
         </div>
+    </div>
     </div>
 
     <!-- Bottom Navigation -->
@@ -571,203 +573,20 @@
             </a>
         </div>
     </div>
-
-    <script>
-        // Set bulan saat ini sebagai default
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentMonth = new Date().getMonth() + 1;
-            const bulanSelect = document.getElementById('bulan');
-            bulanSelect.value = currentMonth;
-            filterData(); // Load data untuk bulan saat ini
-        });
-
-        function filterData() {
-            const bulan = document.getElementById('bulan').value;
-            const tahun = new Date().getFullYear();
-            const bulanNama = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-            ];
-
-            if (!bulan) {
-                updateTable([]);
-                updateStats({
-                    absent: 0,
-                    late_clockin: 0,
-                    no_clockin: 0,
-                    no_clockout: 0
-                });
-                return;
-            }
-
-            // Show loading
-            document.getElementById('attendance-table').innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    Memuat data ${bulanNama[bulan]} ${tahun}...
-                </div>
-            `;
-
-            // Simulate API call with sample data
-            setTimeout(() => {
-                const sampleData = generateSampleData(bulan, tahun);
-                updateTable(sampleData.data);
-                updateStats(sampleData.stats);
-            }, 1000);
-        }
-
-        function generateSampleData(bulan, tahun) {
-            const daysInMonth = new Date(tahun, bulan, 0).getDate();
-            const data = [];
-            let stats = {
-                absent: 0,
-                late_clockin: 0,
-                no_clockin: 0,
-                no_clockout: 0
-            };
-
-            for (let i = 1; i <= daysInMonth; i++) {
-                const date = new Date(tahun, bulan - 1, i);
-                const dayOfWeek = date.getDay();
-
-                // Skip weekends
-                if (dayOfWeek === 0 || dayOfWeek === 6) continue;
-
-                const random = Math.random();
-                let jamMasuk = null;
-                let jamKeluar = null;
-
-                if (random > 0.1) { // 90% hadir
-                    const masukHour = 8 + Math.floor(Math.random() * 2); // 8-9 AM
-                    const masukMinute = Math.floor(Math.random() * 60);
-                    jamMasuk = `${masukHour.toString().padStart(2, '0')}:${masukMinute.toString().padStart(2, '0')}`;
-
-                    if (masukHour > 8 || (masukHour === 8 && masukMinute > 0)) {
-                        stats.late_clockin++;
-                    }
-
-                    if (Math.random() > 0.05) { // 95% yang masuk juga keluar
-                        const keluarHour = 17 + Math.floor(Math.random() * 3); // 5-7 PM
-                        const keluarMinute = Math.floor(Math.random() * 60);
-                        jamKeluar = `${keluarHour.toString().padStart(2, '0')}:${keluarMinute.toString().padStart(2, '0')}`;
-                    } else {
-                        stats.no_clockout++;
-                    }
-                } else {
-                    stats.absent++;
-                    if (Math.random() > 0.5) {
-                        stats.no_clockin++;
-                    }
-                }
-
-                data.push({
-                    tanggal: `${tahun}-${bulan.toString().padStart(2, '0')}-${i.toString().padStart(2, '0')}`,
-                    jam_masuk: jamMasuk,
-                    jam_keluar: jamKeluar
-                });
-            }
-
-            return {
-                data,
-                stats
-            };
-        }
-
-        function updateTable(data) {
-            const container = document.getElementById('attendance-table');
-
-            if (data.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-times"></i>
-                        <br>
-                        Tidak ada data absensi
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '';
-            data.forEach(item => {
-                const tanggal = new Date(item.tanggal).toLocaleDateString('id-ID', {
-                    weekday: 'short',
-                    day: 'numeric',
-                    month: 'long'
-                });
-
-                html += `
-                    <div class="table-row">
-                        <div class="date-cell">${tanggal}</div>
-                        <div class="time-cell" data-label="Masuk">
-                            ${item.jam_masuk || '-'}
-                        </div>
-                        <div class="time-cell" data-label="Keluar">
-                            ${item.jam_keluar || '-'}
-                        </div>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function updateStats(stats) {
-            document.getElementById('absent-count').textContent = stats.absent || 0;
-            document.getElementById('late-count').textContent = stats.late_clockin || 0;
-            document.getElementById('no-clockin-count').textContent = stats.no_clockin || 0;
-            document.getElementById('no-clockout-count').textContent = stats.no_clockout || 0;
-        }
-
-        // Bottom Navigation Functions
-        function navigateTo(page) {
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-
-            // Add active class to clicked item
-            event.target.closest('.nav-item').classList.add('active');
-
-            // Add navigation logic here
-            switch (page) {
-                case 'home':
-                    console.log('Navigate to Home');
-                    // window.location.href = '/home';
-                    break;
-                case 'history':
-                    console.log('Already on History page');
-                    break;
-                case 'profile':
-                    console.log('Navigate to Profile');
-                    // window.location.href = '/profile';
-                    break;
-                case 'settings':
-                    console.log('Navigate to Settings');
-                    // window.location.href = '/settings';
-                    break;
-            }
-        }
-
-        // Add click effects
-        document.querySelectorAll('.notification-icon, .menu-icon, .back-button').forEach(button => {
-            button.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-            });
-        });
-
-        // Add click effects to nav items
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-            });
-        });
-    </script>
 </body>
 
 </html>
+<script>
+    function filterData() {
+        const bulan = document.getElementById('bulan').value;
+
+        fetch(`{{ route('absen.filterbulan', ':bulan') }}`.replace(':bulan', bulan))
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('attendance-table').innerHTML = html;
+            })
+            .catch(error => {
+                console.error('Gagal memuat data:', error);
+            });
+    }
+</script>

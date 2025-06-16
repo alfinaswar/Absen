@@ -341,65 +341,107 @@ class AbsensiController extends Controller
             ->orderBy('masuk.user_id')
             ->get();
 
-        // Hitung statistik untuk bulan yang dipilih
-        $stats = $this->calculateStats($data, $request->bulan, $request->tahun);
-
-        // Jika request AJAX, return JSON
-        if ($request->ajax() || $request->wantsJson()) {
-            return response()->json([
-                'success' => true,
-                'data' => $data,
-                'stats' => $stats
-            ]);
-        }
-
-        return view('karyawan.absen.history', compact('data', 'stats'));
+        return view('karyawan.absen.history', compact('data'));
     }
 
-    private function calculateStats($data, $bulan = null, $tahun = null)
+    public function filter($bulan, Request $request)
     {
-        $currentYear = $tahun ?? date('Y');
-        $currentMonth = $bulan ?? date('m');
+        $query = DB::table('absensis as masuk')
+            ->select(
+                'masuk.id as id_masuk',
+                'masuk.user_id',
+                'users.name as nama_karyawan',
+                'masuk.tanggal',
+                'masuk.waktu_absen as jam_masuk',
+                'masuk.kehadiran as kehadiran',
+                'masuk.jenis_absen as jenis_absen_masuk',
+                'masuk.ontime as ontime_masuk',
+                'masuk.keterangan as keterangan_masuk',
+                'masuk.approval as approval_masuk',
+                'masuk.file_pendukung as file_pendukung_masuk',
+                'masuk.selfie_photo as selfie_photo_masuk',
+                'masuk.lokasi as lokasi_masuk',
+                'masuk.latitude as latitude_masuk',
+                'masuk.longitude as longitude_masuk',
+                'masuk.ip_address as ip_address_masuk',
+                'keluar.id as id_keluar',
+                'keluar.waktu_absen as jam_keluar',
+                'keluar.jenis_absen as jenis_absen_keluar',
+                'keluar.ontime as ontime_keluar',
+                'keluar.keterangan as keterangan_keluar',
+                'keluar.approval as approval_keluar',
+                'keluar.file_pendukung as file_pendukung_keluar',
+                'keluar.selfie_photo as selfie_photo_keluar',
+                'keluar.lokasi as lokasi_keluar',
+                'keluar.latitude as latitude_keluar',
+                'keluar.longitude as longitude_keluar',
+                'keluar.ip_address as ip_address_keluar'
+            )
+            ->join('users', 'masuk.user_id', '=', 'users.id')
+            ->leftJoin('absensis as keluar', function ($join) {
+                $join
+                    ->on('masuk.user_id', '=', 'keluar.user_id')
+                    ->on('masuk.tanggal', '=', 'keluar.tanggal')
+                    ->where('keluar.jenis_absen', '=', 'Keluar');
+            })
+            ->where('masuk.jenis_absen', 'Masuk')
+            ->where('masuk.user_id', auth()->user()->id);
 
-        // Query untuk mendapatkan semua data absensi dalam bulan yang dipilih
-        $monthlyData = DB::table('absensis')
-            ->where('user_id', auth()->user()->id)
-            ->whereYear('tanggal', $currentYear)
-            ->whereMonth('tanggal', $currentMonth)
+        $data = $query
+            ->orderBy('masuk.tanggal', 'desc')
+            ->orderBy('masuk.user_id')
+            ->whereMonth('masuk.tanggal', $bulan)
             ->get();
 
-        // Hitung jumlah hari kerja dalam bulan (exclude weekend)
-        $startOfMonth = \Carbon\Carbon::create($currentYear, $currentMonth, 1);
-        $endOfMonth = $startOfMonth->copy()->endOfMonth();
-        $workingDays = 0;
-
-        for ($date = $startOfMonth->copy(); $date <= $endOfMonth; $date->addDay()) {
-            if (!$date->isWeekend()) {
-                $workingDays++;
-            }
-        }
-
-        // Hitung statistik
-        $presentDays = $monthlyData->where('jenis_absen', 'Masuk')->unique('tanggal')->count();
-        $lateDays = $monthlyData->where('jenis_absen', 'Masuk')->where('ontime', 'Terlambat')->count();
-        $noClockIn = $workingDays - $presentDays;
-        $noClockOut = $monthlyData
-            ->where('jenis_absen', 'Masuk')
-            ->filter(function ($item) use ($monthlyData) {
-                return !$monthlyData
-                    ->where('tanggal', $item->tanggal)
-                    ->where('jenis_absen', 'Keluar')
-                    ->count();
-            })
-            ->count();
-
-        return [
-            'absent' => $noClockIn,
-            'late_clockin' => $lateDays,
-            'no_clockin' => $noClockIn,
-            'no_clockout' => $noClockOut
-        ];
+        $countOntime = Absensi::where('ontime', 'Y')->get();
+        $countLate = Absensi::where('ontime', 'N')->get();
+        return view('absensi._table', compact('data'));
     }
+
+    // private function calculateStats($data, $bulan = null, $tahun = null)
+    // {
+    //     $currentYear = $tahun ?? date('Y');
+    //     $currentMonth = $bulan ?? date('m');
+
+    //     // Query untuk mendapatkan semua data absensi dalam bulan yang dipilih
+    //     $monthlyData = DB::table('absensis')
+    //         ->where('user_id', auth()->user()->id)
+    //         ->whereYear('tanggal', $currentYear)
+    //         ->whereMonth('tanggal', $currentMonth)
+    //         ->get();
+
+    //     // Hitung jumlah hari kerja dalam bulan (exclude weekend)
+    //     $startOfMonth = \Carbon\Carbon::create($currentYear, $currentMonth, 1);
+    //     $endOfMonth = $startOfMonth->copy()->endOfMonth();
+    //     $workingDays = 0;
+
+    //     for ($date = $startOfMonth->copy(); $date <= $endOfMonth; $date->addDay()) {
+    //         if (!$date->isWeekend()) {
+    //             $workingDays++;
+    //         }
+    //     }
+
+    //     // Hitung statistik
+    //     $presentDays = $monthlyData->where('jenis_absen', 'Masuk')->unique('tanggal')->count();
+    //     $lateDays = $monthlyData->where('jenis_absen', 'Masuk')->where('ontime', 'Terlambat')->count();
+    //     $noClockIn = $workingDays - $presentDays;
+    //     $noClockOut = $monthlyData
+    //         ->where('jenis_absen', 'Masuk')
+    //         ->filter(function ($item) use ($monthlyData) {
+    //             return !$monthlyData
+    //                 ->where('tanggal', $item->tanggal)
+    //                 ->where('jenis_absen', 'Keluar')
+    //                 ->count();
+    //         })
+    //         ->count();
+
+    //     return [
+    //         'absent' => $noClockIn,
+    //         'late_clockin' => $lateDays,
+    //         'no_clockin' => $noClockIn,
+    //         'no_clockout' => $noClockOut
+    //     ];
+    // }
 
     /**
      * Menyimpan absensi baru.
