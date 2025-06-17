@@ -517,20 +517,16 @@
                 <h3 class="card-title">📊 Statistik Kehadiran</h3>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <div class="stat-label">Absent</div>
-                        <div class="stat-number" id="absent-count">0</div>
+                        <div class="stat-label">Total Absen</div>
+                        <div class="stat-number" id="absent-count">{{$countOntime + $countLate}}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">Late Clock In</div>
-                        <div class="stat-number" id="late-count">0</div>
+                        <div class="stat-label">Terlambat</div>
+                        <div class="stat-number" id="late-count">{{$countLate}}</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-label">No Clock In</div>
-                        <div class="stat-number" id="no-clockin-count">0</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">No Clock Out</div>
-                        <div class="stat-number" id="no-clockout-count">0</div>
+                        <div class="stat-label">Tepat Waktu</div>
+                        <div class="stat-number" id="ontime-count">{{$countOntime}}</div>
                     </div>
                 </div>
             </div>

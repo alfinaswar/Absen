@@ -511,7 +511,8 @@
 
             $tanggal = Carbon::today();
             $masuk = $user->getAbsensi->where('jenis_absen', 'Masuk')->first();
-            $pulang = $user->getAbsensi->where('jenis_absen', 'Pulang')->first();
+            $pulang = $user->getAbsensi->where('jenis_absen', 'Keluar')->first();
+            // dd()
         @endphp
 
         <div class="schedule-card">
@@ -540,6 +541,7 @@
                     <div>
                         <div class="schedule-text">
                             Pulang
+
                             {{ isset($pulang->waktu_absen) ? \Carbon\Carbon::parse($pulang->waktu_absen)->format('H:i') : '-' }}
                         </div>
                     </div>
@@ -643,6 +645,14 @@
                 <i class="fas fa-phone menu-item-icon"></i>
                 <span class="menu-item-text">📞 Bantuan Kontak HR</span>
             </a>
+            <a href="{{ route('logout') }}" class="menu-item-slide"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fas fa-sign-out-alt menu-item-icon"></i>
+                <span class="menu-item-text">🚪 Logout</span>
+            </a>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
         </div>
     </div>
 

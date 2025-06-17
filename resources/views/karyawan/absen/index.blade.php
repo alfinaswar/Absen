@@ -946,7 +946,7 @@
             lat: {{ $user->getPerusahaan->Latitude ?? '-6.2088' }}, // Latitude kota Pekanbaru
             lng: {{ $user->getPerusahaan->Longitude ?? '106.8456' }} // Longitude kota Pekanbaru
         };
-        const officeRadius = 1002; // in meters - adjust as needed
+        const officeRadius = 4002; // in meters - adjust as needed
 
         // DOM elements
         const locationStatus = document.getElementById('locationStatus');

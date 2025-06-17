@@ -341,10 +341,22 @@ class AbsensiController extends Controller
             ->orderBy('masuk.user_id')
             ->get();
 
-        return view('karyawan.absen.history', compact('data'));
+        $countOntime = Absensi::where('ontime', 'Y')
+            ->where('user_id', auth()->user()->id)
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->count();
+
+        $countLate = Absensi::where('ontime', 'N')
+            ->where('user_id', auth()->user()->id)
+            ->whereMonth('tanggal', now()->month)
+            ->whereYear('tanggal', now()->year)
+            ->count();
+
+        return view('karyawan.absen.history', compact('data', 'countOntime', 'countLate'));
     }
 
-    public function filter($bulan, Request $request)
+    public function filter($bulan = null, Request $request)
     {
         $query = DB::table('absensis as masuk')
             ->select(
@@ -390,11 +402,9 @@ class AbsensiController extends Controller
         $data = $query
             ->orderBy('masuk.tanggal', 'desc')
             ->orderBy('masuk.user_id')
-            ->whereMonth('masuk.tanggal', $bulan)
+            ->whereMonth('masuk.tanggal', $bulan ?? now()->month)
             ->get();
 
-        $countOntime = Absensi::where('ontime', 'Y')->get();
-        $countLate = Absensi::where('ontime', 'N')->get();
         return view('absensi._table', compact('data'));
     }
 
@@ -632,11 +642,11 @@ class AbsensiController extends Controller
 
     public function StoreCuti(Request $request)
     {
-        // Cek apakah user sudah mengajukan cuti di tanggal yang sama
+        // dd($request->files);
         $cek = Absensi::where('user_id', auth()->user()->id)
             ->where('kehadiran', 'C')
             ->where(function ($query) use ($request) {
-                $query->whereBetween('tanggal', [$request->tanggal_mulai, $request->tanggal_selesai]);
+                $query->whereBetween('tanggal', [$request->TanggalAwal, $request->TanggalAkhir]);
             })
             ->first();
         if ($cek) {
@@ -644,13 +654,13 @@ class AbsensiController extends Controller
         }
 
         $filePath = null;
-        if ($request->hasFile('file_upload')) {
-            $file = $request->file('file_upload');
+        if ($request->hasFile('files')) {
+            $file = $request->file('files')[0];
             $filePath = $file->storeAs('cuti_files', $file->getClientOriginalName(), 'public');
         }
 
-        $tanggalMulai = \Carbon\Carbon::parse($request->tanggal_mulai);
-        $tanggalSelesai = \Carbon\Carbon::parse($request->tanggal_selesai);
+        $tanggalMulai = \Carbon\Carbon::parse($request->TanggalAwal);
+        $tanggalSelesai = \Carbon\Carbon::parse($request->TanggalAkhir);
 
         for ($date = $tanggalMulai; $date->lte($tanggalSelesai); $date->addDay()) {
             // Simpan absen MASUK
@@ -662,7 +672,7 @@ class AbsensiController extends Controller
                 'status' => null,
                 'kehadiran' => 'C',
                 'jenis_absen' => 'Masuk',
-                'keterangan' => $request->keterangan,
+                'keterangan' => $request->Keterangan,
                 'approval' => 'N',
                 'ontime' => null,
                 'ip_address' => $request->ip(),
@@ -686,7 +696,10 @@ class AbsensiController extends Controller
             ]);
         }
 
-        return redirect()->route('absen.index')->with('success', 'Pengajuan cuti berhasil disimpan.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Pengajuan cuti berhasil disimpan.'
+        ]);
     }
 
     public function download(Request $request)
