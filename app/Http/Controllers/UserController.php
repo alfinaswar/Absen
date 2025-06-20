@@ -92,11 +92,12 @@ class UserController extends Controller
 
     public function UpdateProfile($id): View
     {
-        $user = User::find($id);
+        $user = User::with('getShift')->find($id);
         $roles = Role::pluck('name', 'name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
+        $shift = ShiftKerja::get();
 
-        return view('users.edit-profile', compact('user', 'roles', 'userRole'));
+        return view('users.edit-profile', compact('user', 'roles', 'userRole', 'shift'));
     }
 
     public function update(Request $request, $id): RedirectResponse

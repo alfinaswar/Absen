@@ -637,7 +637,7 @@
                 <i class="fas fa-calendar-alt menu-item-icon"></i>
                 <span class="menu-item-text">📅 Kalender Kerja</span>
             </a>
-            <a href="#" class="menu-item-slide">
+            <a href="{{route('users.update-profile', auth()->user()->id)}}" class="menu-item-slide">
                 <i class="fas fa-user-cog menu-item-icon"></i>
                 <span class="menu-item-text">👤 Pengaturan Akun</span>
             </a>
