@@ -581,11 +581,11 @@
         <div class="menu-grid">
             <div class="menu-title">Menu Utama</div>
             <div class="menu-items">
-                <a href="{{route('absen.TimeOff')}}" class="menu-item">
+                <a href="{{ route('absen.TimeOff') }}" class="menu-item">
                     <i class="fas fa-calendar-check menu-icon"></i>
                     <span class="menu-label">Izin</span>
                 </a>
-                <a href="#" class="menu-item">
+                <a href="{{ route('absen.over-time') }}" class="menu-item">
                     <i class="fas fa-clock menu-icon"></i>
                     <span class="menu-label">Lembur</span>
                 </a>
@@ -637,7 +637,7 @@
                 <i class="fas fa-calendar-alt menu-item-icon"></i>
                 <span class="menu-item-text">📅 Kalender Kerja</span>
             </a>
-            <a href="{{route('users.update-profile', auth()->user()->id)}}" class="menu-item-slide">
+            <a href="{{ route('users.update-profile', auth()->user()->id) }}" class="menu-item-slide">
                 <i class="fas fa-user-cog menu-item-icon"></i>
                 <span class="menu-item-text">👤 Pengaturan Akun</span>
             </a>
@@ -680,7 +680,7 @@
     <script>
         // Add click effects and interactions
         document.querySelectorAll('.menu-item').forEach(item => {
-            item.addEventListener('click', function (e) {
+            item.addEventListener('click', function(e) {
                 // e.preventDefault();
                 // Add ripple effect
                 this.style.transform = 'scale(0.95)';
@@ -691,7 +691,7 @@
         });
 
         document.querySelectorAll('.bottom-nav-item').forEach(item => {
-            item.addEventListener('click', function (e) {
+            item.addEventListener('click', function(e) {
                 // e.preventDefault();
                 // Remove active class from all items
                 document.querySelectorAll('.bottom-nav-item').forEach(nav => nav.classList.remove(
@@ -702,7 +702,7 @@
         });
 
         // Add notification bell animation
-        document.querySelector('.fa-bell').addEventListener('click', function () {
+        document.querySelector('.fa-bell').addEventListener('click', function() {
             this.style.animation = 'shake 0.5s';
             setTimeout(() => {
                 this.style.animation = '';
@@ -732,7 +732,7 @@
         menuOverlay.addEventListener('click', closeSlideMenu);
 
         // Close menu with Escape key
-        document.addEventListener('keydown', function (e) {
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && slideMenu.classList.contains('active')) {
                 closeSlideMenu();
             }
@@ -740,7 +740,7 @@
 
         // Add click effects to slide menu items
         document.querySelectorAll('.menu-item-slide').forEach(item => {
-            item.addEventListener('click', function (e) {
+            item.addEventListener('click', function(e) {
                 // e.preventDefault();
                 // Add click effect
                 this.style.transform = 'translateX(10px)';

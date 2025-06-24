@@ -7,6 +7,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\JenisCutiController;
 use App\Http\Controllers\MasterPerusahaanController;
 use App\Http\Controllers\MasterStatusPegawaiController;
+use App\Http\Controllers\OverTimeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ShiftKerjaController;
@@ -60,6 +61,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/form-time-off', [AbsensiController::class, 'FormCuti'])->name('absen.formCuti');
         Route::POST('/store-time-off', [AbsensiController::class, 'StoreCuti'])->name('absen.SimpanCuti');
         Route::get('/absensi/filter/{bulan}', [AbsensiController::class, 'filter'])->name('absen.filterbulan');
+        Route::get('/overtime', [AbsensiController::class, 'OverTime'])->name('absen.over-time');
+        Route::POST('/store-time-off', [AbsensiController::class, 'StoreLembur'])->name('absen.SimpanLembur');
     });
     Route::prefix('shift')->group(function () {
         Route::GET('/', [ShiftKerjaController::class, 'index'])->name('shift.index');
@@ -69,6 +72,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::GET('/edit/{id}', [ShiftKerjaController::class, 'edit'])->name('shift.edit');
         Route::PUT('/update/{id}', [ShiftKerjaController::class, 'update'])->name('shift.update');
         Route::delete('/hapus/{id}', [ShiftKerjaController::class, 'destroy'])->name('shift.destroy');
+    });
+    Route::prefix('monitoring-lembur')->group(function () {
+        Route::GET('/', [OverTimeController::class, 'index'])->name('ot.index');
+        Route::GET('/create', [OverTimeController::class, 'create'])->name('ot.create');
+        Route::post('/simpan', [OverTimeController::class, 'store'])->name('ot.store');
+        Route::GET('/simpan-lembur/{id}', [OverTimeController::class, 'storeLembur'])->name('ot.acc');
+        Route::GET('/edit/{id}', [OverTimeController::class, 'edit'])->name('ot.edit');
+        Route::PUT('/update/{id}', [OverTimeController::class, 'update'])->name('ot.update');
+        Route::delete('/hapus/{id}', [OverTimeController::class, 'destroy'])->name('ot.destroy');
     });
     Route::prefix('master-cuti')->group(function () {
         Route::GET('/', [JenisCutiController::class, 'index'])->name('cuti.index');

@@ -6,6 +6,7 @@ use App\Exports\AbsenExport;
 use App\Models\Absensi;
 use App\Models\JenisCuti;
 use App\Models\MasterPerusahaan;
+use App\Models\OverTime;
 use App\Models\QrcodeToken;
 use App\Models\ShiftKerja;
 use App\Models\ShiftKerjaDetail;
@@ -702,6 +703,15 @@ class AbsensiController extends Controller
         ]);
     }
 
+    public function StoreLembur(Request $request)
+    {
+        $data = $request->all();
+        $data['NamaKaryawan'] = auth()->user()->id;
+        $data['KodePerusahaan'] = auth()->user()->IdPerusahaan;
+        OverTime::create($data);
+        return redirect()->back()->with('success', 'Lembur Berhasil Diajukan');
+    }
+
     public function download(Request $request)
     {
         // dd($request->all());
@@ -792,6 +802,19 @@ class AbsensiController extends Controller
         ])->find(auth()->user()->id);
         $jenis = JenisCuti::get();
         return view('karyawan.absen.time-off', compact('user', 'jenis'));
+    }
+
+    public function OverTime()
+    {
+        $user = User::with([
+            'getAbsensi' => function ($query) {
+                $query->whereDate('tanggal', now()->format('Y-m-d'));
+            },
+            'getShift',
+            'getPerusahaan'
+        ])->find(auth()->user()->id);
+        $jenis = JenisCuti::get();
+        return view('karyawan.absen.over-time', compact('user', 'jenis'));
     }
 
     /**
