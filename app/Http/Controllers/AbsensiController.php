@@ -229,8 +229,9 @@ class AbsensiController extends Controller
                 })
                 ->where('masuk.jenis_absen', 'Masuk')
                 ->where('masuk.user_id', auth()->user()->id)
-                ->orderBy('masuk.tanggal', 'desc')
-                ->orderBy('masuk.user_id');
+                // ->orderBy('masuk.tanggal', 'desc')
+                ->orderBy('masuk.user_id')
+                ->orderBy('id', 'DESC');
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -245,31 +246,49 @@ class AbsensiController extends Controller
                     $foto = $row->selfie_photo_masuk;
                     $lokasi = $row->lokasi_masuk;
 
-                    if ($foto) {
+                    if ($foto && $foto != '') {
+                        // Karena foto disimpan di storage dengan path lengkap
+                        $fotoUrl = Storage::url($foto);
+
                         return '<button class="btn btn-sm btn-info preview-foto"
-                        data-foto="' . $foto . '"
+                        data-foto="' . $fotoUrl . '"
                         data-lokasi="' . e($lokasi) . '"
-                        data-title="Foto Masuk">
-                    <i class="fas fa-eye"></i> Preview
-                </button>';
+                        data-title="Foto Absen Masuk"
+                        data-waktu="' . e($row->jam_masuk) . '"
+                        data-tanggal="' . e(\Carbon\Carbon::parse($row->tanggal)->format('d/m/Y')) . '">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>';
                     }
 
-                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                    return '<span class="badge bg-secondary">Tidak Ada Foto</span>';
                 })
                 ->addColumn('foto_keluar', function ($row) {
                     $foto = $row->selfie_photo_keluar;
                     $lokasi = $row->lokasi_keluar;
 
-                    if ($foto) {
+                    if ($foto && $foto != '') {
+                        // Cek apakah foto berupa URL lengkap atau path relatif
+                        if (filter_var($foto, FILTER_VALIDATE_URL)) {
+                            $fotoUrl = $foto; // Jika sudah URL lengkap
+                        } else {
+                            // Jika berupa nama file, sesuaikan dengan struktur folder Anda
+                            $fotoUrl = asset('storage/' . $foto);
+                            // Atau bisa juga:
+                            // $fotoUrl = Storage::url('selfie_photos/' . $foto);
+                            // $fotoUrl = url('storage/selfie_photos/' . $foto);
+                        }
+
                         return '<button class="btn btn-sm btn-info preview-foto"
-                        data-foto="' . $foto . '"
+                        data-foto="' . $fotoUrl . '"
                         data-lokasi="' . e($lokasi) . '"
-                        data-title="Foto Keluar">
-                    <i class="fas fa-eye"></i> Preview
-                </button>';
+                        data-title="Foto Absen Keluar"
+                        data-waktu="' . e($row->jam_keluar) . '"
+                        data-tanggal="' . e(\Carbon\Carbon::parse($row->tanggal)->format('d/m/Y')) . '">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>';
                     }
 
-                    return '<span class="badge bg-secondary text-dark">Tidak Ada Foto</span>';
+                    return '<span class="badge bg-secondary">Tidak Ada Foto</span>';
                 })
                 ->editColumn('tanggal', function ($row) {
                     return \Carbon\Carbon::parse($row->tanggal)->format('d/m/Y');
@@ -643,7 +662,16 @@ class AbsensiController extends Controller
 
     public function StoreCuti(Request $request)
     {
-        // dd($request->files);
+        // Hitung jumlah cuti tahun ini
+        $tahunIni = date('Y');
+        $ceksisa = Absensi::where('user_id', auth()->user()->id)
+            ->where('kehadiran', 'C')
+            ->whereYear('tanggal', $tahunIni)
+            ->count();
+
+        if ($ceksisa >= 12) {
+            return redirect()->back()->with('error', 'Cuti tidak dapat diajukan karena sudah melebihi batas maksimal 12 hari dalam setahun.');
+        }
         $cek = Absensi::where('user_id', auth()->user()->id)
             ->where('kehadiran', 'C')
             ->where(function ($query) use ($request) {

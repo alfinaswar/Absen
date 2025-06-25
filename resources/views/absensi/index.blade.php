@@ -60,8 +60,7 @@
                                     @csrf
                                     <div class="col-md-3">
                                         <label for="start_date" class="form-label fw-bold">Tanggal Mulai</label>
-                                        <input type="date" name="start_date" id="start_date" class="form-control"
-                                            required>
+                                        <input type="date" name="start_date" id="start_date" class="form-control" required>
                                     </div>
                                     <div class="col-md-3">
                                         <label for="end_date" class="form-label fw-bold">Tanggal Selesai</label>
@@ -154,38 +153,68 @@
         </div>
 
         <!-- Modal Preview Foto dan Lokasi -->
-        <div class="modal fade" id="modalPreviewFoto" tabindex="-1" aria-labelledby="modalPreviewLabel"
+        <!-- Modal Preview Foto -->
+        <div class="modal fade" id="modalPreviewFoto" tabindex="-1" role="dialog" aria-labelledby="modalPreviewLabel"
             aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalPreviewLabel">Preview</h5>
+                        <h5 class="modal-title" id="modalPreviewLabel">Preview Foto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body text-center">
-                        <img id="previewFoto" src="" class="img-fluid mb-3" alt="Foto Preview" height="300px"
-                            width="300px">
-                        <p id="previewLokasi" class="text-muted"></p>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 text-center mb-3">
+                                <img id="previewFoto" src="" class="img-fluid rounded shadow" alt="Preview Foto"
+                                    style="max-height: 400px; width: auto;">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-map-marker-alt text-danger"></i> Lokasi
+                                        </h6>
+                                        <p id="previewLokasi" class="card-text">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-clock text-primary"></i> Waktu & Tanggal
+                                        </h6>
+                                        <p id="previewWaktu" class="card-text">-</p>
+                                        <p id="previewTanggal" class="card-text">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
             </div>
         </div>
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 var el;
                 window.TomSelect && (new TomSelect(document.getElementById('karyawan'), {
                     copyClassesToDropdown: false,
                     dropdownParent: 'body',
                     controlInput: '<input>',
                     render: {
-                        item: function(data, escape) {
+                        item: function (data, escape) {
                             if (data.customProperties) {
                                 return '<div><span class="dropdown-item-indicator">' + data
                                     .customProperties + '</span>' + escape(data.text) + '</div>';
                             }
                             return '<div>' + escape(data.text) + '</div>';
                         },
-                        option: function(data, escape) {
+                        option: function (data, escape) {
                             if (data.customProperties) {
                                 return '<div><span class="dropdown-item-indicator">' + data
                                     .customProperties + '</span>' + escape(data.text) + '</div>';
@@ -197,21 +226,21 @@
             });
         </script>
         <script>
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 var el;
                 window.TomSelect && (new TomSelect(document.getElementById('perusahaan'), {
                     copyClassesToDropdown: false,
                     dropdownParent: 'body',
                     controlInput: '<input>',
                     render: {
-                        item: function(data, escape) {
+                        item: function (data, escape) {
                             if (data.customProperties) {
                                 return '<div><span class="dropdown-item-indicator">' + data
                                     .customProperties + '</span>' + escape(data.text) + '</div>';
                             }
                             return '<div>' + escape(data.text) + '</div>';
                         },
-                        option: function(data, escape) {
+                        option: function (data, escape) {
                             if (data.customProperties) {
                                 return '<div><span class="dropdown-item-indicator">' + data
                                     .customProperties + '</span>' + escape(data.text) + '</div>';
@@ -223,21 +252,54 @@
             });
         </script>
         <script type="text/javascript">
-            $(document).on('click', '.preview-foto', function() {
-                var fotoUrl = $(this).data('foto'); // base64 langsung
-                var lokasi = $(this).data('lokasi');
-                var title = $(this).data('title');
 
-                $('#modalPreviewLabel').text(title);
-                $('#previewFoto').attr('src', fotoUrl);
-                $('#previewLokasi').text('Lokasi: ' + lokasi);
 
-                $('#modalPreviewFoto').modal('show');
-            });
+            $(document).ready(function () {
+                $(document).on('click', '.preview-foto', function () {
+                    var fotoUrl = $(this).data('foto');
+                    var lokasi = $(this).data('lokasi');
+                    var title = $(this).data('title');
+                    var waktu = $(this).data('waktu');
+                    var tanggal = $(this).data('tanggal');
 
-            $(document).ready(function() {
+                    console.log('Preview foto clicked:', {
+                        fotoUrl: fotoUrl,
+                        lokasi: lokasi,
+                        title: title,
+                        waktu: waktu,
+                        tanggal: tanggal
+                    });
 
-                var dataTable = function() {
+                    // Validasi URL foto
+                    if (!fotoUrl || fotoUrl === 'undefined') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Oops...',
+                            text: 'Foto tidak tersedia!'
+                        });
+                        return;
+                    }
+
+                    // Set modal content
+                    $('#modalPreviewLabel').text(title || 'Preview Foto');
+                    $('#previewFoto').attr('src', fotoUrl);
+                    $('#previewLokasi').text(lokasi || 'Lokasi tidak tersedia');
+                    $('#previewWaktu').text('Waktu: ' + (waktu || '-'));
+                    $('#previewTanggal').text('Tanggal: ' + (tanggal || '-'));
+
+                    // Show modal
+                    var modal = new bootstrap.Modal(document.getElementById('modalPreviewFoto'));
+                    modal.show();
+
+
+
+                });
+
+                // Clear image error handler when modal is hidden
+                $('#modalPreviewFoto').on('hidden.bs.modal', function () {
+                    $('#previewFoto').off('error');
+                });
+                var dataTable = function () {
                     var table = $('.data-table');
                     table.DataTable({
                         responsive: true,
@@ -253,7 +315,7 @@
                         },
                         ajax: {
                             url: "{{ route('absen.index') }}",
-                            data: function(d) {
+                            data: function (d) {
                                 d.start_date = $('#start_date').val();
                                 d.end_date = $('#end_date').val();
                                 d.shift = $('#shift').val();
@@ -262,66 +324,66 @@
                             }
                         },
                         columns: [{
-                                data: 'DT_RowIndex',
-                                name: 'DT_RowIndex',
-                                orderable: false,
-                                searchable: false
-                            },
-                            {
-                                data: 'nama_karyawan',
-                                name: 'nama_karyawan'
-                            },
-                            {
-                                data: 'tanggal',
-                                name: 'tanggal'
-                            },
-                            {
-                                data: 'kehadiran',
-                                name: 'kehadiran'
-                            },
-                            {
-                                data: 'jam_masuk',
-                                name: 'jam_masuk'
-                            },
-                            {
-                                data: 'jam_keluar',
-                                name: 'jam_keluar'
-                            },
-                            {
-                                data: 'status_masuk',
-                                name: 'status_masuk',
-                                orderable: false,
-                                searchable: false
-                            },
+                            data: 'DT_RowIndex',
+                            name: 'DT_RowIndex',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'nama_karyawan',
+                            name: 'nama_karyawan'
+                        },
+                        {
+                            data: 'tanggal',
+                            name: 'tanggal'
+                        },
+                        {
+                            data: 'kehadiran',
+                            name: 'kehadiran'
+                        },
+                        {
+                            data: 'jam_masuk',
+                            name: 'jam_masuk'
+                        },
+                        {
+                            data: 'jam_keluar',
+                            name: 'jam_keluar'
+                        },
+                        {
+                            data: 'status_masuk',
+                            name: 'status_masuk',
+                            orderable: false,
+                            searchable: false
+                        },
 
-                            {
-                                data: 'foto_masuk',
-                                name: 'foto_masuk',
-                                orderable: false,
-                                searchable: false
-                            },
-                            {
-                                data: 'foto_keluar',
-                                name: 'foto_keluar',
-                                orderable: false,
-                                searchable: false
-                            },
+                        {
+                            data: 'foto_masuk',
+                            name: 'foto_masuk',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                            data: 'foto_keluar',
+                            name: 'foto_keluar',
+                            orderable: false,
+                            searchable: false
+                        },
 
-                            {
-                                data: 'action',
-                                name: 'action',
-                                orderable: false,
-                                searchable: false
-                            },
+                        {
+                            data: 'action',
+                            name: 'action',
+                            orderable: false,
+                            searchable: false
+                        },
                         ],
                     });
                 };
 
                 dataTable();
-                $('#filter-apply').click(function() {
+                $('#filter-apply').click(function () {
                     $('.data-table').DataTable().ajax.reload();
                 });
-                $('body').on('click', '.acc-cuti', function() {
+                $('body').on('click', '.acc-cuti', function () {
                     var id = $(this).data('id'); // Ambil ID data
 
                     Swal.fire({
@@ -342,7 +404,7 @@
                                     id: id,
                                     _token: "{{ csrf_token() }}"
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     Swal.fire(
                                         'Berhasil!',
                                         response.message || 'Cuti berhasil di-ACC.',
@@ -350,7 +412,7 @@
                                     );
                                     table.ajax.reload(); // Refresh DataTable
                                 },
-                                error: function(xhr) {
+                                error: function (xhr) {
                                     Swal.fire(
                                         'Gagal!',
                                         xhr.responseJSON.message ||
@@ -362,7 +424,7 @@
                         }
                     });
                 });
-                $(document).on('click', '.delete', function() {
+                $(document).on('click', '.delete', function () {
                     var id = $(this).data('id');
                     var url = '{{ route('absen.destroy', ':id') }}'.replace(':id', id);
 
@@ -381,7 +443,7 @@
                                 data: {
                                     _token: '{{ csrf_token() }}',
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     if (response.success) {
                                         Swal.fire(
                                             'Dihapus!',
@@ -398,7 +460,7 @@
                                         );
                                     }
                                 },
-                                error: function() {
+                                error: function () {
                                     Swal.fire(
                                         'Error!',
                                         'Terjadi kesalahan saat menghapus data.',
@@ -412,4 +474,4 @@
 
             });
         </script>
-    @endsection
+@endsection

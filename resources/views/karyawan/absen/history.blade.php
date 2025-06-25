@@ -493,20 +493,23 @@
         <div class="card">
             <div class="card-body">
                 <form id="filterForm">
+                    @php
+                        $bulanSekarang = (int) date('n');
+                    @endphp
                     <select id="bulan" name="bulan" class="form-select" onchange="filterData()">
                         <option value="">Pilih Bulan</option>
-                        <option value="1">Januari</option>
-                        <option value="2">Februari</option>
-                        <option value="3">Maret</option>
-                        <option value="4">April</option>
-                        <option value="5">Mei</option>
-                        <option value="6">Juni</option>
-                        <option value="7">Juli</option>
-                        <option value="8">Agustus</option>
-                        <option value="9">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
+                        <option value="1" {{ $bulanSekarang == 1 ? 'selected' : '' }}>Januari</option>
+                        <option value="2" {{ $bulanSekarang == 2 ? 'selected' : '' }}>Februari</option>
+                        <option value="3" {{ $bulanSekarang == 3 ? 'selected' : '' }}>Maret</option>
+                        <option value="4" {{ $bulanSekarang == 4 ? 'selected' : '' }}>April</option>
+                        <option value="5" {{ $bulanSekarang == 5 ? 'selected' : '' }}>Mei</option>
+                        <option value="6" {{ $bulanSekarang == 6 ? 'selected' : '' }}>Juni</option>
+                        <option value="7" {{ $bulanSekarang == 7 ? 'selected' : '' }}>Juli</option>
+                        <option value="8" {{ $bulanSekarang == 8 ? 'selected' : '' }}>Agustus</option>
+                        <option value="9" {{ $bulanSekarang == 9 ? 'selected' : '' }}>September</option>
+                        <option value="10" {{ $bulanSekarang == 10 ? 'selected' : '' }}>Oktober</option>
+                        <option value="11" {{ $bulanSekarang == 11 ? 'selected' : '' }}>November</option>
+                        <option value="12" {{ $bulanSekarang == 12 ? 'selected' : '' }}>Desember</option>
                     </select>
                 </form>
             </div>
@@ -538,10 +541,29 @@
                     <div>Keluar</div>
                 </div>
                 <div id="attendance-table">
-                    <div class="loading">
-                        <i class="fas fa-calendar-alt"></i><br><br>
-                        Pilih bulan untuk melihat data absensi
-                    </div>
+                    @php
+                        // Ambil bulan dan tahun dari filter, default ke bulan sekarang
+                        $bulan = request('bulan') ?? date('n');
+                        $tahun = date('Y');
+                        $jumlahHari = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
+
+                        // Buat array data absensi dengan key tanggal
+                        $dataAbsen = [];
+                        foreach ($data as $d) {
+                            $dataAbsen[$d->tanggal] = $d;
+                        }
+                    @endphp
+                    @for ($i = 1; $i <= $jumlahHari; $i++)
+                        @php
+                            $tanggal = sprintf('%04d-%02d-%02d', $tahun, $bulan, $i);
+                            $absen = $dataAbsen[$tanggal] ?? null;
+                        @endphp
+                        <div class="table-row">
+                            <div>{{ $tanggal }}</div>
+                            <div>{{ $absen ? ($absen->jam_masuk ?? '-') : '-' }}</div>
+                            <div>{{ $absen ? ($absen->jam_keluar ?? '-') : '-' }}</div>
+                        </div>
+                    @endfor
                 </div>
             </div>
 

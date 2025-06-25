@@ -156,9 +156,9 @@
 
         <!-- Login Form -->
         <div class="mb-4">
-            <h1>Selamat datang di Intrack</h1>
+            <h1>Selamat datang di HexaTime</h1>
             <div class="title-underline"></div>
-            <p class="subtitle">Selamat datang! Silahkan memasukkan email dan password Intrack anda untuk absensi.</p>
+            <p class="subtitle">Selamat datang! Silahkan memasukkan email dan password anda untuk absensi.</p>
         </div>
 
         <form method="POST" action="{{ route('login') }}" autocomplete="on" novalidate>

@@ -214,6 +214,25 @@
             margin-bottom: 8px;
         }
 
+        .button-warning {
+            padding: 14px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            min-height: 48px;
+            border: none;
+            width: 100%;
+            margin-bottom: 8px;
+            background-color: #ff9800;
+            color: #fff;
+        }
+
         .button-in {
             background-color: #e8f0fe;
             color: #233b81;
@@ -852,6 +871,14 @@
                 </svg>
                 Absen Keluar
             </div>
+        </div>
+        <div class="action-buttons" style="margin-top: 15px;">
+
+            <a class="button-warning" href="{{route('home')}}" id="btnback" aria-colspan="btn btn-warning"
+                style="bg-color:">
+                Kembali
+            </a>
+
         </div>
     </div>
 
